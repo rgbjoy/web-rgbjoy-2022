@@ -1,1 +1,1 @@
-# web-rgbjoy-2022
+This is a starter template for [Learn Next.js](https://nextjs.org/learn).
