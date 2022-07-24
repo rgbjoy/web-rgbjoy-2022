@@ -1,39 +1,33 @@
-import Head from 'next/head';
-import Layout from '../../components/layout';
-import { getAllPostIds, getPostData } from '../../lib/posts';
-import Date from '../../components/date';
-import utilStyles from '../../styles/utils.module.scss';
+import React from "react"
+import Layout from "../../components/layout"
 
-export async function getStaticProps({ params }) {
-  const postData = await getPostData(params.id);
-  return {
-    props: {
-      postData,
+export const getServerSideProps = async ({ params }) => {
+  const post = await prisma.post.findUnique({
+    where: {
+      id: String(params?.id),
     },
-  };
-}
-
-export async function getStaticPaths() {
-  const paths = getAllPostIds();
+    include: {
+      author: {
+        select: { name: true },
+      },
+    },
+  });
   return {
-    paths,
-    fallback: false,
+    props: post,
   };
-}
+};
 
-export default function Post({ postData }) {
+const Post = (props) => {
+  let title = props.title
+
   return (
     <Layout>
-      <Head>
-        <title>{postData.title}</title>
-      </Head>
-      <article>
-        <h1 className={utilStyles.headingXl}>{postData.title}</h1>
-        <div className={utilStyles.lightText}>
-          <Date dateString={postData.date} />
-        </div>
-        <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
-      </article>
+      <div>
+        <h2>{title} By {props?.author?.name || "Unknown author"}</h2>
+        <p>{props.content}</p>
+      </div>
     </Layout>
-  );
+  )
 }
+
+export default Post

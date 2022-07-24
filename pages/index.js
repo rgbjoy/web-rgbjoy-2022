@@ -4,19 +4,24 @@ import utilStyles from '../styles/utils.module.scss';
 import Link from 'next/link';
 import Date from '../components/date';
 import React from 'react';
-
-import { getSortedPostsData } from '../lib/posts';
+import prisma from '../lib/prisma';
 
 export async function getStaticProps() {
-  const allPostsData = getSortedPostsData();
-  return {
-    props: {
-      allPostsData,
+  const feed = await prisma.post.findMany({
+    where: { published: true },
+    include: {
+      author: {
+        select: { name: true },
+      },
     },
+  });
+  return {
+    props: { feed },
+    revalidate: 10,
   };
-}
+};
 
-export default function Home({ allPostsData }) {
+export default function Home({ feed }) {
   const [likes, setLikes] = React.useState(0);
 
   function handleClick() {
@@ -31,15 +36,11 @@ export default function Home({ allPostsData }) {
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
+          {feed.map(({ id, date, title }) => (
             <li className={utilStyles.listItem} key={id}>
               <Link href={`/posts/${id}`}>
                 <a>{title}</a>
               </Link>
-              <br />
-              <small className={utilStyles.lightText}>
-                <Date dateString={date} />
-              </small>
             </li>
           ))}
         </ul>
