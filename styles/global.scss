@@ -1,15 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('../asset/fonts/GTAmericaMono-Bold.woff2') format('woff2'),
+      url('../asset/fonts/GTAmericaMono-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('../asset/fonts/GTAmericaMono-BoldItalic.woff2') format('woff2'),
+      url('../asset/fonts/GTAmericaMono-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('../asset/fonts/GTAmericaMono-Regular.woff2') format('woff2'),
+      url('../asset/fonts/GTAmericaMono-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('../asset/fonts/GTAmericaMono-RegularItalic.woff2') format('woff2'),
+      url('../asset/fonts/GTAmericaMono-RegularItalic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "GT America Mono", sans-serif;
   line-height: 1.6;
   font-size: 18px;
+  color: white;
+  background: #1E1D1F;
 }
 
 * {
@@ -17,7 +51,7 @@ body {
 }
 
 a {
-  color: #0070f3;
+  color: #00DAC6;
   text-decoration: none;
 
   &:hover {

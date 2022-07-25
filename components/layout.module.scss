@@ -13,3 +13,24 @@
 .backToHome {
   margin: 3rem 0 0;
 }
+
+.footer :global {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .social {
+    display: flex;
+
+    a {
+      display: inline-block;
+      padding: 0 5px;
+    }
+  }
+
+  .copyright {
+    font-size: 50%;
+    color: #aaaaaa;
+    padding: 0 5px;
+  }
+}
