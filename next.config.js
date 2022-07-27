@@ -1,7 +1,6 @@
-const path = require('path')
-
 module.exports = {
-  sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
+  images: {
+    domains: ['d33wubrfki0l68.cloudfront.net'],
+    formats: ['image/avif', 'image/webp'],
   },
 }
