@@ -1,59 +1,43 @@
-import React, { ReactNode, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import * as THREE from 'three'
+import * as THREE from "three";
+import { CameraShake } from '@react-three/drei'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Points, PointMaterial } from '@react-three/drei'
+import * as random from "maath/random";
 
 type Props = {
-  children?: ReactNode
+  children?: React.ReactNode
   title?: string
 }
 
+function Stars(props:any) {
+  const ref = useRef<THREE.Points>(null!);
+  const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 1.5 }))
+  useFrame((state, delta) => {
+    ref.current.rotation.x -= delta / 1000
+    ref.current.rotation.y -= delta / 1000
+  })
+  return (
+    <group rotation={[0, 0, Math.PI / 4]}>
+      <Points ref={ref} positions={sphere} frustumCulled={false} {...props}>
+        <PointMaterial transparent color="#ffa0e0" size={0.003} sizeAttenuation={true} depthWrite={false} />
+      </Points>
+    </group>
+  )
+}
+
+
 const Layout = ({ children, title = 'This is the default title' }: Props) => {
-  useEffect(() => {
-    const scene = new THREE.Scene()
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    camera.position.z = 2
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true })
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    document.querySelector("#__next").prepend(renderer.domElement)
-
-    const geometry = new THREE.BoxGeometry()
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      wireframe: false,
-    })
-
-    const cube = new THREE.Mesh(geometry, material)
-    scene.add(cube)
-
-    window.addEventListener('resize', onWindowResize, false)
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      render()
-    }
-
-    function animate() {
-      requestAnimationFrame(animate)
-
-      cube.rotation.x += 0.01
-      cube.rotation.y += 0.01
-
-      render()
-    }
-
-    function render() {
-      renderer.render(scene, camera)
-    }
-    animate()
-  }, []);
 
   return (
     <>
+      <Canvas camera={{ position: [0, 0, 1] }}>
+        <Stars />
+        <CameraShake yawFrequency={0.02} pitchFrequency={0.02} rollFrequency={0.02} />
+      </Canvas>
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -64,7 +48,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
             <a>Home</a>
           </Link>
           <Link href="/about">
-            <a>About</a>
+            <a>About me</a>
           </Link>
           <Link href="/projects">
             <a>Projects</a>

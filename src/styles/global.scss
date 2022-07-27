@@ -1,36 +1,78 @@
-$gutter: 30px;
+@font-face {
+  font-family: 'Rhode';
+  src: url('../asset/fonts/Rhode-MediumWide.woff2') format('woff2'),
+      url('../asset/fonts/Rhode-MediumWide.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
-  height: 100vh;
+  height: 100%;
 }
 
 body {
   background-color: black;
   color: white;
   overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  user-select: none;
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0id2hpdGUiLz48L3N2Zz4='),
+    auto;
 }
 
 #__next {
   position: relative;
-  height: 100vh;
+  height: 100%;
 }
 
 a {
+  position: relative;
   color: white;
+  text-decoration: none;
 
-  &:hover {
-    color: white;
-    text-decoration: none;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-radius: 4px;
+    background-color: #FFF;
+    bottom: -2px;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
   }
+
+  &:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+
+}
+
+h1, h2, h3 {
+  font-family: 'Rhode', sans-serif;
+  font-weight: normal;
 }
 
 .wrapper {
   position: absolute;
-  top: 60px;
+  top: $gutter * 2;
   left: $gutter;
-  width: 100vh;
-  height: 100vh;
+  // width: 100%;
+  // height: 100%;
+
+  @media screen and (max-width: $mobile) {
+    top: 60px;
+    left: $gutter-mobile;
+  }
 }
 
 canvas {
@@ -43,10 +85,15 @@ canvas {
 header {
   position: fixed;
   top: $gutter;
-  left: $gutter;
-  width: 100%;
+  right: $gutter;
+
+  @media screen and (max-width: $mobile) {
+    top: $gutter-mobile;
+    right: $gutter-mobile;
+  }
 
   nav {
+    font-family: 'Rhode', sans-serif;
     width: 100%;
     display: flex;
     justify-content: space-around;
@@ -54,13 +101,45 @@ header {
 
   a {
     display: block;
+    margin-left: 20px;
+
+    &:first-child {
+      margin: 0;
+    }
   }
 }
 
 footer {
   position: fixed;
   left: $gutter;
+  right: $gutter;
   bottom: $gutter;
+  display: flex;
+  font-size: 80%;
+  justify-content: space-between;
+
+  @media screen and (max-width: $mobile) {
+    bottom: $gutter-mobile;
+    left: $gutter-mobile;
+    right: $gutter-mobile;
+    font-size: 50%;
+  }
+
+  .links a {
+    margin-right: 10px;
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+
+  .social a {
+    margin-left: 10px;
+
+    &:first-child {
+      margin: 0;
+    }
+  }
 }
 
 .example-container {
