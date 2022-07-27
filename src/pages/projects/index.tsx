@@ -1,9 +1,9 @@
 import { GetStaticProps } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
 
 import { Project } from '../../interfaces'
 import { sampleProjectData } from '../../utils/sample-data'
-import Layout from '../../components/Layout'
 import List from '../../components/List'
 
 type Props = {
@@ -11,10 +11,11 @@ type Props = {
 }
 
 const WithStaticProps = ({ items }: Props) => (
-  <Layout title="Projects">
+  <>
+    <Head><title>Projects</title></Head>
     <h1>Projects</h1>
     <List items={items} />
-  </Layout>
+  </>
 )
 
 export const getStaticProps: GetStaticProps = async () => {

@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import Layout from '../components/Layout'
+import Head from 'next/head'
 
 const IndexPage = () => (
-  <Layout title="RGBJOY">
+  <>
+    <Head><title>RGBJOY</title></Head>
     <h1>Hello 👋</h1>
-  </Layout>
+  </>
 )
 
 export default IndexPage

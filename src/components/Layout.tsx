@@ -18,7 +18,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
 
     const renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
-    document.querySelector(".wrapper").prepend(renderer.domElement)
+    document.querySelector("#__next").prepend(renderer.domElement)
 
     const geometry = new THREE.BoxGeometry()
     const material = new THREE.MeshBasicMaterial({
@@ -50,11 +50,11 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
       renderer.render(scene, camera)
     }
     animate()
-  })
+  }, []);
+
   return (
-    <div className="wrapper">
+    <>
       <Head>
-        <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
@@ -71,7 +71,9 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
           </Link>
         </nav>
       </header>
-      {children}
+      <div className="wrapper">
+        {children}
+      </div>
       <footer>
         <div className="links">
           <a aria-label="RGBJOY Instagram" target="_blank" rel="noreferrer" href="https://instagram.com/rgbjoy">Instagram</a>
@@ -85,7 +87,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
           <a href="tel:+17188776858">+1 718 877 6858</a>
         </div>
       </footer>
-    </div>
+    </>
   )
 }
 

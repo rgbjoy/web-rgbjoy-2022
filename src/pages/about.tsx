@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import Layout from '../components/Layout'
+import Head from 'next/head'
 
 const AboutPage = () => (
-  <Layout title="About">
+  <>
+    <Head><title>RGBJOY - About</title></Head>
     <h1>About</h1>
     <p>I&apos;m a multideplinary designer and developer currently located in Vero Beach, FL.</p>
-  </Layout>
+  </>
 )
 
 export default AboutPage

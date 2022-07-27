@@ -1,11 +1,19 @@
+$gutter: 30px;
+
 html, body {
   margin: 0;
+  height: 100vh;
 }
 
 body {
   background-color: black;
   color: white;
   overflow: hidden;
+}
+
+#__next {
+  position: relative;
+  height: 100vh;
 }
 
 a {
@@ -18,7 +26,11 @@ a {
 }
 
 .wrapper {
-  position: relative;
+  position: absolute;
+  top: 60px;
+  left: $gutter;
+  width: 100vh;
+  height: 100vh;
 }
 
 canvas {
@@ -30,8 +42,8 @@ canvas {
 
 header {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: $gutter;
+  left: $gutter;
   width: 100%;
 
   nav {
@@ -46,7 +58,9 @@ header {
 }
 
 footer {
-  position: absolute;
+  position: fixed;
+  left: $gutter;
+  bottom: $gutter;
 }
 
 .example-container {
