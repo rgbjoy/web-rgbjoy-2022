@@ -74,10 +74,10 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
       {children}
       <footer>
         <div className="links">
-          <a aria-label="RGBJOY Instagram" target="_blank" href="https://instagram.com/rgbjoy">Instagram</a>
-          <a aria-label="RGBJOY Twitter" target="_blank" href="https://twitter.com/rgbjoy">Twitter</a>
-          <a aria-label="RGBJOY Codepen" target="_blank" href="https://codepen.io/rgbjoy/pens/popular">Codepen</a>
-          <a aria-label="RGBJOY Linkedin" target="_blank" href="https://www.linkedin.com/in/rgbjoy/">Linkedin</a>
+          <a aria-label="RGBJOY Instagram" target="_blank" rel="noreferrer" href="https://instagram.com/rgbjoy">Instagram</a>
+          <a aria-label="RGBJOY Twitter" target="_blank" rel="noreferrer" href="https://twitter.com/rgbjoy">Twitter</a>
+          <a aria-label="RGBJOY Codepen" target="_blank" rel="noreferrer" href="https://codepen.io/rgbjoy/pens/popular">Codepen</a>
+          <a aria-label="RGBJOY Linkedin" target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/rgbjoy/">Linkedin</a>
         </div>
 
         <div className="social">
