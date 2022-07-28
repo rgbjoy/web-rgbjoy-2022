@@ -19,11 +19,7 @@ html, body {
 body {
   background-color: black;
   color: white;
-  overflow: hidden;
   font-family: 'Montserrat', sans-serif;
-  user-select: none;
-  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0id2hpdGUiLz48L3N2Zz4='),
-    auto;
 }
 
 #__next {
@@ -50,33 +46,63 @@ a {
     transition: transform .3s ease-in-out;
   }
 
-  &:hover::before {
+  &:hover::before:not(.btn) {
     transform-origin: left;
     transform: scaleX(1);
   }
 
 }
 
-h1, h2, h3 {
-  font-family: 'Rhode', sans-serif;
-  font-weight: normal;
-}
+.btn {
+  background: white;
+  display: inline-block;
+  color: black;
+  padding: 10px;
+  transition: all .15s ease-in-out;
+  border-radius: 2px;
 
-.wrapper {
-  position: absolute;
-  top: $gutter * 2;
-  left: $gutter;
-  // width: 100%;
-  // height: 100%;
-
-  @media screen and (max-width: $mobile) {
-    top: 60px;
-    left: $gutter-mobile;
+  &:hover {
+    color: white;
+    background: black;
   }
 }
 
-canvas {
-  position: absolute;
+h1, h2, h3 {
+  font-family: 'Rhode', sans-serif;
+  font-weight: normal;
+  margin: 0;
+
+  @media screen and (max-width: $mobile) {
+    font-size: 80%;
+  }
+}
+
+p {
+  line-height: 150%;
+  letter-spacing: 2px;
+  @media screen and (max-width: $mobile) {
+    font-size: 80%;
+  }
+}
+
+.wrapper {
+  position: relative;
+  padding: 240px 120px 0 120px;
+}
+
+.badge {
+  // font-family: 'Rhode', sans-serif;
+  position: fixed;
+  writing-mode: vertical-rl;
+  right: $gutter;
+  transform: translateY(-50%);
+  font-size: 80%;
+  letter-spacing: 1px;
+  top: 50%;
+}
+
+.background {
+  position: fixed !important;
   top: 0;
   left: 0;
   z-index:-1;
@@ -94,6 +120,7 @@ header {
 
   nav {
     font-family: 'Rhode', sans-serif;
+    font-size: 80%;
     width: 100%;
     display: flex;
     justify-content: space-around;

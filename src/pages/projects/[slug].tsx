@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { Project } from '../../interfaces'
 import { sampleProjectData } from '../../utils/sample-data'
 import ListDetail from '../../components/ListDetail'
+import Layout from '../../components/Layout';
 
 type Props = {
   item?: Project
@@ -20,10 +21,10 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
   }
 
   return (
-    <>
+    <Layout page="detail">
       <Head><title>{`${item ? item.name : 'Project Detail'}`}</title></Head>
       <ListDetail item={item} />
-    </>
+    </Layout>
   )
 }
 
