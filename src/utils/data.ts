@@ -7,7 +7,7 @@ export const clientData: Client[] = [
     slug: 'the-newrepublic',
     time: '10.2018 - Present',
     title: 'Contract',
-    description: "Worked closely with editorial and product teams to help build frontend and backend components, print-to-web features, animation, video editing, and building/designing the new redesign in 2020.",
+    description: "Worked closely with editorial and product teams to help build frontend (React) and backend(GraphQL, Sequalize) components, print-to-web features, animation, and video editing. Helped migrate old codebase to the latest redesign.",
     technology: ["React", "GraphQL", "Postres", "Sequalize", "Heroku"],
     images:[
       "https://d33wubrfki0l68.cloudfront.net/dd23708ebc4053551bb33e18b7174e73b6e1710b/dea24/static/images/wallpapers/shared-colors@2x.png",
@@ -20,7 +20,7 @@ export const clientData: Client[] = [
     slug: 'code-theory',
     time: '10.2010 - 05.2016',
     title: 'Senior Designer & Developer',
-    description: "Worked with creative directors on creating various web experiences for DPSG brands (Dr Pepper, Motts, etc.). Flash/HTML5 development for the websites, designed/built games, and various advertising elements.",
+    description: "Created designs and built various flash experiences for DPSG brands (Dr Pepper, Motts, etc.). Games, banners, and websites made on demanding deadlines.",
     technology: ["HMTL5", "Flash", "Greensock"],
     images:[
       "https://d33wubrfki0l68.cloudfront.net/dd23708ebc4053551bb33e18b7174e73b6e1710b/dea24/static/images/wallpapers/shared-colors@2x.png",
@@ -34,7 +34,7 @@ export const clientData: Client[] = [
     time: '05.2008 - 05.2010',
     title: 'Production Designer/Developer',
     technology: ["Flash", "Greensock"],
-    description: "Worked with producers to build and design various web experiences for various film marketing. Flash development for the web and advertising, social media (custom myspace lol).",
+    description: "Helped build and design flash web experiences for the film industry.",
     images:[
       "https://d33wubrfki0l68.cloudfront.net/dd23708ebc4053551bb33e18b7174e73b6e1710b/dea24/static/images/wallpapers/shared-colors@2x.png",
       "https://d33wubrfki0l68.cloudfront.net/49de349d12db851952c5556f3c637ca772745316/cfc56/static/images/wallpapers/bridge-02@2x.png",
