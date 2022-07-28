@@ -1,7 +1,18 @@
 .intro {
-  position: absolute;
+  @media screen and (max-width:$mobile) {
+    margin-top: 120px;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 .btn {
   margin-top: 60px;
+
+  @media screen and (max-width:$mobile) {
+    margin-top: 40px;
+    font-size: 80%;
+  }
 }

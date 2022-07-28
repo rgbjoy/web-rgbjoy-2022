@@ -5,13 +5,13 @@ import Layout from '../components/Layout'
 
 const IndexPage = () => (
   <Layout page="intro">
-    <Head><title>Tom Fletcher - creative digital engineer</title></Head>
+    <Head><title>Tom Fletcher - Multidisciplinary digital creator & web engineer</title></Head>
     <div className={style.intro}>
       <h1>Tom Fletcher</h1>
-      <p>creative digital engineer</p>
+      <p>Multidisciplinary digital creator & web engineer</p>
 
-      <Link href="/projects">
-        <a className="btn">Check out my work</a>
+      <Link href="/work">
+        <a className={`btn ${style.btn}`}>See work</a>
       </Link>
     </div>
   </Layout>

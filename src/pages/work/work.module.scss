@@ -1,0 +1,47 @@
+.work :global {
+  h2 {
+    margin-top: 80px;
+  }
+
+  .description {
+    margin-top: 5px;
+    font-size: 90%;
+  }
+
+  .name {
+    font-size: 120%;
+  }
+
+  .time {
+    margin-top: 5px;
+  }
+
+  .seemore {
+    font-size: 80%;
+    margin-top: 20px;
+    display: inline-block;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    @media screen and (min-width: $mobile) {
+      margin-right: 60px;
+    }
+
+    li {
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      margin-bottom: 30px;
+
+      &:last-child {
+        padding-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      a {
+      }
+    }
+  }
+}

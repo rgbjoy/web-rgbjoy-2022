@@ -4,9 +4,18 @@
 //
 // import { Project } from 'path/to/interfaces';
 
-export type Project = {
+export type Client = {
   name: string
   slug: string
+  time?: string
+  title?: string
   description: string
-  images: string[]
+  technology?: string[]
+  images?: string[]
+}
+
+export type Project = {
+  name: string
+  link: string
+  description?: string
 }

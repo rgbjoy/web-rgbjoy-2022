@@ -1,0 +1,38 @@
+.selfie {
+  display: flex;
+  justify-content: space-between;
+
+  @media screen and (max-width: $mobile) {
+    margin-bottom: 60px;
+  }
+
+  .selfieWrapper {
+    width: 300px;
+
+    @media screen and (max-width: $mobile) {
+      width: 50%;
+      // margin: 30px 0;
+    }
+  }
+}
+
+.strengths {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 60px;
+
+  div:first-child {
+    line-height: 200%;
+    font-size: 80%;
+  }
+
+  .detail {
+    width: 45%;
+    line-height: 200%;
+
+    @media screen and (max-width: $mobile) {
+      font-size: 80%;
+      width: 50%;
+    }
+  }
+}

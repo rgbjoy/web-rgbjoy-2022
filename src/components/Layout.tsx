@@ -14,6 +14,7 @@ const variants = {
 
 const Layout = ({ children, page }: Props) => (
   <motion.div
+    key="transition"
     variants={variants}
     initial="hidden"
     animate="enter"
