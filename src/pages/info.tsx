@@ -24,7 +24,7 @@ const Info = () => (
 
     <p>
       I&apos;m currently working freelance with <a href="https://newrepublic.com/" target="_blank" rel="noreferrer">The New Republic</a>. I&apos;m based in Vero Beach, FL. My passion lies in web development, design, 3D, game design, motion, and technology. When I
-      get the chance to get off a computer, I&apos;m either surfing or traveling for surf.
+      get the chance to get off a computer, I&apos;m either surfing with the family or finding the next thing to learn.
     </p>
 
     <div className={style.strengths}>
