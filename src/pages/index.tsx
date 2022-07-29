@@ -7,7 +7,7 @@ const IndexPage = () => (
   <Layout page="intro">
     <Head><title>Tom Fletcher - Multidisciplinary digital creator & web engineer</title></Head>
     <div className={style.intro}>
-      <h1>Tom Fletcher {String(process.env.VERCEL_ENV === "development" ? "dev" : "")}</h1>
+      <h1>Tom Fletcher {String(process.env.VERCEL_ENV === "preview" ? "dev" : "")}</h1>
       <p>Multidisciplinary digital creator & web engineer</p>
 
       <Link href="/work">
