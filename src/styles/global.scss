@@ -172,12 +172,28 @@ footer {
   }
 
   .footer-wrapper {
+    position: relative;
     display: flex;
-    font-size: 80%;
     justify-content: space-between;
     margin-left: $gutter;
     margin-right: $gutter;
     margin-bottom: $gutter;
+
+    &:after {
+      content: "";
+      display: block;
+      width: 90px;
+      height: 1px;
+      background: white;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+
+      @media screen and (max-width: $mobile) {
+        width: 1px;
+        height: 90px;
+      }
+    }
 
     @media screen and (max-width: $mobile) {
       margin-left: $gutter-mobile;
@@ -186,23 +202,16 @@ footer {
     }
   }
 
-  @media screen and (max-width: $mobile) {
-    font-size: 50%;
-  }
-
   .links a {
     margin-right: 10px;
+
+    @media screen and (max-width: $mobile) {
+      font-size: 65%;
+    }
 
     &:last-child {
       margin: 0;
     }
-  }
-
-  .line {
-    width: 90px;
-    height: 1px;
-    background: white;
-    align-self: end;
   }
 }
 
