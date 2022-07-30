@@ -1,0 +1,110 @@
+.header {
+  position: fixed;
+  top: $gutter;
+  right: $gutter;
+
+  @media screen and (max-width: $mobile) {
+    top: $gutter-mobile;
+    right: $gutter-mobile;
+  }
+
+  nav {
+    font-family: "Rhode", sans-serif;
+    font-size: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+    .active {
+      pointer-events: none;
+      opacity: 0.2;
+    }
+  }
+
+  a {
+    display: block;
+    margin-left: 20px;
+
+    &:first-child {
+      margin: 0;
+    }
+  }
+}
+
+.badge {
+  font-family: 'Rhode', sans-serif;
+  position: fixed;
+  writing-mode: vertical-rl;
+  right: $gutter;
+  transform: translateY(-50%);
+  font-size: 80%;
+  letter-spacing: 1px;
+  top: 50%;
+
+  @media screen and (max-width: $mobile) {
+    display: none;
+  }
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  &:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, rgba($colorBackground, 0), rgba($colorBackground, 0.9) 50%);
+    width: 100%;
+    height: 10em;
+    z-index: -1;
+  }
+
+  .footerWrapper {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin-left: $gutter;
+    margin-right: $gutter;
+    margin-bottom: $gutter;
+
+    &:after {
+      content: "";
+      display: block;
+      width: 90px;
+      height: 1px;
+      background: white;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+
+      @media screen and (max-width: $mobile) {
+        width: 1px;
+        height: 90px;
+      }
+    }
+
+    @media screen and (max-width: $mobile) {
+      margin-left: $gutter-mobile;
+      margin-right: $gutter-mobile;
+      margin-bottom: $gutter-mobile;
+    }
+  }
+
+  .footerLinks a {
+    margin-right: 10px;
+
+    @media screen and (max-width: $mobile) {
+      font-size: 65%;
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
