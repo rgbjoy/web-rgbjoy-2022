@@ -20,17 +20,6 @@ const Work = ({ client, project }: Props) => (
     <div className={style.work}>
       <h1>— Work</h1>
 
-      <h2>Past Projects</h2>
-      <ul className="projects">
-        {project.map((item, i) => (
-          <li key={i}>
-            <div className="name">{item.name}</div>
-            <div className="description">{item.description}</div>
-            <a className="seemore" href={item.link} target="_blank" rel="noreferrer">website</a>
-          </li>
-        ))}
-      </ul>
-
       <h2>Clients</h2>
       <ul className="clients">
         {client.map((item, i) => (
@@ -43,6 +32,18 @@ const Work = ({ client, project }: Props) => (
           </li>
         ))}
       </ul>
+
+      <h2>Past Projects</h2>
+      <ul className="projects">
+        {project.map((item, i) => (
+          <li key={i}>
+            <div className="name">{item.name}</div>
+            <div className="description">{item.description}</div>
+            <a className="seemore" href={item.link} target="_blank" rel="noreferrer">website</a>
+          </li>
+        ))}
+      </ul>
+
     </div>
   </Layout>
 )
