@@ -40,6 +40,8 @@
   font-size: 80%;
   letter-spacing: 1px;
   top: 50%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   @media screen and (max-width: $mobile) {
     display: none;
