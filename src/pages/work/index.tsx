@@ -17,29 +17,29 @@ const Work = ({ client, project }: Props) => (
   <Layout>
     <Head><title>Work</title></Head>
 
-    <div className={style.work}>
+    <div >
       <h1>— Work</h1>
 
-      <h2>Clients</h2>
-      <ul className="clients">
+      <h2 className={style.sectionTitle}>Clients</h2>
+      <ul className={style.list}>
         {client.map((item, i) => (
-          <li key={i}>
-            <div className="name">{item.name}</div>
-            <div className="time">{item.time}</div>
+          <li className={style.item} key={i}>
+            <div className={style.name}>{item.name}</div>
+            <div className={style.time}>{item.time}</div>
             <Link href="/work/[slug]" as={`/work/${item.slug}`}>
-              <a className="seemore">more details</a>
+              <a className={style.seemore}>more details</a>
             </Link>
           </li>
         ))}
       </ul>
 
-      <h2>Past Projects</h2>
-      <ul className="projects">
+      <h2 className={style.sectionTitle}>Past Projects</h2>
+      <ul className={style.list}>
         {project.map((item, i) => (
-          <li key={i}>
-            <div className="name">{item.name}</div>
-            <div className="description">{item.description}</div>
-            <a className="seemore" href={item.link} target="_blank" rel="noreferrer">website</a>
+          <li className={style.item} key={i}>
+            <div className={style.name}>{item.name}</div>
+            <div className={style.description}>{item.description}</div>
+            <a className={style.seemore} href={item.link} target="_blank" rel="noreferrer">website</a>
           </li>
         ))}
       </ul>

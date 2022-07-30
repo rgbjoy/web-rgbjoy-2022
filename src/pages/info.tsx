@@ -23,7 +23,7 @@ const Info = () => (
     <p><a href="m&#97;ilto&#58;%74%&#54;F%6&#68;&#37;40&#114;gbjoy&#46;co&#109;">Email</a> — <a href="/pdf/RGBJOY-TomFletcher-resume.pdf" target="_blank" rel="noreferrer">Résumé</a> — <a href="https://www.linkedin.com/in/rgbjoy/" target="_blank" rel="noreferrer">Linkedin</a></p>
 
     <p>
-      Hi, my name is Tom and I&apos;m based in Vero Beach, FL. My passion lies in web development, design, 3D, game design, motion, and technology.
+      Hi, my name is Tom and I&apos;m based in Vero Beach, FL. My passion lies in web development, design, 3D, interactive, motion, and technology.
     </p>
     <p>
       When I get the chance to get off a computer, I&apos;m either surfing with the family or finding the next thing to pour <a href="https://www.stickermule.com/hot-sauce" rel="noreferrer">mule sauce</a> on...
