@@ -15,6 +15,16 @@ const Layout = ({ children, page }: Props) => {
 
   return (
     <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ type: [0, 0.71, 0.2, 1.01] }}
+        className={`wrapper ${page ? page : ""}`}
+      >
+        {children}
+      </motion.div>
+
       <header className={style.header}>
         <nav>
           {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
@@ -30,16 +40,6 @@ const Layout = ({ children, page }: Props) => {
       </header>
 
       <div className={style.badge}>2022 Portfolio</div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ type: [0, 0.71, 0.2, 1.01] }}
-        className={`wrapper ${page ? page : ""}`}
-      >
-        {children}
-      </motion.div>
 
       <footer className={style.footer}>
         <div className={style.footerWrapper}>

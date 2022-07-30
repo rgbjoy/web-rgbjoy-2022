@@ -89,11 +89,12 @@ p {
 .wrapper {
   position: relative;
   padding: 240px $gutter * 2 200px $gutter;
-  max-width: 75%;
+  width: 75%;
+  max-width: 960px;
 
   @media screen and (max-width: $mobile) {
     padding: 120px 20px 60px 20px;
-    max-width: 100%;
+    width: 100%;
   }
 }
 
