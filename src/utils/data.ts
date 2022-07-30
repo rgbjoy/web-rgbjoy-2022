@@ -52,7 +52,7 @@ export const projectData: Project[] = [
   {
     name: 'The Laughing Dog Gallery',
     link: 'https://thelaughingdoggallery.com/',
-    description: 'Branding, design, and development',
+    description: 'Branding, design, and Wordpress development',
   },
   {
     name: 'Open Resources',
