@@ -2,7 +2,6 @@
   "name": "rgbjoy-2022",
   "private": true,
   "version": "1.0.0",
-  "prebuild": "scripts/generate-robots-txt",
   "scripts": {
     "dev": "next",
     "build": "next build",
