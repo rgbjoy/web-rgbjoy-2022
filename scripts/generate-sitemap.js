@@ -12,18 +12,16 @@ async function generateSitemap() {
     "!src/pages/api", // Ignore API routes
   ]);
 
-  console.log(pages)
-
   const urlSet = pages
     .map((page) => {
       // Remove none route related parts of filename.
-      const path = page.replace("pages", "").replace(/(.js)/, "");
+      const path = page.replace("src/pages", "").replace(/(.js)/, "");
       // Remove the word index from route
       const route = path === "/index" ? "" : path;
       // Top priority for index and companies page
       const priority = ["/index", "/companies"].includes(path) ? "1.0" : "0.5";
       // Build url portion of sitemap.xml
-      return `<url><loc>https://remotebear.io${route}</loc><priority>${priority}</priority><changefreq>daily</changefreq></url>`;
+      return `<url><loc>https://rgbjoy.com${route}</loc><priority>${priority}</priority><changefreq>daily</changefreq></url>`;
     })
     .join("");
 
