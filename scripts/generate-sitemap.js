@@ -15,7 +15,7 @@ async function generateSitemap() {
   const urlSet = pages
     .map((page) => {
       // Remove none route related parts of filename.
-      const path = page.replace("src/pages", "").replace(/(.js)/, "");
+      const path = page.replace("src/pages", "").replace(/(.tsx)/, "").replace(/(index)/, "");
       // Remove the word index from route
       const route = path === "/index" ? "" : path;
       // Top priority for index and companies page
