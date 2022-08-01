@@ -77,7 +77,6 @@ const Background = ({ page }) => {
       <EffectComposer multisampling={0} disableNormalPass={true}>
         <Noise opacity={0.05} />
       </EffectComposer>
-      {/* <CameraShake yawFrequency={0.02} pitchFrequency={0.02} rollFrequency={0.02} /> */}
     </Canvas>
   )
 }
