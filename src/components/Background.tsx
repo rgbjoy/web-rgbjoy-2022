@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import * as THREE from "three";
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial } from '@react-three/drei'
-import { EffectComposer, Noise } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise } from "@react-three/postprocessing";
 import * as random from "maath/random";
 
 import gsap from "gsap"
@@ -75,7 +75,8 @@ const Background = ({ page }) => {
         </group>
       </Rotate>
       <EffectComposer multisampling={0} disableNormalPass={true}>
-        <Noise opacity={0.05} />
+        {/* <Noise opacity={0.05} /> */}
+        <Bloom radius={0.5} luminanceThreshold={0} height={400} />
       </EffectComposer>
     </Canvas>
   )
