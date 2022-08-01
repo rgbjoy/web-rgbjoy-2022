@@ -1221,6 +1221,11 @@ glsl-noise@^0.0.0:
   resolved "https://registry.yarnpkg.com/glsl-noise/-/glsl-noise-0.0.0.tgz#367745f3a33382c0eeec4cb54b7e99cfc1d7670b"
   integrity sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==
 
+"gsap@npm:@gsap/member":
+  version "3.10.4"
+  resolved "https://npm.greensock.com/@gsap%2fmember/-/member-3.10.4.tgz#03329b20d2386c34a020d2dfe05c282e73063dff"
+  integrity sha512-UScwIPDulbQcshjEtYYX2vX6sSURHoKbbdMcFjY/6IqAQkA0BoLHC142IGcWiDEm1iLRn/el3HFC/SF0Ew+oxQ==
+
 has-bigints@^1.0.1, has-bigints@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.2.tgz#0871bd3e3d51626f6ca0966668ba35d5602d6eaa"
