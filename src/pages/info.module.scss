@@ -21,6 +21,20 @@
   justify-content: space-between;
   margin-top: 60px;
 
+  &:first-child {
+    position: relative;
+    padding-top: 60px;
+    &:after {
+      content:'';
+      position:absolute;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 1px;
+      background: white;
+    }
+  }
+
   div:first-child {
     line-height: 200%;
     font-size: 80%;
@@ -35,4 +49,8 @@
       width: 50%;
     }
   }
+}
+
+.btn {
+  margin-top: 30px;
 }

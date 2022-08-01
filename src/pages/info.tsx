@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Layout from '../components/Layout';
 import style from './info.module.scss'
 import selfie from '../../public/img/selfie.jpg'
+import Link from 'next/link';
 
 const Info = () => (
   <Layout page="info">
@@ -29,14 +30,19 @@ const Info = () => (
       When I get the chance to get off a computer, I&apos;m either surfing with the family or finding the next thing to pour <a href="https://www.stickermule.com/hot-sauce" rel="noreferrer">mule sauce</a> on...
     </p>
 
-    <div className={style.strengths}>
-      <div>Development</div>
-      <div className={style.detail}>React, Next.js, GraphQL, Sequelize, Postgres, ThreeJS, Greensock, Heroku, Vercel, Docker, Cloudflare, Imgix, Processing, Unity / C#, VSCode</div>
-    </div>
+    <Link href="/work">
+      <a className={`btn ${style.btn}`}>See some work</a>
+    </Link>
 
-    <div className={style.strengths}>
-      <div>Creative</div>
-      <div className={style.detail}>Cinema 4D with Octane renderer, After Effects, Photoshop, Illustrator, Figma &amp; XD, and Asana</div>
+    <div>
+      <div className={style.strengths}>
+        <div>Development</div>
+        <div className={style.detail}>React, Next.js, GraphQL, Sequelize, Postgres, ThreeJS, Greensock, Heroku, Vercel, Docker, Cloudflare, Imgix, Processing, Unity / C#, VSCode</div>
+      </div>
+      <div className={style.strengths}>
+        <div>Creative</div>
+        <div className={style.detail}>Cinema 4D with Octane renderer, After Effects, Photoshop, Illustrator, Figma &amp; XD, and Asana</div>
+      </div>
     </div>
   </Layout>
 )

@@ -10,8 +10,8 @@ const IndexPage = () => (
       <h1>Tom Fletcher {String(process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "**dev**" : "")}</h1>
       <p>Multidisciplinary digital creator & web engineer</p>
 
-      <Link href="/work">
-        <a className={`btn ${style.btn}`}>See work</a>
+      <Link href="/info">
+        <a className={`btn ${style.btn}`}>Learn more</a>
       </Link>
     </div>
   </Layout>
