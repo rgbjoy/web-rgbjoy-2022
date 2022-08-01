@@ -74,9 +74,8 @@ const Background = ({ page }) => {
           <Plane color="#00FF00" position={[-0.5, -0.5, 0]} rotation={[0, 0, 0]} />
         </group>
       </Rotate>
-      <EffectComposer multisampling={0} disableNormalPass={true}>
-        {/* <Noise opacity={0.05} /> */}
-        <Bloom radius={0.5} luminanceThreshold={0} height={400} />
+      <EffectComposer multisampling={3} disableNormalPass={true}>
+        <Bloom kernelSize={3} height={300} width={300} luminanceThreshold={0} luminanceSmoothing={0.4} intensity={0.6} />
       </EffectComposer>
     </Canvas>
   )
