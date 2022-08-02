@@ -9,7 +9,7 @@ const Info = () => (
   <Layout page="info">
     <Head><title>Info</title></Head>
     <div className={style.selfie}>
-      <h1>— Info</h1>
+      <h1 className={style.header}>Hello 👋</h1>
       <div className={style.selfieWrapper}>
         <Image
           alt="Selfie"
