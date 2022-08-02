@@ -9,7 +9,7 @@ const Info = () => (
   <Layout page="info">
     <Head><title>Info</title></Head>
     <div className={style.selfie}>
-      <h1 className={style.header}>Hello 👋</h1>
+      <h1 className={style.header}>Info</h1>
       <div className={style.selfieWrapper}>
         <Image
           alt="Selfie"
@@ -21,8 +21,11 @@ const Info = () => (
       </div>
     </div>
 
-    <p><a href="m&#97;ilto&#58;%74%&#54;F%6&#68;&#37;40&#114;gbjoy&#46;co&#109;">Email</a> — <a href="/pdf/RGBJOY-TomFletcher-resume.pdf" target="_blank" rel="noreferrer">Résumé</a> — <a href="https://www.linkedin.com/in/rgbjoy/" target="_blank" rel="noreferrer">Linkedin</a></p>
-
+    <p>
+      <a className="underline" href="m&#97;ilto&#58;%74%&#54;F%6&#68;&#37;40&#114;gbjoy&#46;co&#109;">Email</a>{" • "}
+      <a className="underline" href="/pdf/RGBJOY-TomFletcher-resume.pdf" target="_blank" rel="noreferrer">Résumé</a>{" • "}
+      <a className="underline" href="https://www.linkedin.com/in/rgbjoy/" target="_blank" rel="noreferrer">Linkedin</a>
+    </p>
     <p>
       Hi, my name is Tom and I&apos;m based in Vero Beach, FL. My passion lies in web development, design, 3D, interactive, motion, and technology.
     </p>

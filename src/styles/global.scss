@@ -48,7 +48,19 @@ a {
     transition: transform 0.3s ease-in-out;
   }
 
-  &:not(.btn):hover::before {
+  &.underline {
+    &::before {
+      transition: transform 0.3s ease-in-out;
+      background-color: white;
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    &:hover::before {
+      transform: scaleX(0);
+    }
+  }
+
+  &:not(.btn, .underline):hover::before {
     transform-origin: left;
     transform: scaleX(1);
   }
@@ -90,12 +102,12 @@ p {
 
 .wrapper {
   position: relative;
-  padding: 240px $gutter * 2 200px $gutter;
+  padding: 240px ($gutter * 2) 200px $gutter;
   width: 75%;
   max-width: 960px;
 
   @media screen and (max-width: $mobile) {
-    padding: 120px 20px 60px 20px;
+    padding: 120px 20px 100px 20px;
     width: 100%;
   }
 }

@@ -29,7 +29,7 @@ const Work = ({ client, project }: Props) => (
             <div className={style.name}>{item.name}</div>
             <div className={style.time}>{item.time}</div>
             <Link href="/work/[slug]" as={`/work/${item.slug}`}>
-              <a className={style.seemore}>more details</a>
+              <a className={`${style.seemore} underline`}>More details</a>
             </Link>
           </li>
         ))}
@@ -41,7 +41,7 @@ const Work = ({ client, project }: Props) => (
           <li className={style.item} key={i}>
             <div className={style.name}>{item.name}</div>
             <div className={style.description}>{item.description}</div>
-            <a className={style.seemore} href={item.link} target="_blank" rel="noreferrer">website</a>
+            <a className={`${style.seemore} underline`} href={item.link} target="_blank" rel="noreferrer">Project link</a>
           </li>
         ))}
       </ul>
