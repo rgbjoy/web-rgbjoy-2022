@@ -4,7 +4,6 @@ import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial, Center, Float } from '@react-three/drei'
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import * as random from "maath/random";
 
 import gsap from "gsap"
@@ -65,12 +64,11 @@ const Background = ({ page }) => {
     <Canvas className={style.background} camera={{ fov: 25, position: [5, 5, 5] }} resize={{ polyfill: ResizeObserver }}
       gl={{
         powerPreference: "high-performance",
-        alpha: false,
+        alpha: true,
         antialias: false,
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-      <color attach="background" args={["#121212"]} />
       <Stars />
       <Float>
         <Center>
@@ -81,9 +79,6 @@ const Background = ({ page }) => {
           </Rig>
         </Center>
       </Float>
-      <EffectComposer multisampling={3} disableNormalPass={true}>
-        <Bloom kernelSize={3} height={300} width={300} luminanceThreshold={0} luminanceSmoothing={0.4} intensity={0.6} />
-      </EffectComposer>
     </Canvas>
   )
 }
