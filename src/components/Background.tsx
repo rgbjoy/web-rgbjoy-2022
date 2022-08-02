@@ -73,7 +73,7 @@ const Background = ({ page }) => {
       <Stars />
       <Float>
         <Center>
-          <Rig page={page} visible={page !== "/" ? false : true}>
+          <Rig page={page}>
             <Plane color="#FF0000" position={[-0.5, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
             <Plane color="#0000FF" position={[0, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
             <Plane color="#00FF00" position={[-0.5, -0.5, 0]} rotation={[0, 0, 0]} />
