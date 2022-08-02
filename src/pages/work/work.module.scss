@@ -3,6 +3,7 @@
 }
 
 .sectionTitle {
+  margin-bottom: 30px;
   margin-top: 80px;
 }
 
@@ -35,10 +36,11 @@
 
   .item {
     padding: 30px 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-top: 1px dotted rgba(255, 255, 255, 0.25);
 
-    &:last-child {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    &:first-child {
+      border: none;
+      // border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
     }
   }
 }

@@ -5,8 +5,8 @@ export const clientData: Client[] = [
   {
     name: 'The New Republic',
     slug: 'the-newrepublic',
-    time: '10.2018 - Present',
-    title: 'Contract',
+    time: '10.2018 / Present',
+    title: 'Freelance',
     description: "Worked closely with editorial and product teams to help build frontend (React) and backend(GraphQL, Sequalize) components, print-to-web features, animation, and video editing. Helped migrate old codebase to the latest redesign.",
     technology: ["React", "GraphQL", "Postres", "Sequalize", "Heroku"],
     images:[
@@ -18,7 +18,7 @@ export const clientData: Client[] = [
   {
     name: 'Code & Theory',
     slug: 'code-theory',
-    time: '10.2010 - 05.2016',
+    time: '10.2010 / 05.2016',
     title: 'Senior Designer & Developer',
     description: "Created designs and built various flash experiences for DPSG brands (Dr Pepper, Motts, etc.). Games, banners, and websites made on demanding deadlines.",
     technology: ["HMTL5", "Flash", "Greensock"],
@@ -31,8 +31,8 @@ export const clientData: Client[] = [
   {
     name: 'Mammoth Advertising',
     slug: 'mammoth-advertising',
-    time: '05.2008 - 05.2010',
-    title: 'Production Designer/Developer',
+    time: '05.2008 / 05.2010',
+    title: 'Designer & Developer',
     technology: ["Flash", "Greensock"],
     description: "Helped build and design flash web experiences for the film industry.",
     images:[
