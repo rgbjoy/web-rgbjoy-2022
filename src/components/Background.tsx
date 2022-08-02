@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, Suspense } from 'react';
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Points, PointMaterial, Center, Float } from '@react-three/drei'
+import { Points, PointMaterial, Float } from '@react-three/drei'
 import * as random from "maath/random";
 
 import gsap from "gsap"
@@ -39,7 +39,7 @@ const Rig = ({ children, page }) => {
   const ref = useRef(null)
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
-    ref.current.position.y = WIDTH < 768 ? -0.65 : 0;
+    ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
     ref.current.rotation.y += delta / 50;
   })
   return (
@@ -76,13 +76,11 @@ const Background = ({ page }) => {
         <Suspense fallback={null}>
           <Stars />
           <Float>
-            <Center>
-              <Rig page={page}>
-                <Plane color="#FF0000" position={[-0.5, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
-                <Plane color="#0000FF" position={[0, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
-                <Plane color="#00FF00" position={[-0.5, -0.5, 0]} rotation={[0, 0, 0]} />
-              </Rig>
-            </Center>
+            <Rig page={page}>
+              <Plane color="#FF0000" position={[0, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
+              <Plane color="#0000FF" position={[0.5, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
+              <Plane color="#00FF00" position={[0, -0.5, 0]} />
+            </Rig>
           </Float>
         </Suspense>
     </Canvas>
