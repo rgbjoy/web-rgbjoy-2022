@@ -20,7 +20,7 @@ const Work = ({ client, project }: Props) => (
     <div >
       <h1 className={style.header}>Work</h1>
 
-      <p>I'm currently looking for a full-time position.</p>
+      <p>I&aposm currently looking for a full-time position.</p>
 
       <h2 className={style.sectionTitle}>Clients</h2>
       <ul className={style.list}>
