@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 import * as THREE from "three";
+import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial, Center, Float } from '@react-three/drei'
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
@@ -61,7 +62,7 @@ const Stars = (props: any) => {
 
 const Background = ({ page }) => {
   return (
-    <Canvas className={style.background} camera={{ fov: 25, position: [5, 5, 5] }}
+    <Canvas className={style.background} camera={{ fov: 25, position: [5, 5, 5] }} resize={{ polyfill: ResizeObserver }}
       gl={{
         powerPreference: "high-performance",
         alpha: false,
