@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
@@ -14,19 +14,23 @@ function getRandomInt(min: any, max: any): number {
   return Math.random() * (max - min) + min;
 }
 
+function getRandomPick(items:Array<number>):number {
+  return items[Math.floor(Math.random()*items.length)];
+}
+
 const Plane = (props: any) => {
   const plane = useRef(null)
 
   useEffect(() => {
     gsap.from(plane.current.rotation, { duration: 3, delay: getRandomInt(0, 1), x: 0, y: 0, z: 0, ease: "power2.inOut" });
-    gsap.from(plane.current.position, { duration: 3, delay: getRandomInt(0, 1), x: getRandomInt(-5, 5), y: getRandomInt(-5, 5), z: getRandomInt(-5, 5), ease: "power2.inOut" });
-    gsap.from(plane.current.material, { duration: 3, opacity: 0, ease: "power2.in" });
+    gsap.from(plane.current.position, { duration: 3, delay: getRandomInt(0, 1), x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "power2.inOut" });
+    gsap.to(plane.current.material, { duration: 3, opacity: 1, ease: "power2.in" });
   }, []);
 
   return (
     <mesh {...props} ref={plane} >
       <planeGeometry />
-      <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthTest={false} transparent={true} color={props.color} />
+      <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} />
     </mesh>
   )
 }
@@ -69,16 +73,18 @@ const Background = ({ page }) => {
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-      <Stars />
-      <Float>
-        <Center>
-          <Rig page={page}>
-            <Plane color="#FF0000" position={[-0.5, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
-            <Plane color="#0000FF" position={[0, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
-            <Plane color="#00FF00" position={[-0.5, -0.5, 0]} rotation={[0, 0, 0]} />
-          </Rig>
-        </Center>
-      </Float>
+        <Suspense fallback={null}>
+          <Stars />
+          <Float>
+            <Center>
+              <Rig page={page}>
+                <Plane color="#FF0000" position={[-0.5, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
+                <Plane color="#0000FF" position={[0, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
+                <Plane color="#00FF00" position={[-0.5, -0.5, 0]} rotation={[0, 0, 0]} />
+              </Rig>
+            </Center>
+          </Float>
+        </Suspense>
     </Canvas>
   )
 }
