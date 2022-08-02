@@ -67,14 +67,16 @@ a {
   }
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   font-family: "Rhode", sans-serif;
   font-weight: normal;
   margin: 0;
+}
 
-
+@media screen and (max-width: $mobile) {
+  h1 {
+    font-size: 1.8em;
+  }
 }
 
 p {
@@ -107,4 +109,9 @@ p {
   color: white;
   top: $gutter;
   left: $gutter;
+
+  @media screen and (max-width: $mobile) {
+    top: $gutter-mobile;
+    left: $gutter-mobile;
+  }
 }

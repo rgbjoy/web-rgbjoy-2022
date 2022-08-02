@@ -8,7 +8,7 @@ const IndexPage = () => (
     <Head><title>Tom Fletcher - Multidisciplinary digital creator & web engineer</title></Head>
     <div className={style.intro}>
       <h1>Tom Fletcher {String(process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "**dev**" : "")}</h1>
-      <p>Multidisciplinary digital creator & web engineer</p>
+      <p>Multidisciplinary digital creator &amp; web engineer</p>
 
       <Link href="/info">
         <a className={`btn ${style.btn}`}>Learn more</a>
