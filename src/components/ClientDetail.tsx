@@ -13,12 +13,12 @@ type ClientDetailProps = {
 const ClientDetail = ({ item }: ClientDetailProps) => {
   return (
     <>
-      <h1>{item.name}</h1>
+      <h1 className={style.header}>{item.name}</h1>
       <p>{item.time} / {item.title}</p>
       <p className={style.subhead}>{item.description}</p>
-      <div className={style.subhead}>
+      <div className={`${style.subhead} ${style.technology}`}>
         Technology:
-        <ul className={style.technology}>
+        <ul className={style.technologyList}>
           {item.technology.map((item, i) => (
             <li key={i}>{item}</li>
           ))}
