@@ -9,9 +9,10 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "@react-three/drei": "^9.17.3",
+    "@react-three/drei": "^9.19.2",
     "@react-three/fiber": "^8.2.2",
     "@react-three/postprocessing": "^2.5.5",
+    "@types/three": "^0.143.0",
     "framer-motion": "^6.5.1",
     "gsap": "^3.10.4",
     "maath": "^0.0.2",
