@@ -23,7 +23,9 @@ export default function Document() {
         <meta property="og:type" content="website"/>
         <meta property="og:title" content="Tom Fletcher"/>
         <meta property="og:description" content=" Multidisciplinary digital creator & web engineer"/>
-
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:creator" content="@rgbjoy" />
+        <meta property="twitter:image" content="https://rgbjoy.com/social/rgbjoy.jpg"/>
         <meta property="og:image" content="https://rgbjoy.com/social/rgbjoy.jpg"/>
 
         {/* Global Site Tag (gtag.js) - Google Analytics */}
