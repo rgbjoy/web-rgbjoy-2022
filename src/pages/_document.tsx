@@ -18,6 +18,14 @@ export default function Document() {
         <meta name="msapplication-config" content="/social/browserconfig.xml"/>
         <meta name="theme-color" content="#ffffff"/>
 
+        <meta property="og:url" content="https://rgbjoy.com"/>
+        <meta property="og:site_name" content="RGBJOY"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Tom Fletcher"/>
+        <meta property="og:description" content=" Multidisciplinary digital creator & web engineer"/>
+
+        <meta property="og:image" content="https://rgbjoy.com/social/rgbjoy.jpg"/>
+
         {/* Global Site Tag (gtag.js) - Google Analytics */}
         <script
             async

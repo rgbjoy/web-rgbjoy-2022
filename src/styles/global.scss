@@ -22,6 +22,8 @@ body {
   color: white;
   font-family: "Montserrat", sans-serif;
   letter-spacing: 1px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #__next {
