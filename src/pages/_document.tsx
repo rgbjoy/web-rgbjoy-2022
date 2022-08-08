@@ -4,6 +4,8 @@ export default function Document() {
   return (
     <Html>
       <Head>
+        <meta name="description" content="Multidisciplinary digital creator & web engineer"/>
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
@@ -16,13 +18,13 @@ export default function Document() {
         <link rel="shortcut icon" href="/social/favicon.ico"/>
         <meta name="msapplication-TileColor" content="#da532c"/>
         <meta name="msapplication-config" content="/social/browserconfig.xml"/>
-        <meta name="theme-color" content="#ffffff"/>
+        <meta name="theme-color" content="#121212"/>
 
         <meta property="og:url" content="https://rgbjoy.com"/>
         <meta property="og:site_name" content="RGBJOY"/>
         <meta property="og:type" content="website"/>
         <meta property="og:title" content="Tom Fletcher"/>
-        <meta property="og:description" content=" Multidisciplinary digital creator & web engineer"/>
+        <meta property="og:description" content="Multidisciplinary digital creator & web engineer"/>
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:creator" content="@rgbjoy" />
         <meta property="twitter:image" content="https://rgbjoy.com/social/rgbjoy.jpg"/>
