@@ -47,12 +47,12 @@ a {
     left: 0;
     transform-origin: right;
     transform: scaleX(0);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s cubic-bezier(0.455, 0.030, 0.515, 0.955);
   }
 
   &.underline {
     &::before {
-      transition: transform 0.3s ease-in-out;
+      transition: transform 0.3s cubic-bezier(0.455, 0.030, 0.515, 0.955);
       background-color: white;
       transform: scaleX(1);
       transform-origin: left;
@@ -72,7 +72,7 @@ a {
   border: 1px solid white;
   display: inline-block;
   padding: 10px;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.15s cubic-bezier(0.455, 0.030, 0.515, 0.955);
   border-radius: 2px;
 
   &:hover {
@@ -107,6 +107,10 @@ p {
   padding: 240px ($gutter * 2) 200px $gutter;
   width: 75%;
   max-width: 960px;
+
+  &.intro {
+    pointer-events: none;
+  }
 
   @media screen and (max-width: $mobile) {
     padding: 120px 20px 100px 20px;

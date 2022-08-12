@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import Image from 'next/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
@@ -11,13 +12,15 @@ const Info = () => (
     <div className={style.selfie}>
       <h1 className={style.header}>Info</h1>
       <div className={style.selfieWrapper}>
-        <Image
-          alt="Selfie"
-          src={selfie}
-          layout="responsive"
-          width={640}
-          height={1004}
-        />
+        <div className={style.selfieWrapper__inner}>
+          <Image
+            alt="Selfie"
+            src={selfie}
+            layout="responsive"
+            width={640}
+            height={1004}
+          />
+        </div>
       </div>
     </div>
 
