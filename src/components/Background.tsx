@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, Suspense, Children } from 'react';
 
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
@@ -9,13 +9,31 @@ import * as random from "maath/random";
 import gsap from "gsap"
 
 import style from "./Background.module.scss"
+import { MeshStandardMaterial } from 'three';
 
-function getRandomInt(min: any, max: any): number {
+const getRandomInt = (min: any, max: any):number => {
   return Math.random() * (max - min) + min;
 }
 
-function getRandomPick(items:Array<number>):number {
+const getRandomPick = (items:Array<number>):number => {
   return items[Math.floor(Math.random()*items.length)];
+}
+
+let clickable = true
+const handleClick = (e) => {
+
+  if (!clickable) {
+    return
+  }
+
+  clickable = false
+
+  const meshes = e.eventObject.children
+  for(var m of meshes) {
+    gsap.to(m.rotation, { yoyo: true, repeat: 1, duration: 2, x: 0, y:0, z:0, ease: "power2.inOut" });
+    gsap.to(m.position, { yoyo: true, repeat: 1, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "power2.inOut" });
+    gsap.to(m.material, { yoyo: true, repeat: 1, duration: 2, opacity: 0, ease: "power2.in", onComplete:() => {clickable = true} });
+  }
 }
 
 const Plane = (props: any) => {
@@ -36,14 +54,20 @@ const Plane = (props: any) => {
 }
 
 const Rig = ({ children, page }) => {
+  const [hovered, setHovered] = useState(false)
   const ref = useRef(null)
+
+  useEffect(() => {
+    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+  }, [hovered])
+
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
     ref.current.rotation.y += delta / 50;
   })
   return (
-    <group ref={ref} visible={page !== "/" ? false : true}>{children}</group>
+    <group onClick={handleClick} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)} ref={ref} visible={page !== "/" ? false : true}>{children}</group>
   )
 }
 

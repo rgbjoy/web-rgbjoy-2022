@@ -93,7 +93,7 @@
     font-weight: bold;
     font-size: 18px;
     z-index: 2;
-    transition: all 0.25s ease-in-out;
+    transition: all 0.25s cubic-bezier(0.455, 0.030, 0.515, 0.955);
 
     &:hover {
       color: black;

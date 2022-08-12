@@ -45,6 +45,11 @@ export const clientData: Client[] = [
 
 export const projectData: Project[] = [
   {
+    name: 'Empower Artists',
+    link: 'https://empowerartists.com/',
+    description: 'Wordpress development',
+  },
+  {
     name: 'Great American Properties',
     link: 'https://greatamericanproperties.net/',
     description: 'Branding, design, and Wordpress development',
@@ -68,10 +73,5 @@ export const projectData: Project[] = [
     name: 'Orchid Island Brewery',
     link: 'https://www.instagram.com/p/CI1afnUHiZa/',
     description: 'Branding',
-  },
-  {
-    name: 'Empower Artists',
-    link: 'https://empowerartists.com/',
-    description: 'Wordpress development',
   },
 ]
