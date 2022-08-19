@@ -33,6 +33,8 @@ const SiteLayout = ({ children }:Props) => {
         2022 Portfolio
       </motion.div>
 
+      {children}
+
       <motion.header
         initial={{ top: -20 }}
         animate={{ top: width < 800 ? 20 : 60 }}
@@ -50,8 +52,6 @@ const SiteLayout = ({ children }:Props) => {
           </ActiveLink>
         </nav>
       </motion.header>
-
-      {children}
 
       <motion.footer
         id="footer"
