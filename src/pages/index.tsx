@@ -12,7 +12,7 @@ const IndexPage = () => (
       <h2>Multidisciplinary digital creator &amp; web engineer</h2>
       <p>A passion for crafting details and making functional software for human beings</p>
 
-      <Link href="/info">
+      <Link href="/info" scroll={false}>
         <a className={`btn ${style.btn}`}>Learn more</a>
       </Link>
     </div>

@@ -36,7 +36,7 @@ const Info = () => (
       When I get the chance to get off a computer, I&apos;m either surfing with the family or finding the next thing to pour <a href="https://www.stickermule.com/hot-sauce" rel="noreferrer">mule sauce</a> on...
     </p>
 
-    <Link href="/work">
+    <Link href="/work" scroll={false}>
       <a className={`btn ${style.btn}`}>See some work</a>
     </Link>
 
