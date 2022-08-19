@@ -9,10 +9,12 @@ import "../styles/global.scss"
 import { useRouter } from 'next/router';
 
 import SiteLayout from '../components/SiteLayout';
+import { usePageTransitionFix } from '../utils/usePageTransitionFix'
 
 
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  usePageTransitionFix()
   const router = useRouter()
   return (
     <>
@@ -24,7 +26,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <SiteLayout>
         <AnimatePresence
           mode="wait"
-          exitBeforeEnter
           onExitComplete={() => window.scrollTo(0, 0)}
         >
           <Component {...pageProps} key={router.pathname} />
