@@ -17,7 +17,7 @@ const ActiveLink = ({ children, activeClassName, ...props }) => {
       : childClassName
 
   return (
-    <Link href={null} {...props}>
+    <Link href={null} {...props} scroll={false}>
       {React.cloneElement(child, {
         className: className || null,
       })}

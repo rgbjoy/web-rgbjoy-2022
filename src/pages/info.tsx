@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import Image from 'next/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
@@ -16,6 +15,7 @@ const Info = () => (
           <Image
             alt="Selfie"
             src={selfie}
+            priority
             layout="responsive"
             width={640}
             height={1004}
