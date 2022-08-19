@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense, Children } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
@@ -9,44 +9,62 @@ import * as random from "maath/random";
 import gsap from "gsap"
 
 import style from "./Background.module.scss"
-import { MeshStandardMaterial } from 'three';
 
-const getRandomInt = (min: any, max: any):number => {
-  return Math.random() * (max - min) + min;
+let animatingOut = false
+let clickable = false
+
+const getRandomPick = (items: Array<number>): number => {
+  return items[Math.floor(Math.random() * items.length)];
 }
 
-const getRandomPick = (items:Array<number>):number => {
-  return items[Math.floor(Math.random()*items.length)];
+const animateOut = (meshes) => {
+  for (var m of meshes) {
+    gsap.to(m.rotation, { overwrite: true, duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeIn" });
+    gsap.to(m.position, { overwrite: true, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "Power2.easeIn" });
+    gsap.to(m.material, { overwrite: true, duration: 2, opacity: 0, ease: "Power2.easeIn", onComplete: () => animatingOut = false });
+  }
 }
 
-let clickable = true
-const handleClick = (e) => {
+const animateIn = (meshes) => {
+  for (var m of meshes) {
 
-  if (!clickable) {
+    if (!animatingOut) {
+      m.position.set(getRandomPick([-5, 5]), getRandomPick([-5, 5]), getRandomPick([-5, 5]))
+    }
+
+    if (m.name == "red") {
+      gsap.to(m.position, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
+      gsap.to(m.rotation, { duration: 2, x: THREE.MathUtils.degToRad(90), y: 0, z: 0, ease: "Power2.easeOut" });
+    } else if (m.name == "green") {
+      gsap.to(m.position, { duration: 2, x: 0, y: -0.5, z: 0, ease: "Power2.easeOut" });
+      gsap.to(m.rotation, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
+    } else if (m.name == "blue") {
+      gsap.to(m.position, { duration: 2, x: 0.5, y: 0, z: 0, ease: "Power2.easeOut" });
+      gsap.to(m.rotation, { duration: 2, x: 0, y: THREE.MathUtils.degToRad(90), z: 0, ease: "Power2.easeOut" });
+    }
+
+    gsap.to(m.material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
+  }
+}
+
+const handleClick = (e, isHome) => {
+  if (!clickable && isHome) {
     return
   }
 
   clickable = false
 
   const meshes = e.eventObject.children
-  for(var m of meshes) {
-    gsap.to(m.rotation, { yoyo: true, repeat: 1, duration: 2, x: 0, y:0, z:0, ease: "power2.inOut" });
-    gsap.to(m.position, { yoyo: true, repeat: 1, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "power2.inOut" });
-    gsap.to(m.material, { yoyo: true, repeat: 1, duration: 2, opacity: 0, ease: "power2.in", onComplete:() => {clickable = true} });
+  for (var m of meshes) {
+    gsap.to(m.rotation, { yoyo: true, repeat: 1, duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeInOut" });
+    gsap.to(m.position, { yoyo: true, repeat: 1, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "Power2.easeInOut" });
+    gsap.to(m.material, { yoyo: true, repeat: 1, duration: 2, opacity: 0, ease: "Power2.easeInOut", onComplete: () => { clickable = true } });
   }
 }
 
 const Plane = (props: any) => {
-  const plane = useRef(null)
-
-  useEffect(() => {
-    gsap.from(plane.current.rotation, { duration: 3, delay: getRandomInt(0, 1), x: 0, y: 0, z: 0, ease: "power2.inOut" });
-    gsap.from(plane.current.position, { duration: 3, delay: getRandomInt(0, 1), x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "power2.inOut" });
-    gsap.to(plane.current.material, { duration: 3, opacity: 1, ease: "power2.in" });
-  }, []);
-
   return (
-    <mesh {...props} ref={plane} >
+    <mesh {...props} >
       <planeGeometry />
       <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} />
     </mesh>
@@ -56,18 +74,34 @@ const Plane = (props: any) => {
 const Rig = ({ children, page }) => {
   const [hovered, setHovered] = useState(false)
   const ref = useRef(null)
+  const isHome = page == "/" ? true : false
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
+
+  useEffect(() => {
+    const meshes = ref.current && ref.current.children
+    if (!meshes) {
+      return
+    }
+    isHome ? animateIn(meshes) : animateOut(meshes)
+  }, [isHome])
 
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
     ref.current.rotation.y += delta / 50;
   })
+
   return (
-    <group onClick={handleClick} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)} ref={ref} visible={page !== "/" ? false : true}>{children}</group>
+    <group
+      onClick={e => handleClick(e, isHome)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      ref={ref}>
+      {children}
+    </group>
   )
 }
 
@@ -97,16 +131,16 @@ const Background = ({ page }) => {
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-        <Suspense fallback={null}>
-          <Stars />
-          <Float>
-            <Rig page={page}>
-              <Plane color="#FF0000" position={[0, 0, 0]} rotation={[THREE.MathUtils.degToRad(90), 0, 0]} />
-              <Plane color="#0000FF" position={[0.5, 0, 0]} rotation={[0, THREE.MathUtils.degToRad(90), 0]} />
-              <Plane color="#00FF00" position={[0, -0.5, 0]} />
-            </Rig>
-          </Float>
-        </Suspense>
+      <Suspense fallback={null}>
+        <Stars />
+        <Float>
+          <Rig page={page}>
+            <Plane color="#FF0000" name="red" />
+            <Plane color="#00FF00" name="green" />
+            <Plane color="#0000FF" name="blue" />
+          </Rig>
+        </Float>
+      </Suspense>
     </Canvas>
   )
 }
