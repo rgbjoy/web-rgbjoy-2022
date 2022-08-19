@@ -53,8 +53,6 @@ const SiteLayout = ({ children }:Props) => {
 
       {children}
 
-      {console.log(width < 800)}
-
       <motion.footer
         id="footer"
         initial={{ bottom: width < 800 ? -80 : -110 }}

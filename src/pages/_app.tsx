@@ -24,6 +24,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <SiteLayout>
         <AnimatePresence
           mode="wait"
+          exitBeforeEnter
           onExitComplete={() => window.scrollTo(0, 0)}
         >
           <Component {...pageProps} key={router.pathname} />
