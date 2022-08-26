@@ -2,7 +2,8 @@ import { GetStaticProps } from 'next'
 import Head from 'next/head'
 
 import { Client, Project } from '../../interfaces'
-import { clientData, projectData } from '../../utils/data'
+import { projectData } from '../../data/project'
+import { clientData } from '../../data/client'
 import Layout from '../../components/Layout';
 import Link from 'next/link'
 import style from "./work.module.scss"
