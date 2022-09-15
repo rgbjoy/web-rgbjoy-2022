@@ -2,7 +2,7 @@ import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 
 import { Client } from '../../interfaces'
-import { clientData } from '../../utils/data'
+import { clientData } from '../../data/client'
 import ClientDetail from '../../components/ClientDetail'
 import Layout from '../../components/Layout';
 

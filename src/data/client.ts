@@ -1,6 +1,5 @@
-import { Client, Project } from '../interfaces'
+import { Client } from '../interfaces'
 
-/** Dummy project data. */
 export const clientData: Client[] = [
   {
     name: 'The New Republic',
@@ -40,38 +39,5 @@ export const clientData: Client[] = [
       "https://d33wubrfki0l68.cloudfront.net/49de349d12db851952c5556f3c637ca772745316/cfc56/static/images/wallpapers/bridge-02@2x.png",
       "https://d33wubrfki0l68.cloudfront.net/594de66469079c21fc54c14db0591305a1198dd6/3f4b1/static/images/wallpapers/bridge-01@2x.png"
     ]
-  },
-]
-
-export const projectData: Project[] = [
-  {
-    name: 'Empower Artists',
-    link: 'https://empowerartists.com/',
-    description: 'Wordpress development',
-  },
-  {
-    name: 'Great American Properties',
-    link: 'https://greatamericanproperties.net/',
-    description: 'Branding, design, and Wordpress development',
-  },
-  {
-    name: 'The Laughing Dog Gallery',
-    link: 'https://thelaughingdoggallery.com/',
-    description: 'Branding, design, and Wordpress development',
-  },
-  {
-    name: 'Open Resources',
-    link: 'https://openupresources.org/',
-    description: 'Wordpress development',
-  },
-  {
-    name: 'Clemens Bruns Schaub',
-    link: 'https://cbsarchs.com/',
-    description: 'Branding, design, and Wordpress development',
-  },
-  {
-    name: 'Orchid Island Brewery',
-    link: 'https://www.instagram.com/p/CI1afnUHiZa/',
-    description: 'Branding',
   },
 ]
