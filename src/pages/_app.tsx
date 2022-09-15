@@ -14,7 +14,7 @@ import { usePageTransitionFix } from '../utils/usePageTransitionFix'
 
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  //usePageTransitionFix()
+  usePageTransitionFix()
   const router = useRouter()
   return (
     <>
