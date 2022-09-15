@@ -20,6 +20,8 @@ const SiteLayout = ({ children }:Props) => {
 
   const { width } = useWindowDimensions();
 
+  const paths = router.pathname.split("/").filter(a => a.length > 0).length
+
   return (
     <>
       <Suspense fallback={<div className="loading">...</div>}>
@@ -42,7 +44,7 @@ const SiteLayout = ({ children }:Props) => {
         className={style.header}>
         <nav>
           {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
-            <a>/</a>
+            <a>.{paths < 2 ? `.` : ``}<span>/</span></a>
           </ActiveLink> : ""}
           <ActiveLink activeClassName={style.active} href="/info">
             <a>Info</a>
