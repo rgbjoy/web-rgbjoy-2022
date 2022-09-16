@@ -297,10 +297,10 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.5.4.tgz#6d26df992a32ea5532a1e7b732f5485857116b00"
   integrity sha512-dzcGxqL1kPKociXK+pcq5ley77cWDWiphfv8OREv8dAZS1dKDTJq1zVy7ZD5ocyMtKMZw/7AcOdIJ1H80Dp56g==
 
-"@react-three/drei@^9.30.3":
-  version "9.30.3"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.30.3.tgz#58fc003f2c29231e3b80bff9ba54a22295124dec"
-  integrity sha512-KspJg31+YPUFExwWRnEN881EWHZprTZouCdrJsk5VLgEXbG7WbnpZmkD0wMY7hZXc+9p4ACOof9j9SaZ1paxTA==
+"@react-three/drei@^9.31.0":
+  version "9.31.0"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.31.0.tgz#eafeee96dea88969bc007f3e65be64bf922470c0"
+  integrity sha512-hkefWcDPmiZ8dBV+Xd56N6I1k/dlfjRX/bEb1Tr+sfdKAk9QwoEcVEdiZr5NUx9Cldhc0qCrFA7AmAIsISjqcg==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@react-spring/three" "^9.3.1"
@@ -450,17 +450,17 @@
     "@typescript-eslint/types" "5.37.0"
     eslint-visitor-keys "^3.3.0"
 
-"@use-gesture/core@10.2.19":
-  version "10.2.19"
-  resolved "https://registry.yarnpkg.com/@use-gesture/core/-/core-10.2.19.tgz#cbb249ef714a554564518fcac2c9ed3eb15ba89e"
-  integrity sha512-fsvuWmEfDDVgCEChLZuJFO8ZgBQLsEsL40ncv+HWYbkF90SwrLo2lkCu+O9TZa9ipqWC2KBXl27pRODY5ogr4w==
+"@use-gesture/core@10.2.20":
+  version "10.2.20"
+  resolved "https://registry.yarnpkg.com/@use-gesture/core/-/core-10.2.20.tgz#b29e0aadd5e90336e599d849e50eef0e06aa28bf"
+  integrity sha512-4lFhHc8so4yIHkBEs641DnEsBxPyhJ5GEjB4PURFDH4p/FcZriH6w99knZgI63zN/MBFfylMyb8+PDuj6RIXKQ==
 
 "@use-gesture/react@^10.2.0":
-  version "10.2.19"
-  resolved "https://registry.yarnpkg.com/@use-gesture/react/-/react-10.2.19.tgz#3e5d4757aaad9efe0e40ef17a952e9d5e10e97aa"
-  integrity sha512-pzRBEHehKKaM0T1bRlvLACfUlFetfaTrNH3mduJlRTsWvgKV+SNhoGxZzIavqyZW1kcIacYeXPr3XfvutpoN2w==
+  version "10.2.20"
+  resolved "https://registry.yarnpkg.com/@use-gesture/react/-/react-10.2.20.tgz#2d556a62c22200507b9d478ce7159057004acb8d"
+  integrity sha512-KnJq9ZSqprWA6uNhWTUHZqTCh+rfa0j8ehTzqeBhktUPrmTj7yVOBvEQ/vSFU/7d72cGgWSsJ0f5T6GQCHXnvg==
   dependencies:
-    "@use-gesture/core" "10.2.19"
+    "@use-gesture/core" "10.2.20"
 
 "@webgpu/glslang@^0.0.15":
   version "0.0.15"
@@ -646,9 +646,9 @@ camelcase-css@^2.0.1:
   integrity sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==
 
 caniuse-lite@^1.0.30001332:
-  version "1.0.30001400"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001400.tgz#3038bee70d8b875604cd8833cb0e5e254ee0281a"
-  integrity sha512-Mv659Hn65Z4LgZdJ7ge5JTVbE3rqbJaaXgW5LEI9/tOaXclfIZ8DW7D7FCWWWmWiiPS7AC48S8kf3DApSxQdgA==
+  version "1.0.30001402"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001402.tgz#aa29e1f47f5055b0d0c07696a67b8b08023d14c8"
+  integrity sha512-Mx4MlhXO5NwuvXGgVb+hg65HZ+bhUYsz8QtDGDo2QmaJS2GBX47Xfi2koL86lc8K+l+htXeTEB/Aeqvezoo6Ew==
 
 chalk@^4.0.0:
   version "4.1.2"
