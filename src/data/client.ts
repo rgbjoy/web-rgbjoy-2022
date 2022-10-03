@@ -4,7 +4,7 @@ export const clientData: Client[] = [
   {
     name: 'The New Republic',
     slug: 'the-newrepublic',
-    time: '10.2018 / Present',
+    time: '08.2016 / Present',
     title: 'Freelance',
     description: "Worked closely with editorial and product teams to help build frontend (React) and backend(GraphQL, Sequalize) components, print-to-web features, animation, and video editing. Helped migrate old codebase to the latest redesign.",
     technology: ["React", "GraphQL", "Postres", "Sequalize", "Heroku"],
