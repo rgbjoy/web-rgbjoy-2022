@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import style from './info.module.scss'
-import selfie from '../../public/img/selfie.jpg'
+import selfie from '../../public/img/me.jpg'
 import Link from 'next/link';
 
 const Info = () => (
@@ -18,7 +18,7 @@ const Info = () => (
             priority
             layout="responsive"
             width={640}
-            height={1004}
+            height={960}
           />
         </div>
       </div>
