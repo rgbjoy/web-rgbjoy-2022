@@ -19,6 +19,7 @@ const Info = () => (
             layout="responsive"
             width={640}
             height={960}
+            placeholder="blur"
           />
         </div>
       </div>
