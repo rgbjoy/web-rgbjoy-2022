@@ -8,8 +8,8 @@ const IndexPage = () => (
     <Head><title>Tom Fletcher - Multidisciplinary digital creator &amp; web engineer</title></Head>
     <div className={style.intro}>
 
-      <h1><span>Tom Fletcher</span> {String(process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "**dev**" : "")}</h1>
-      <h2><span>Multidisciplinary digital creator &amp; web engineer</span></h2>
+      <h1>Tom Fletcher {String(process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "**dev**" : "")}</h1>
+      <h2>Multidisciplinary digital creator &amp; web engineer</h2>
       <p>A passion for crafting details and making functional software for human beings</p>
 
       <Link href="/info" scroll={false}>
