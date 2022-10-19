@@ -16,28 +16,8 @@
     overflow: hidden;
     background: black;
 
-    &__inner {
-      animation-name: reveal;
-      animation-delay: 0.25s;
-      animation-duration: 0.75s;
-      animation-fill-mode: backwards;
-      transition-timing-function: cubic-bezier(0.250, 0.460, 0.450, 0.940);
-
-      @keyframes reveal {
-        0% {
-          opacity: 0;
-          transform: translateY(100%);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0%);
-        }
-      }
-    }
-
     @media screen and (max-width: $mobile) {
       width: 50%;
-      // margin: 30px 0;
     }
   }
 }
