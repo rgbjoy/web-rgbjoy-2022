@@ -29,8 +29,8 @@ const Work = ({ client, project }: Props) => (
           <li className={style.item} key={i}>
             <div className={style.name}>{item.name}</div>
             <div className={style.time}>{item.time}</div>
-            <Link href="/work/[slug]" as={`/work/${item.slug}`} scroll={false}>
-              <a className={`${style.seemore} underline`}>More details</a>
+            <Link className={`${style.seemore} underline`} href="/work/[slug]" as={`/work/${item.slug}`} scroll={false}>
+              More details
             </Link>
           </li>
         ))}

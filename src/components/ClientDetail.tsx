@@ -24,8 +24,8 @@ const ClientDetail = ({ item }: ClientDetailProps) => {
           ))}
         </ul>
       </div>
-      <Link href="/work" scroll={false}>
-        <a className={`${style.back} underline`}>Back to work</a>
+      <Link className={`${style.back} underline`} href="/work" scroll={false}>
+        Back to work
       </Link>
     </>)
 }
