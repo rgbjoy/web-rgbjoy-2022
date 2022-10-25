@@ -44,13 +44,13 @@ const SiteLayout = ({ children }:Props) => {
         className={style.header}>
         <nav>
           {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
-            <a>.{paths < 2 ? `.` : ``}<span>/</span></a>
+            .{paths < 2 ? `.` : ``}<span>/</span>
           </ActiveLink> : ""}
           <ActiveLink activeClassName={style.active} href="/info">
-            <a>Info</a>
+            Info
           </ActiveLink>
           <ActiveLink activeClassName={style.active} href="/work">
-            <a>Work</a>
+            Work
           </ActiveLink>
         </nav>
       </motion.header>

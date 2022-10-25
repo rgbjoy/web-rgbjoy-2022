@@ -17,14 +17,11 @@ const Info = () => {
 
   const [loaded, setLoaded] = useState(false);
   const animationControls = useAnimation();
-  useEffect(
-    () => {
-      if (loaded) {
-        animationControls.start("visible");
-      }
-    },
-    [loaded]
-  );
+  useEffect(() => {
+    if (loaded) {
+      animationControls.start("visible");
+    }
+  }, [loaded, animationControls]);
 
   const handleImageLoad = () => {
     setLoaded(true)
@@ -36,24 +33,19 @@ const Info = () => {
       <div className={style.selfie}>
         <h1 className={style.header}>Info</h1>
         <div className={style.selfieWrapper}>
-          <div className={style.selfieWrapper__inner}>
-            <motion.div
-              initial={"hidden"}
-              animate={animationControls}
-              variants={animationVariants}
-              transition={{ ease: "easeOut", duration: 1, delay: 1 }}
-            >
-              <Image
-                alt="Selfie"
-                src={selfie}
-                priority
-                layout="responsive"
-                width={640}
-                height={960}
-                onLoadingComplete={handleImageLoad}
-              />
-            </motion.div>
-          </div>
+          <motion.div
+            initial={"hidden"}
+            animate={animationControls}
+            variants={animationVariants}
+            transition={{ ease: "easeOut", duration: 1, delay: 1 }}
+          >
+            <Image
+              alt="Selfie"
+              src={selfie}
+              priority
+              onLoadingComplete={handleImageLoad}
+            />
+          </motion.div>
         </div>
       </div>
 
@@ -69,8 +61,8 @@ const Info = () => {
         When I get the chance to get off a computer, I&apos;m either surfing with the family or finding the next thing to pour <a href="https://www.stickermule.com/hot-sauce" rel="noreferrer">mule sauce</a> on...
       </p>
 
-      <Link href="/work" scroll={false}>
-        <a className={`btn ${style.btn}`}>See some work</a>
+      <Link className={`btn ${style.btn}`} href="/work" scroll={false}>
+        See some work
       </Link>
 
       <div>

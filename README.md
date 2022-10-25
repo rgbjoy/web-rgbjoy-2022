@@ -4,7 +4,7 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 
 ## Technology used
 
-- Next.js
+- Next.js 13
 - React 18
 - TypeScript
 - [R3F](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) for intro 3D
