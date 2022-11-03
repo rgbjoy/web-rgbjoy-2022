@@ -4,6 +4,14 @@ const generateRobotsTxt = require("./scripts/generate-robots-txt");
 const generateSitemap = require("./scripts/generate-sitemap");
 
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname:  process.env.REMOTE_HOSTNAME,
+      },
+    ],
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
     prependData: `@import "./src/styles/variables.scss";`
