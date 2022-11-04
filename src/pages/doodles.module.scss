@@ -2,7 +2,7 @@
   color: white;
 }
 
-.my-masonry-grid :global  {
+.my-masonry-grid :global {
   margin-top: 80px;
   display: flex;
   margin-left: -30px;
@@ -15,6 +15,7 @@
     img {
       width: 100%;
       height: auto;
+      cursor: pointer;
     }
 
     h3 {
@@ -24,5 +25,25 @@
     > div {
       margin-bottom: 30px;
     }
+  }
+}
+
+.lightbox {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  z-index: 999;
+
+  img {
+    width: 90vw !important;
+    height: auto;
   }
 }

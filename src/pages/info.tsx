@@ -70,6 +70,20 @@ const Info = (props) => {
     )
   }
 
+  const getImageData = () => {
+    let smallImage = {}
+    let bigImage = {}
+    info.profileImage.mediaDetails.sizes.map((mediaDetails) =>{
+      if(mediaDetails.name === "medium_large") {
+        smallImage = mediaDetails
+      }
+      if(mediaDetails.name === "1536x1536" || "2048x2048") {
+        bigImage = mediaDetails
+      }
+    })
+    return {smallImage, bigImage}
+  }
+
   return (
     <Layout page="info">
       <Head><title>Info</title></Head>
@@ -84,7 +98,11 @@ const Info = (props) => {
           >
             <Image
               alt="Selfie"
-              src={selfie}
+              src={getImageData().bigImage["sourceUrl"]}
+              placeholder="blur"
+              blurDataURL={getImageData().smallImage["sourceUrl"]}
+              width={getImageData().bigImage["width"]}
+              height={getImageData().bigImage["height"]}
               priority
               onLoadingComplete={handleImageLoad}
             />
@@ -112,6 +130,16 @@ export async function getStaticProps() {
         page(id: "cG9zdDoyNA==") {
           content(format: RENDERED)
           info {
+            profileImage {
+              mediaDetails {
+                sizes {
+                  sourceUrl
+                  width
+                  height
+                  name
+                }
+              }
+            }
             links {
               link {
                 title

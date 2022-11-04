@@ -6,6 +6,9 @@ import ActiveLink from "./ActiveLink";
 import style from './SiteLayout.module.scss'
 import useWindowDimensions from '../utils/useWindowDimensions'
 
+import { gql } from "@apollo/client";
+import { client } from "../data/app";
+
 type Props = {
   children?: React.ReactNode
 }
@@ -15,7 +18,7 @@ const DynamicBackground = dynamic(
   { loading: () => <div className="loading">...</div>, ssr: false }
 )
 
-const SiteLayout = ({ children }:Props) => {
+const SiteLayout = ({ children }) => {
   const router = useRouter()
 
   const { width } = useWindowDimensions();
@@ -52,6 +55,9 @@ const SiteLayout = ({ children }:Props) => {
           <ActiveLink activeClassName={style.active} href="/work">
             Work
           </ActiveLink>
+          <ActiveLink activeClassName={style.active} href="/doodles">
+            Doodles
+          </ActiveLink>
         </nav>
       </motion.header>
 
@@ -72,6 +78,36 @@ const SiteLayout = ({ children }:Props) => {
       </motion.footer>
     </>
   )
+}
+
+export async function getStaticProps() {
+  console.log("heeeey")
+  const { data, errors } = await client.query({
+    query: gql`
+      query postsQuery {
+        page(id: "cG9zdDo1MA==") {
+          doodles {
+            gallery {
+              mediaDetails {
+                sizes {
+                  name
+                  width
+                  height
+                  sourceUrl
+                }
+              }
+              title
+            }
+          }
+        }
+      }
+    `,
+  });
+  return {
+    props: {
+      options: data.siteSettings,
+    },
+  };
 }
 
 export default SiteLayout;

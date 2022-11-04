@@ -6,7 +6,7 @@ import style from './doodles.module.scss'
 
 import { gql } from "@apollo/client";
 import { client } from "../data/app";
-
+import LightBox from '../components/Lightbox';
 
 const Doodles = (props) => {
 
@@ -14,30 +14,38 @@ const Doodles = (props) => {
     page: { doodles },
   } = props;
 
-  const GetDoodles = () => {
-
+  const Doodles = () => {
     return (
       <Masonry
         breakpointCols={3}
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
-          {doodles["doodle"].map((value, i) => {
-            const image = value["image"]["mediaDetails"]["sizes"][4]
-            const alt = value["image"]["altText"]
-            const src = image["sourceUrl"]
-            const width = image["width"]
-            const height = image["height"]
-
+          {doodles.gallery.map((value, i) => {
+            const images = value.mediaDetails.sizes
+            let smallImage = {}
+            let bigImage = {}
+            images.map((mediaDetails) => {
+              if(mediaDetails.name === "medium_large") {
+                smallImage = mediaDetails
+              }
+              if(mediaDetails.name === "1536x1536" || "2048x2048") {
+                bigImage = mediaDetails
+              }
+            })
             return (
               <div key={i}>
-                <Image
-                  src={src}
-                  priority
-                  width={width}
-                  height={height}
-                  alt={alt}
-                />
-                <h3>{value["title"]}</h3>
+                <LightBox src={value.sourceUrl} alt="value.title">
+                  <Image
+                    src={bigImage["sourceUrl"]}
+                    placeholder="blur"
+                    blurDataURL={smallImage["sourceUrl"]}
+                    priority
+                    width={bigImage["width"]}
+                    height={bigImage["height"]}
+                    quality={100}
+                    alt={value.title}
+                  />
+                </LightBox>
               </div>
             )
           })}
@@ -49,7 +57,7 @@ const Doodles = (props) => {
     <Layout page="info">
       <Head><title>Info</title></Head>
       <h1 className={style.header}>Doodles</h1>
-      <GetDoodles />
+      <Doodles />
     </Layout>
   )
 }
@@ -60,19 +68,17 @@ export async function getStaticProps() {
       query postsQuery {
         page(id: "cG9zdDo1MA==") {
           doodles {
-            doodle {
-              title
-              image {
-                altText
-                mediaDetails {
-                  sizes {
-                    sourceUrl
-                    width
-                    height
-                    name
-                  }
+            gallery {
+              sourceUrl
+              mediaDetails {
+                sizes {
+                  name
+                  width
+                  height
+                  sourceUrl
                 }
               }
+              title
             }
           }
         }
