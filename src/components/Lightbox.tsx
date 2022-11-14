@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image'
 import style from "../pages/doodles.module.scss"
 
-const LightBox = ({ children, src, alt, Wrapper = 'div', zIndex = 100 }) => {
+const LightBox = ({ children, src, alt }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const toggleIsOpen = () => {
@@ -14,7 +14,11 @@ const LightBox = ({ children, src, alt, Wrapper = 'div', zIndex = 100 }) => {
 			{children}
 			{isOpen ?
 				<div onClick={toggleIsOpen} className={style.lightbox}>
-					<img src={src} alt={alt} />
+					<Image
+						src={src}
+						alt={alt}
+						fill
+					/>
 				</div>
 				: null}
 		</div>

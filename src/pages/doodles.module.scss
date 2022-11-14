@@ -43,7 +43,7 @@
   z-index: 999;
 
   img {
-    width: 90vw !important;
-    height: auto;
+    object-fit: contain;
+    padding: 10%;
   }
 }
