@@ -2,7 +2,6 @@ import Image from 'next/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import style from './info.module.scss'
-import selfie from '../../public/img/me.jpg'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
@@ -123,7 +122,12 @@ const Info = (props) => {
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps({req, res}) {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
+
   const { data, errors } = await client.query({
     query: gql`
       query postsQuery {
@@ -155,6 +159,7 @@ export async function getStaticProps() {
       }
     `,
   });
+
   return {
     props: {
       page: data.page,

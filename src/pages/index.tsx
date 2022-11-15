@@ -28,7 +28,12 @@ const IndexPage = (props) => {
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps({req, res}) {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
+
   const { data, errors } = await client.query({
     query: gql`
       query postsQuery{

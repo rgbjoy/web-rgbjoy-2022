@@ -9,13 +9,9 @@ import useWindowDimensions from '../utils/useWindowDimensions'
 import { gql } from "@apollo/client";
 import { client } from "../data/app";
 
-type Props = {
-  children?: React.ReactNode
-}
-
 const DynamicBackground = dynamic(
   () => import('./Background'),
-  { loading: () => <div className="loading">...</div>, ssr: false }
+  { loading: () => <div className="loadingBackground">...</div>, ssr: false }
 )
 
 const SiteLayout = ({ children }) => {
@@ -27,7 +23,7 @@ const SiteLayout = ({ children }) => {
 
   return (
     <>
-      <Suspense fallback={<div className="loading">...</div>}>
+      <Suspense fallback={<div className="loadingBackground">...</div>}>
         <DynamicBackground page={router.pathname} />
       </Suspense>
       <motion.div
