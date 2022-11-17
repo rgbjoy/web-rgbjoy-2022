@@ -1,3 +1,5 @@
+$grid: 10px;
+
 .header {
   color: white;
 }
@@ -5,11 +7,11 @@
 .my-masonry-grid :global {
   margin-top: 80px;
   display: flex;
-  margin-left: -30px;
+  margin-left: -$grid;
   width: auto;
 
   .my-masonry-grid_column {
-    padding-left: 30px;
+    padding-left: $grid;
     background-clip: padding-box;
 
     img {
@@ -22,7 +24,7 @@
 
 .image :global {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: $grid;
   font-size: 0;
 
   .hovered {
