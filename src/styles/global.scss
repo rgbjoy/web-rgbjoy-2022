@@ -13,7 +13,7 @@
 
 /* ===== Scrollbar CSS ===== */
 * {
-  scrollbar-width: thin;
+  scrollbar-width: 10px;
   scrollbar-color: rgba(94, 94, 94, 0.407) rgba(94, 94, 94, 0.407);
 }
 
@@ -35,11 +35,11 @@
 html,
 body {
   margin: 0;
-  width: 100vw;
   height: 100%;
 }
 
 body {
+  overflow-y: scroll;
   background-color: $colorBackground;
   color: white;
   font-family: "Montserrat", sans-serif;
@@ -111,7 +111,7 @@ h3 {
   margin: 0;
 }
 
-@media screen and (max-width: $mobile) {
+@include mobile-only {
   h1 {
     font-size: 1.8em;
   }
@@ -121,7 +121,7 @@ p {
   line-height: 150%;
   letter-spacing: 2px;
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     font-size: 80%;
   }
 }
@@ -136,7 +136,7 @@ p {
     pointer-events: none;
   }
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     padding: 120px 20px 100px 20px;
     width: 100%;
   }
@@ -161,7 +161,7 @@ p {
   top: $gutter;
   left: $gutter;
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     top: $gutter-mobile;
     left: $gutter-mobile;
   }

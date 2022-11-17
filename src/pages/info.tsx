@@ -128,7 +128,7 @@ export async function getServerSideProps({req, res}) {
     'public, s-maxage=10, stale-while-revalidate=59'
   )
 
-  const { data, errors } = await client.query({
+  const { loading, errors, data } = await client.query({
     query: gql`
       query postsQuery {
         page(id: "cG9zdDoyNA==") {
@@ -159,6 +159,15 @@ export async function getServerSideProps({req, res}) {
       }
     `,
   });
+
+  if (loading) {
+    return <div className="loadingPage">...</div>
+  }
+
+  if (errors) {
+    console.error(errors);
+    return null;
+  }
 
   return {
     props: {

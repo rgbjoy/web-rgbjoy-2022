@@ -28,7 +28,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           mode="wait"
           onExitComplete={() => {window.scrollTo(0, 0)}}
         >
-          {isPageLoading ? <div className="loadingPage">...</div> : <Component {...pageProps} key={router.pathname} />}
+          <Component {...pageProps} key={router.pathname} />
         </AnimatePresence>
       </SiteLayout>
     </>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import style from "../pages/doodles.module.scss"
 
-const LightBox = ({ children, src, alt }) => {
+const LightBox = ({ children, image }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const toggleIsOpen = () => {
@@ -14,11 +14,16 @@ const LightBox = ({ children, src, alt }) => {
 			{children}
 			{isOpen ?
 				<div onClick={toggleIsOpen} className={style.lightbox}>
-					<Image
-						src={src}
-						alt={alt}
-						fill
-					/>
+					<div className={style.lightbox__inner}>
+						<Image
+							src={image.source}
+							alt={image.alt}
+							placeholder="blur"
+							blurDataURL={image.smallImage["sourceUrl"]}
+							quality={100}
+							layout="fill"
+						/>
+					</div>
 				</div>
 				: null}
 		</div>

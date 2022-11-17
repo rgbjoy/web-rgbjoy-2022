@@ -6,7 +6,7 @@
   display: flex;
   justify-content: space-between;
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     margin-bottom: 60px;
   }
 
@@ -22,7 +22,7 @@
       height: auto;
     }
 
-    @media screen and (max-width: $mobile) {
+    @include mobile-only {
       width: 50%;
     }
   }
@@ -60,7 +60,7 @@
     width: 45%;
     line-height: 200%;
 
-    @media screen and (max-width: $mobile) {
+    @include mobile-only {
       font-size: 80%;
       width: 50%;
     }
