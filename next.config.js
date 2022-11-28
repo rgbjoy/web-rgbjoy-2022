@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
-const generateRobotsTxt = require("./scripts/generate-robots-txt");
-const generateSitemap = require("./scripts/generate-sitemap");
 
 const nextConfig = {
   images: {
@@ -16,7 +14,7 @@ const nextConfig = {
     includePaths: [path.join(__dirname, 'styles')],
     prependData: `@import "./src/styles/variables.scss";`
   },
-  webpack(config, {isServer}) {
+  webpack(config) {
     config.module.rules.push({
       test: /\.(glb|gltf)$/,
       use: {
@@ -30,11 +28,6 @@ const nextConfig = {
         loader: 'file-loader',
       },
     });
-
-    if (isServer) {
-      generateSitemap();
-      generateRobotsTxt();
-    }
 
     return config;
   },
