@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/legacy/image'
-import style from "../pages/doodles.module.scss"
+import style from "../pages/art.module.scss"
 
 const LightBox = ({ children, image }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -16,12 +16,13 @@ const LightBox = ({ children, image }) => {
 				<div onClick={toggleIsOpen} className={style.lightbox}>
 					<div className={style.lightbox__inner}>
 						<Image
-							src={image.source}
-							alt={image.alt}
+							src={image.sourceUrl}
+							width={image.mediaDetails.width}
+							height={image.mediaDetails.height}
+							alt=""
 							placeholder="blur"
-							blurDataURL={image.smallImage["sourceUrl"]}
+							blurDataURL={image.mediaDetails.sizes[0].sourceUrl}
 							quality={100}
-							layout="fill"
 						/>
 					</div>
 				</div>

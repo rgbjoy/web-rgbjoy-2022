@@ -48,11 +48,11 @@ const SiteLayout = ({ children }) => {
           <ActiveLink activeClassName={style.active} href="/info">
             Info
           </ActiveLink>
-          <ActiveLink activeClassName={style.active} href="/work">
-            Work
+          <ActiveLink activeClassName={style.active} href="/dev">
+            Dev
           </ActiveLink>
-          <ActiveLink activeClassName={style.active} href="/doodles">
-            Doodles
+          <ActiveLink activeClassName={style.active} href="/art">
+            Art
           </ActiveLink>
         </nav>
       </motion.header>
@@ -74,36 +74,6 @@ const SiteLayout = ({ children }) => {
       </motion.footer>
     </>
   )
-}
-
-export async function getStaticProps() {
-  console.log("heeeey")
-  const { data, errors } = await client.query({
-    query: gql`
-      query postsQuery {
-        page(id: "cG9zdDo1MA==") {
-          doodles {
-            gallery {
-              mediaDetails {
-                sizes {
-                  name
-                  width
-                  height
-                  sourceUrl
-                }
-              }
-              title
-            }
-          }
-        }
-      }
-    `,
-  });
-  return {
-    props: {
-      options: data.siteSettings,
-    },
-  };
 }
 
 export default SiteLayout;

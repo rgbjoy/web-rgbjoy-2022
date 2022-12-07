@@ -5,13 +5,13 @@ import { Client } from '../../interfaces'
 import { clientData } from '../../data/client'
 import Layout from '../../components/Layout';
 import Link from 'next/link'
-import style from "./work.module.scss"
+import style from "./dev.module.scss"
 
 import { gql } from "@apollo/client";
 import { client } from "../../data/app";
 
 
-const Work = (props) => {
+const Dev = (props) => {
   const {
     clients: clients,
     page: { work },
@@ -40,10 +40,10 @@ const Work = (props) => {
 
   return (
     <Layout>
-      <Head><title>Work</title></Head>
+      <Head><title>Developemt</title></Head>
 
       <div >
-        <h1 className={style.header}>Work</h1>
+        <h1 className={style.header}>Development Work</h1>
 
         <div dangerouslySetInnerHTML={{__html:work.intro}} />
 
@@ -53,7 +53,7 @@ const Work = (props) => {
             <li className={style.item} key={"clients"+i}>
               <div className={style.name}>{item.name}</div>
               <div className={style.time}>{item.time}</div>
-              <Link className={`${style.seemore} underline`} href="/work/[slug]" as={`/work/${item.slug}`} scroll={false}>
+              <Link className={`${style.seemore} underline`} href="/dev/[slug]" as={`/dev/${item.slug}`} scroll={false}>
                 More details
               </Link>
             </li>
@@ -68,24 +68,31 @@ const Work = (props) => {
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+
+export async function getServerSideProps({ req, res }) {
+
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
+
   const clients: Client[] = clientData
   const { data, errors } = await client.query({
     query: gql`
-    query postsQuery {
-      page(id: "cG9zdDo0MQ==") {
-        work {
-          intro
-          pastProjects {
-            title
-            link {
-              url
+      query postsQuery {
+        page(id: "cG9zdDo0MQ==") {
+          work {
+            intro
+            pastProjects {
+              title
+              link {
+                url
+              }
+              description
             }
-            description
           }
         }
       }
-    }
     `,
   });
 
@@ -97,4 +104,4 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 }
 
-export default Work
+export default Dev

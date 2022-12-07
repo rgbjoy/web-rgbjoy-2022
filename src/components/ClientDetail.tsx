@@ -2,7 +2,6 @@ import * as React from 'react'
 import Link from 'next/link'
 
 import { Client } from '../interfaces'
-import { Gallery } from './Gallery'
 
 import style from './ClientDetail.module.scss'
 
@@ -24,7 +23,7 @@ const ClientDetail = ({ item }: ClientDetailProps) => {
           ))}
         </ul>
       </div>
-      <Link className={`${style.back} underline`} href="/work" scroll={false}>
+      <Link className={`${style.back} underline`} href="/dev" scroll={false}>
         Back to work
       </Link>
     </>)

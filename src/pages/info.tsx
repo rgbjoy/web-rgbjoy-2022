@@ -113,7 +113,7 @@ const Info = (props) => {
 
       <div dangerouslySetInnerHTML={{__html:props.page.content}} />
 
-      <Link className={`btn ${style.btn}`} href="/work" scroll={false}>
+      <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
         See some work
       </Link>
 

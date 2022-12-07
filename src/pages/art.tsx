@@ -1,18 +1,16 @@
-import Image from 'next/legacy/image'
+import Image from 'next/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import Masonry from 'react-masonry-css'
-import style from './doodles.module.scss'
+import style from './art.module.scss'
 
 import { gql } from "@apollo/client";
 import { client } from "../data/app";
 
-import { motion, useAnimation } from 'framer-motion';
-
 import { useState, useEffect, useRef } from "react";
 import LightBox from '../components/Lightbox';
 
-const Doodles = (props) => {
+const Art = (props) => {
 
   const {
     page: { doodles },
@@ -44,12 +42,12 @@ const Doodles = (props) => {
         <LightBox image={image}>
             <Image
               alt={image.title}
-              src={image.bigImage["sourceUrl"]}
+              src={image.sourceUrl}
               placeholder="blur"
-              blurDataURL={image.smallImage["sourceUrl"]}
+              blurDataURL={image.mediaDetails.sizes[0].sourceUrl}
               priority
-              width={image.bigImage["width"]}
-              height={image.bigImage["height"]}
+              width={image.mediaDetails.width}
+              height={image.mediaDetails.height}
             />
             <div className={`caption ${isHovered ? "hovered" : ""}`}>{image.title}</div>
         </LightBox>
@@ -59,34 +57,19 @@ const Doodles = (props) => {
 
   return (
     <Layout page="info">
-      <Head><title>Info</title></Head>
-      <h1 className={style.header}>Doodles</h1>
+      <Head><title>Artwork</title></Head>
+
+      <h1 className={style.header}>Artwork</h1>
+
       <div dangerouslySetInnerHTML={{ __html: props.page.content }} />
       <Masonry
         breakpointCols={3}
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
           {
-            doodles.gallery.map((value, i) => {
-              const images = value.mediaDetails.sizes
-              const getImageData = () => {
-                const title = value.title
-                const source = value["sourceUrl"]
-                let smallImage = {}
-                let bigImage = {}
-                images.map((mediaDetails) => {
-                  if (mediaDetails.name === "medium_large") {
-                    smallImage = mediaDetails
-                  }
-                  if (mediaDetails.name === "1536x1536" || "2048x2048") {
-                    bigImage = mediaDetails
-                  }
-                })
-                return { smallImage, bigImage, title, source }
-              }
-
+            doodles.gallery.map((image, i) => {
               return (
-                <DoodleImage key={"image"+i} image={getImageData()} />
+                <DoodleImage key={"image"+i} image={image} />
               )
             })
           }
@@ -109,15 +92,16 @@ export async function getServerSideProps({ req, res }) {
           doodles {
             gallery {
               sourceUrl
+              title
               mediaDetails {
-                sizes {
-                  name
+                width
+                height
+                sizes(include: MEDIUM) {
+                  sourceUrl
                   width
                   height
-                  sourceUrl
                 }
               }
-              title
             }
           }
         }
@@ -141,4 +125,4 @@ export async function getServerSideProps({ req, res }) {
   };
 }
 
-export default Doodles
+export default Art
