@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import Masonry from 'react-masonry-css'

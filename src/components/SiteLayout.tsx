@@ -6,13 +6,23 @@ import ActiveLink from "./ActiveLink";
 import style from './SiteLayout.module.scss'
 import useWindowDimensions from '../utils/useWindowDimensions'
 
-import { gql } from "@apollo/client";
-import { client } from "../data/app";
-
 const DynamicBackground = dynamic(
   () => import('./Background'),
   { loading: () => <div className="loadingBackground">...</div>, ssr: false }
 )
+
+const Footer = () => {
+  return (
+    <div className={style.footerWrapper}>
+      <div className={style.footerLinks}>
+        <a target="_blank" rel="noreferrer" href="https://instagram.com/rgbjoy">Instagram</a>
+        <a target="_blank" rel="noreferrer" href="https://twitter.com/rgbjoy">Twitter</a>
+        <a target="_blank" rel="noreferrer" href="https://codepen.io/rgbjoy/pens/popular">Codepen</a>
+        <a target="_blank" rel="noreferrer" href="https://github.com/rgbjoy/">Github</a>
+      </div>
+    </div>
+  )
+}
 
 const SiteLayout = ({ children }) => {
   const router = useRouter()
@@ -63,14 +73,7 @@ const SiteLayout = ({ children }) => {
         animate={{ bottom: 0 }}
         transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
         className={style.footer}>
-        <div className={style.footerWrapper}>
-          <div className={style.footerLinks}>
-            <a target="_blank" rel="noreferrer" href="https://instagram.com/rgbjoy">Instagram</a>
-            <a target="_blank" rel="noreferrer" href="https://twitter.com/rgbjoy">Twitter</a>
-            <a target="_blank" rel="noreferrer" href="https://codepen.io/rgbjoy/pens/popular">Codepen</a>
-            <a target="_blank" rel="noreferrer" href="https://github.com/rgbjoy/">Github</a>
-          </div>
-        </div>
+        <Footer />
       </motion.footer>
     </>
   )

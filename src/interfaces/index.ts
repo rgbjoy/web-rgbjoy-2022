@@ -2,7 +2,7 @@
 // and then use them in any component by importing them. For
 // example, to import the interface below do:
 //
-// import { Project } from 'path/to/interfaces';
+// import { Cleint } from 'path/to/interfaces';
 
 export type Client = {
   name: string
@@ -12,10 +12,4 @@ export type Client = {
   description: string
   technology?: string[]
   images?: string[]
-}
-
-export type Project = {
-  name: string
-  link: string
-  description?: string
 }
