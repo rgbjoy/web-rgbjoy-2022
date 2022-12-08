@@ -13,7 +13,7 @@ import LightBox from '../components/Lightbox';
 const Art = (props) => {
 
   const {
-    page: { doodles },
+    page: { artwork },
   } = props;
 
   function useHover<HTMLDivElement>() {
@@ -73,7 +73,7 @@ const Art = (props) => {
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
           {
-            doodles.gallery.map((image, i) => {
+            artwork.gallery.map((image, i) => {
               return (
                 <DoodleImage key={"image"+i} image={image} />
               )
@@ -95,7 +95,7 @@ export async function getServerSideProps({ req, res }) {
       query postsQuery {
         page(id: "cG9zdDo1MA==") {
           content(format: RENDERED)
-          doodles {
+          artwork {
             gallery {
               sourceUrl
               title
