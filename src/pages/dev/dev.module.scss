@@ -30,7 +30,7 @@
   list-style-type: none;
   padding: 0;
 
-  @media screen and (min-width: $mobile) {
+  @include mobile-up {
     margin-right: 60px;
   }
 

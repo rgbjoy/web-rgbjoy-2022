@@ -1,0 +1,83 @@
+$grid: 10px;
+
+.header {
+  color: white;
+}
+
+.my-masonry-grid :global {
+  margin-top: 80px;
+  display: flex;
+  margin-left: -$grid;
+  width: auto;
+
+  .my-masonry-grid_column {
+    padding-left: $grid;
+    background-clip: padding-box;
+
+    img, video {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.media :global {
+  position: relative;
+  margin-bottom: $grid;
+  font-size: 0;
+  overflow: hidden;
+
+  .caption {
+    position: absolute;
+    color: black;
+    opacity: 0;
+    background: rgba(255, 255, 255, 0);
+    top: 0;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition-property: opacity, background;
+    transition-duration: 0.2s;
+    transition-timing-function:  ease-in-out;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .hovered + .caption {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.lightbox {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  z-index: 999;
+
+  &__inner {
+    width: 90%;
+    height: 90%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  img, video {
+    object-fit: contain;
+    padding: 10%;
+  }
+}

@@ -3,7 +3,7 @@
   top: $gutter;
   right: $gutter;
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     top: $gutter-mobile;
     right: $gutter-mobile;
   }
@@ -47,7 +47,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media screen and (max-width: $mobile) {
+  @include mobile-only {
     display: none;
   }
 }
@@ -70,7 +70,7 @@
     height: 10em;
     z-index: -1;
 
-    @media screen and (max-width: $mobile) {
+    @include mobile-only {
       background-image: linear-gradient(to bottom, rgba($colorBackground, 0), rgba($colorBackground, 0.9) 50%);
       height: 5em;
     }
@@ -94,13 +94,13 @@
       bottom: 0;
       right: 0;
 
-      @media screen and (max-width: $mobile) {
+      @include mobile-only {
         width: 1px;
         height: 90px;
       }
     }
 
-    @media screen and (max-width: $mobile) {
+    @include mobile-only {
       margin-left: $gutter-mobile;
       margin-right: $gutter-mobile;
       margin-bottom: $gutter-mobile;
@@ -111,7 +111,7 @@
     margin-right: 10px;
     font-size: 80%;
 
-    @media screen and (max-width: $mobile) {
+    @include mobile-only {
       font-size: 65%;
     }
 

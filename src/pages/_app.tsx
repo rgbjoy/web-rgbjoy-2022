@@ -6,16 +6,16 @@ import { AnimatePresence } from 'framer-motion'
 import 'normalize.css/normalize.css';
 import "../styles/global.scss"
 
-import { useRouter } from 'next/router';
-
 import SiteLayout from '../components/SiteLayout';
+import { usePageLoading } from '../utils/isPageLoading';
 import { usePageTransitionFix } from '../utils/usePageTransitionFix'
-
-
+import { useRouter } from 'next/router';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   usePageTransitionFix()
   const router = useRouter()
+  const { isPageLoading } = usePageLoading();
+
   return (
     <>
       <Head>
@@ -28,7 +28,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           mode="wait"
           onExitComplete={() => {window.scrollTo(0, 0)}}
         >
-          <Component {...pageProps} key={router.pathname} />
+          {isPageLoading ? (
+            <div className="loadingPage">...</div>
+          ) : (
+            <Component {...pageProps} key={router.pathname} />
+          )}
         </AnimatePresence>
       </SiteLayout>
     </>
