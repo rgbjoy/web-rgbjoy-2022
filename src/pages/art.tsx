@@ -19,16 +19,20 @@ const Art = (props) => {
   function useHover<HTMLDivElement>() {
     const [value, setValue] = useState<boolean>(false);
     const ref: any = useRef<HTMLDivElement | null>(null);
-    const handleMouseOver = (): void => setValue(true);
-    const handleMouseOut = (): void => setValue(false);
+    const handleMouseOver = ():void => setValue(true)
+    const handleMouseOut = ():void => setValue(false)
+
     useEffect(() => {
       const node: any = ref.current;
       if (node) {
         node.addEventListener("mouseover", handleMouseOver);
         node.addEventListener("mouseout", handleMouseOut);
+        node.addEventListener("click", handleMouseOut);
+
         return () => {
           node.removeEventListener("mouseover", handleMouseOver);
           node.removeEventListener("mouseout", handleMouseOut);
+          node.removeEventListener("click", handleMouseOut);
         };
       }
     }, []);
@@ -40,16 +44,18 @@ const Art = (props) => {
     return (
       <div {...props} ref={hoverRef} className={style.image}>
         <LightBox image={image}>
-            <Image
-              alt={image.title}
-              src={image.sourceUrl}
-              placeholder="blur"
-              blurDataURL={image.mediaDetails.sizes[0].sourceUrl}
-              priority
-              width={image.mediaDetails.width}
-              height={image.mediaDetails.height}
-            />
-            <div className={`caption ${isHovered ? "hovered" : ""}`}>{image.title}</div>
+            <div className={isHovered ? "hovered" : ""}>
+              <Image
+                alt={image.title}
+                src={image.sourceUrl}
+                placeholder="blur"
+                blurDataURL={image.mediaDetails.sizes[0].sourceUrl}
+                priority
+                width={image.mediaDetails.width}
+                height={image.mediaDetails.height}
+              />
+            </div>
+            <div className="caption">{image.title}</div>
         </LightBox>
       </div>
     )
