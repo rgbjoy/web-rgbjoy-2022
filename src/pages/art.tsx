@@ -1,8 +1,8 @@
-import Image from 'next/legacy/image'
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import Masonry from 'react-masonry-css'
 import style from './art.module.scss'
+import Media from '../components/Media';
 
 import { gql } from "@apollo/client";
 import { client } from "../data/app";
@@ -39,23 +39,16 @@ const Art = (props) => {
     return [ref, value];
   }
 
-  const DoodleImage = ({image, ...props}) => {
+  const DoodleImage = ({media, ...props}) => {
     const [hoverRef, isHovered] = useHover<HTMLDivElement>();
+
     return (
-      <div {...props} ref={hoverRef} className={style.image}>
-        <LightBox image={image}>
-            <div className={isHovered ? "hovered" : ""}>
-              <Image
-                alt={image.title}
-                src={image.sourceUrl}
-                placeholder="blur"
-                blurDataURL={image.mediaDetails.sizes[0].sourceUrl}
-                priority
-                width={image.mediaDetails.width}
-                height={image.mediaDetails.height}
-              />
+      <div {...props} ref={hoverRef} className={style.media}>
+        <LightBox media={media}>
+            <div className={`thumbnail ${isHovered ? "hovered" : ""}`}>
+              <Media media={media} thumbnail />
             </div>
-            <div className="caption">{image.title}</div>
+            <div className="caption">{media.title}</div>
         </LightBox>
       </div>
     )
@@ -73,9 +66,9 @@ const Art = (props) => {
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
           {
-            artwork.gallery.map((image, i) => {
+            artwork.gallery.map((media, i) => {
               return (
-                <DoodleImage key={"image"+i} image={image} />
+                <DoodleImage key={"media"+i} media={media} />
               )
             })
           }
@@ -97,8 +90,9 @@ export async function getServerSideProps({ req, res }) {
           content(format: RENDERED)
           artwork {
             gallery {
-              sourceUrl
               title
+              mediaItemUrl
+              mediaType
               mediaDetails {
                 width
                 height

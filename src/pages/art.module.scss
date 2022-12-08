@@ -14,15 +14,14 @@ $grid: 10px;
     padding-left: $grid;
     background-clip: padding-box;
 
-    img {
+    img, video {
       width: 100%;
       height: auto;
-      cursor: pointer;
     }
   }
 }
 
-.image :global {
+.media :global {
   position: relative;
   margin-bottom: $grid;
   font-size: 0;
@@ -77,7 +76,7 @@ $grid: 10px;
     justify-content: center;
   }
 
-  img {
+  img, video {
     object-fit: contain;
     padding: 10%;
   }

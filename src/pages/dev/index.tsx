@@ -14,14 +14,14 @@ import { client } from "../../data/app";
 const Dev = (props) => {
   const {
     clients: clients,
-    page: { work },
+    page: { dev },
   } = props;
 
 
   const GetProjects = () => {
     return (
       <ul className={style.list}>
-      {work["pastProjects"].map((value, i) => {
+      {dev["pastProjects"].map((value, i) => {
         const title = value["title"]
         const description = value["description"]
         const link = value["link"]["url"]
@@ -45,7 +45,7 @@ const Dev = (props) => {
       <div >
         <h1 className={style.header}>Development Work</h1>
 
-        <div dangerouslySetInnerHTML={{__html:work.intro}} />
+        <div dangerouslySetInnerHTML={{__html:dev.intro}} />
 
         <h2 className={style.sectionTitle}>Clients</h2>
         <ul className={style.list}>
@@ -81,7 +81,7 @@ export async function getServerSideProps({ req, res }) {
     query: gql`
       query postsQuery {
         page(id: "cG9zdDo0MQ==") {
-          work {
+          dev {
             intro
             pastProjects {
               title
