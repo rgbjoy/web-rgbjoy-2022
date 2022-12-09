@@ -72,8 +72,16 @@ $grid: 10px;
     height: 90%;
     position: relative;
     display: flex;
-    align-items: center;
     justify-content: center;
+
+    .caption {
+      position: absolute;
+      bottom: 0;
+      font-size: 14px;
+      padding: 5px 7px;
+      color: white;
+      background: black;
+    }
   }
 
   img, video {

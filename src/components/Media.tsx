@@ -15,10 +15,10 @@ const Media = ({media, thumbnail = null}) => {
         src={media.mediaItemUrl}
         width={media.mediaDetails.width}
         height={media.mediaDetails.height}
-        alt=""
+        alt={media.title}
         placeholder="blur"
         blurDataURL={media.mediaDetails.sizes[0].sourceUrl}
-        quality={100}
+        quality={thumbnail ? 75 : 100}
       />
     )
   }
