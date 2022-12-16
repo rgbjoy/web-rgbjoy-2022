@@ -14,9 +14,11 @@ $grid: 10px;
     padding-left: $grid;
     background-clip: padding-box;
 
-    img, video {
-      width: 100%;
-      height: auto;
+    .thumbnail {
+      img, video {
+        width: 100%;
+        height: auto;
+      }
     }
   }
 }
@@ -73,6 +75,7 @@ $grid: 10px;
     position: relative;
     display: flex;
     justify-content: center;
+    // align-items: center;
 
     .caption {
       position: absolute;
@@ -85,7 +88,8 @@ $grid: 10px;
   }
 
   img, video {
-    object-fit: contain;
+    width: 100%;
+    height: auto;
     padding: 10%;
   }
 }

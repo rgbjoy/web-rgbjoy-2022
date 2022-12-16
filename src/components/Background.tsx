@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
@@ -131,16 +131,14 @@ const Background = ({ page }) => {
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-      <Suspense fallback={null}>
-        <Stars />
-        <Float>
-          <Rig page={page}>
-            <Plane color="#FF0000" name="red" />
-            <Plane color="#00FF00" name="green" />
-            <Plane color="#0000FF" name="blue" />
-          </Rig>
-        </Float>
-      </Suspense>
+      <Stars />
+      <Float>
+        <Rig page={page}>
+          <Plane color="#FF0000" name="red" />
+          <Plane color="#00FF00" name="green" />
+          <Plane color="#0000FF" name="blue" />
+        </Rig>
+      </Float>
     </Canvas>
   )
 }

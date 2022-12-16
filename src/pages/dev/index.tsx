@@ -53,8 +53,8 @@ const Dev = (props) => {
             <li className={style.item} key={"clients"+i}>
               <div className={style.name}>{item.name}</div>
               <div className={style.time}>{item.time}</div>
-              <Link className={`${style.seemore} underline`} href="/dev/[slug]" as={`/dev/${item.slug}`} scroll={false}>
-                More details
+              <Link href="/dev/[slug]" as={`/dev/${item.slug}`} scroll={false}>
+                <a className={`${style.seemore} underline`}>More details</a>
               </Link>
             </li>
           ))}

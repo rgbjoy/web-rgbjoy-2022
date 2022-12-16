@@ -62,7 +62,7 @@ const Art = (props) => {
 
       <div dangerouslySetInnerHTML={{ __html: props.page.content }} />
       <Masonry
-        breakpointCols={3}
+        breakpointCols={2}
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
           {

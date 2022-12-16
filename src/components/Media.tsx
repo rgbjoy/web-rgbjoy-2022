@@ -1,4 +1,4 @@
-import Image from 'next/legacy/image'
+import Image from 'next/image'
 
 const Media = ({media, thumbnail = null}) => {
   if (media.mediaType !== "image") {
@@ -16,9 +16,10 @@ const Media = ({media, thumbnail = null}) => {
         width={media.mediaDetails.width}
         height={media.mediaDetails.height}
         alt={media.title}
-        placeholder="blur"
+        placeholder={"blur"}
         blurDataURL={media.mediaDetails.sizes[0].sourceUrl}
         quality={thumbnail ? 75 : 100}
+        className={thumbnail ? "image" : "image-fill"}
       />
     )
   }
