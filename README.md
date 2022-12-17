@@ -4,7 +4,7 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 
 ## Technology used
 
-- Next.js 13
+- Next.js 12
 - React 18
 - TypeScript
 - Apollo Client

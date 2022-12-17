@@ -20,8 +20,8 @@ const IndexPage = (props) => {
         <h2>{home.subhead}</h2>
         <p>{home.intro}</p>
 
-        <Link className={`btn ${style.btn}`} href="/info" scroll={false}>
-          {home.button}
+        <Link href="/info" scroll={false}>
+          <a className={`btn ${style.btn}`}>{home.button}</a>
         </Link>
       </div>
     </Layout>
