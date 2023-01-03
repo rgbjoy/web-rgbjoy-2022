@@ -3,32 +3,31 @@ import { useState, useRef, useEffect } from 'react';
 import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Points, PointMaterial, Float } from '@react-three/drei'
-import * as random from "maath/random";
+import {  Float } from '@react-three/drei'
 
 import gsap from "gsap"
 
 import style from "./Background.module.scss"
 
-let animatingOut = false
 let clickable = false
+let firstLoad = true
 
 const getRandomPick = (items: Array<number>): number => {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-const animateOut = (meshes) => {
+const animateOut = (meshes, isYoyo = false) => {
   for (var m of meshes) {
-    gsap.to(m.rotation, { overwrite: true, duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeIn" });
-    gsap.to(m.position, { overwrite: true, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "Power2.easeIn" });
-    gsap.to(m.material, { overwrite: true, duration: 2, opacity: 0, ease: "Power2.easeIn", onComplete: () => animatingOut = false });
+    gsap.to(m.rotation, { yoyo: isYoyo ? true : false, repeat: isYoyo ? 1 : 0, overwrite: true, duration: 2, x: THREE.MathUtils.degToRad(getRandomPick([-45, 45])), y: THREE.MathUtils.degToRad(getRandomPick([-45, 45])), z: THREE.MathUtils.degToRad(getRandomPick([-45, 45])), ease: isYoyo ? "Sine.easInOut" : "Power2.easInOut" });
+    gsap.to(m.position, { yoyo: isYoyo ? true : false, repeat: isYoyo ? 1 : 0, overwrite: true, duration: 2, x: getRandomPick([-1, 1]), y: getRandomPick([-1, 1]), z: getRandomPick([-1, 1]), ease: isYoyo ? "Sine.easInOut" : "Power2.easInOut" });
+    gsap.to(m.material, { yoyo: isYoyo ? true : false, repeat: isYoyo ? 1 : 0, overwrite: true, duration: 2, opacity: isYoyo ? 1 : 0.15, ease: isYoyo ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true });
   }
 }
 
 const animateIn = (meshes) => {
   for (var m of meshes) {
 
-    if (!animatingOut) {
+    if (firstLoad) {
       m.position.set(getRandomPick([-5, 5]), getRandomPick([-5, 5]), getRandomPick([-5, 5]))
     }
 
@@ -45,21 +44,18 @@ const animateIn = (meshes) => {
 
     gsap.to(m.material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
   }
+  firstLoad = false
 }
 
 const handleClick = (e, isHome) => {
-  if (!clickable && isHome) {
+  if (!clickable || !isHome) {
     return
   }
 
   clickable = false
 
   const meshes = e.eventObject.children
-  for (var m of meshes) {
-    gsap.to(m.rotation, { yoyo: true, repeat: 1, duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeInOut" });
-    gsap.to(m.position, { yoyo: true, repeat: 1, duration: 2, x: getRandomPick([-5, 5]), y: getRandomPick([-5, 5]), z: getRandomPick([-5, 5]), ease: "Power2.easeInOut" });
-    gsap.to(m.material, { yoyo: true, repeat: 1, duration: 2, opacity: 0, ease: "Power2.easeInOut", onComplete: () => { clickable = true } });
-  }
+  animateOut(meshes, true)
 }
 
 const Plane = (props: any) => {
@@ -77,7 +73,9 @@ const Rig = ({ children, page }) => {
   const isHome = page == "/" ? true : false
 
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    if (isHome) {
+      document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    }
   }, [hovered])
 
   useEffect(() => {
@@ -85,7 +83,11 @@ const Rig = ({ children, page }) => {
     if (!meshes) {
       return
     }
-    isHome ? animateIn(meshes) : animateOut(meshes)
+    if (isHome) {
+      animateIn(meshes)
+    } else {
+      animateOut(meshes)
+    }
   }, [isHome])
 
   useFrame((state, delta) => {
@@ -105,22 +107,6 @@ const Rig = ({ children, page }) => {
   )
 }
 
-const Stars = (props: any) => {
-  const ref = useRef(null);
-  const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 10 }))
-  useFrame((state, delta) => {
-    ref.current.rotation.x -= delta / 50
-    ref.current.rotation.y -= delta / 50
-  })
-  return (
-    <group rotation={[0, 0, Math.PI / 4]}>
-      <Points ref={ref} positions={sphere} frustumCulled={false} {...props}>
-        <PointMaterial transparent color="#888888" size={0.03} sizeAttenuation={true} depthWrite={false} />
-      </Points>
-    </group>
-  )
-}
-
 const Background = ({ page }) => {
   return (
     <Canvas className={style.background} camera={{ fov: 25, position: [5, 5, 5] }} resize={{ polyfill: ResizeObserver }}
@@ -131,7 +117,6 @@ const Background = ({ page }) => {
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-      <Stars />
       <Float>
         <Rig page={page}>
           <Plane color="#FF0000" name="red" />

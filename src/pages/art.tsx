@@ -55,7 +55,7 @@ const Art = (props) => {
   }
 
   return (
-    <Layout page="info">
+    <Layout page="art">
       <Head><title>Artwork</title></Head>
 
       <h1 className={style.header}>Artwork</h1>

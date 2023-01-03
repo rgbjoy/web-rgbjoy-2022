@@ -63,13 +63,23 @@ a {
     position: absolute;
     width: 100%;
     height: 1px;
-    border-radius: 4px;
-    background-color: #e70d2f;
     bottom: -2px;
     left: 0;
     transform-origin: right;
     transform: scaleX(0);
     transition: transform 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  }
+
+  &.red::before {
+    background-color: $red;
+  }
+
+  &.green::before {
+    background-color: $green;
+  }
+
+  &.blue::before {
+    background-color: $blue;
   }
 
   &.underline {
@@ -132,6 +142,17 @@ p {
   width: 75%;
   max-width: 960px;
 
+  &.art {
+    padding-right: ($gutter / 2);
+    padding-left: ($gutter / 2);
+    width: 100%;
+    max-width: 1080px;
+
+    + .badge {
+      display: none;
+    }
+  }
+
   &.intro {
     pointer-events: none;
   }
@@ -139,6 +160,30 @@ p {
   @include mobile-only {
     padding: 120px 20px 100px 20px;
     width: 100%;
+  }
+}
+
+.badge {
+  font-family: 'Rhode', sans-serif;
+  position: fixed;
+  writing-mode: vertical-rl;
+  right: $gutter;
+  transform: translateY(-50%);
+  font-size: 80%;
+  letter-spacing: 1px;
+  top: 50%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @include mobile-only {
+    display: none;
+  }
+}
+
+#footer {
+  transition: opacity 0.25s;
+  &.hidden {
+    opacity: 0;
   }
 }
 
