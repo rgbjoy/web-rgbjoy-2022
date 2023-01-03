@@ -36,15 +36,16 @@ const SiteLayout = ({ children }) => {
       <Suspense fallback={<div className="loadingBackground">...</div>}>
         <DynamicBackground page={router.pathname} />
       </Suspense>
+
+      {children}
+
       <motion.div
         initial={{ right: -20 }}
         animate={{ right: 60 }}
-        transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
-        className={style.badge}>
-        2022 Portfolio
+        transition={{ delay: 1, duration: 0.75, ease:"easeOut" }}
+        className={"badge"}>
+        2023 Portfolio
       </motion.div>
-
-      {children}
 
       <motion.header
         initial={{ top: -20 }}
@@ -55,13 +56,13 @@ const SiteLayout = ({ children }) => {
           {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
             .{paths < 2 ? `.` : ``}<span>/</span>
           </ActiveLink> : ""}
-          <ActiveLink activeClassName={style.active} href="/info">
+          <ActiveLink className="red" activeClassName={style.active} href="/info">
             Info
           </ActiveLink>
-          <ActiveLink activeClassName={style.active} href="/dev">
+          <ActiveLink className="green" activeClassName={style.active} href="/dev">
             Dev
           </ActiveLink>
-          <ActiveLink activeClassName={style.active} href="/art">
+          <ActiveLink className="blue" activeClassName={style.active} href="/art">
             Art
           </ActiveLink>
         </nav>

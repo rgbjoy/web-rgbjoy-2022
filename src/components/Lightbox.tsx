@@ -9,6 +9,12 @@ const LightBox = ({ children, media }) => {
 
 	const toggleIsOpen = () => {
 		setIsOpen(!isOpen);
+		if (!isOpen) {
+			document.getElementById("footer").classList.add("hidden")
+		} else {
+			document.getElementById("footer").classList.remove("hidden")
+		}
+
 	};
 
 	const useMousePosition = () => {
@@ -26,9 +32,10 @@ const LightBox = ({ children, media }) => {
 		return position;
 	};
 
-	const position = useMousePosition();
+	let position = useMousePosition();
 	if (isOpen && ref.current) {
-		gsap.to(ref.current, {y: (position.y-ref.current.clientHeight/2)*-1});
+		let posY = position.y - ref.current.offsetHeight /2
+		gsap.to(ref.current, { css: {top: posY} });
 	}
 
 	return (
@@ -37,7 +44,7 @@ const LightBox = ({ children, media }) => {
 			{isOpen ?
 				<div onClick={toggleIsOpen} className={style.lightbox}>
 					<div className={style.lightbox__inner}>
-						<div ref={ref}><Media media={media} /></div>
+						<div className={style.lightbox_wrapper} ref={ref}><Media media={media} /></div>
 						<div className={style.caption}>{media.title}</div>
 					</div>
 				</div>
