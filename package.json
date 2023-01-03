@@ -1,7 +1,6 @@
 {
-  "name": "rgbjoy-2023",
+  "name": "rgbjoy-2022",
   "private": true,
-  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
