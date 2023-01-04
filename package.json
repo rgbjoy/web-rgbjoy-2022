@@ -12,13 +12,12 @@
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
     "@next/bundle-analyzer": "^13.1.1",
-    "@react-three/drei": "^9.50.4",
+    "@react-three/drei": "^9.51.1",
     "@react-three/fiber": "^8.10.0",
-    "@types/three": "^0.147.1",
+    "@types/three": "^0.148.0",
     "@vercel/analytics": "^0.1.6",
-    "framer-motion": "^8.1.4",
+    "framer-motion": "^8.1.7",
     "gsap": "^3.11.4",
-    "maath": "^0.5.1",
     "next": "12.3.2",
     "next-sitemap": "^3.1.44",
     "normalize.css": "^8.0.1",
@@ -26,7 +25,6 @@
     "react-dom": "^18.2.0",
     "react-masonry-css": "^1.0.16",
     "sass": "^1.57.1",
-    "sharp": "^0.31.3",
     "three": "^0.148.0"
   },
   "devDependencies": {

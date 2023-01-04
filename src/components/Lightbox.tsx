@@ -35,7 +35,7 @@ const LightBox = ({ children, media }) => {
 	let position = useMousePosition();
 	if (isOpen && ref.current) {
 		let posY = position.y - ref.current.offsetHeight /2
-		gsap.to(ref.current, { css: {top: posY} });
+		gsap.to(ref.current, {y: -posY} );
 	}
 
 	return (
