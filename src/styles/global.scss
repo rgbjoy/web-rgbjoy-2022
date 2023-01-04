@@ -2,9 +2,8 @@
   font-family: "Rhode";
   src: url("../asset/fonts/Rhode-MediumWide.woff2") format("woff2"),
     url("../asset/fonts/Rhode-MediumWide.woff") format("woff");
-  font-weight: 500;
+  font-weight: normal;
   font-style: normal;
-  font-display: swap;
 }
 
 * {
@@ -172,8 +171,6 @@ p {
   font-size: 80%;
   letter-spacing: 1px;
   top: 50%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
   @include mobile-only {
     display: none;
