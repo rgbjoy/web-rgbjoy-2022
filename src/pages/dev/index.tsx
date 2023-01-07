@@ -71,7 +71,7 @@ const Dev = (props) => {
 
 export const getStaticProps: GetStaticProps = async () => {
   const clients: Client[] = clientData
-  const { loading, data, errors } = await client.query({
+  const { data, errors } = await client.query({
     query: gql`
       query postsQuery {
         page(id: "cG9zdDo0MQ==") {
@@ -90,13 +90,8 @@ export const getStaticProps: GetStaticProps = async () => {
     `,
   });
 
-  if (loading) {
-    return <div className="loadingPage">...</div>
-  }
-
   if (errors) {
-    console.error(errors);
-    return null;
+    return <div className="error">My CMS must be down.</div>
   }
 
   return {
