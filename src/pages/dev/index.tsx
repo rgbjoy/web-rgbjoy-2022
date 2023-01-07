@@ -69,15 +69,9 @@ const Dev = (props) => {
 }
 
 
-export async function getServerSideProps({ req, res }) {
-
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  )
-
+export const getStaticProps: GetStaticProps = async () => {
   const clients: Client[] = clientData
-  const { data, errors } = await client.query({
+  const { loading, data, errors } = await client.query({
     query: gql`
       query postsQuery {
         page(id: "cG9zdDo0MQ==") {
@@ -96,11 +90,21 @@ export async function getServerSideProps({ req, res }) {
     `,
   });
 
+  if (loading) {
+    return <div className="loadingPage">...</div>
+  }
+
+  if (errors) {
+    console.error(errors);
+    return null;
+  }
+
   return {
     props: {
       clients,
       page: data.page,
-    }
+    },
+    revalidate: 60,
   }
 }
 

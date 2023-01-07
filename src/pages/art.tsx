@@ -1,3 +1,5 @@
+import { GetStaticProps } from 'next'
+
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import Masonry from 'react-masonry-css'
@@ -77,12 +79,7 @@ const Art = (props) => {
   )
 }
 
-export async function getServerSideProps({ req, res }) {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  )
-
+export const getStaticProps: GetStaticProps = async () => {
   const { loading, errors, data } = await client.query({
     query: gql`
       query postsQuery {
@@ -122,6 +119,7 @@ export async function getServerSideProps({ req, res }) {
     props: {
       page: data.page,
     },
+    revalidate: 60,
   };
 }
 

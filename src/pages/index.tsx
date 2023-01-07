@@ -1,3 +1,5 @@
+import { GetStaticProps } from 'next';
+
 import Link from 'next/link'
 import Head from 'next/head'
 import style from "./index.module.scss"
@@ -28,11 +30,7 @@ const IndexPage = (props) => {
   )
 }
 
-export async function getServerSideProps({req, res}) {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  )
+export const getStaticProps: GetStaticProps = async () => {
 
   const { loading, errors, data } = await client.query({
     query: gql`
@@ -62,6 +60,7 @@ export async function getServerSideProps({req, res}) {
     props: {
       page: data.page,
     },
+    revalidate: 60,
   };
 }
 
