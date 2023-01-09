@@ -74,17 +74,22 @@ $grid: 30px;
     height: 100%;
     position: relative;
     display: flex;
+    align-content: center;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     cursor:none;
 
     .caption {
-      position: absolute;
-      bottom: 5%;
       font-size: 14px;
       padding: 5px 7px;
-      color: black;
-      background: white;
+      color: white;
+      background: black;
+
+      @include mobile-up {
+        position: absolute;
+        bottom: 5%;
+      }
     }
   }
 
