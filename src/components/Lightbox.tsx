@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Media from "../components/Media"
 import style from "../pages/art.module.scss"
 import gsap from "gsap"
+import useWindowDimensions from '../utils/useWindowDimensions'
 
 const LightBox = ({ children, media }) => {
 	const ref = useRef(null);
@@ -10,9 +11,13 @@ const LightBox = ({ children, media }) => {
 	const toggleIsOpen = () => {
 		setIsOpen(!isOpen);
 		if (!isOpen) {
-			document.getElementById("footer").classList.add("hidden")
+			document.querySelector("body").classList.add("noscroll")
+			document.querySelector("#header").classList.add("hidden")
+			document.querySelector("#footer").classList.add("hidden")
 		} else {
-			document.getElementById("footer").classList.remove("hidden")
+			document.querySelector("body").classList.remove("noscroll")
+			document.querySelector("#header").classList.remove("hidden")
+			document.querySelector("#footer").classList.remove("hidden")
 		}
 
 	};
@@ -21,11 +26,11 @@ const LightBox = ({ children, media }) => {
 		const [position, setPosition] = useState({ x: 0, y: 0 });
 
 		useEffect(() => {
-			const setFromEvent = (e) => setPosition({ x: e.clientX, y: e.clientY });
-			window.addEventListener("mousemove", setFromEvent);
+			const setFromMouseEvent = (e) => setPosition({ x: e.clientX, y: e.clientY });
+			window.addEventListener("mousemove", setFromMouseEvent);
 
 			return () => {
-				window.removeEventListener("mousemove", setFromEvent);
+				window.removeEventListener("mousemove", setFromMouseEvent);
 			};
 		}, []);
 
@@ -33,9 +38,12 @@ const LightBox = ({ children, media }) => {
 	};
 
 	let position = useMousePosition();
+	const { width } = useWindowDimensions();
 	if (isOpen && ref.current) {
-		let posY = position.y - ref.current.offsetHeight /2
-		gsap.to(ref.current, {y: -posY} );
+		if (width > 800) {
+			let posY = position.y - ref.current.offsetHeight /2
+			gsap.to(ref.current, {y: -posY} );
+		}
 	}
 
 	return (

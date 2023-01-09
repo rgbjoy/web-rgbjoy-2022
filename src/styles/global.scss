@@ -45,6 +45,11 @@ body {
   letter-spacing: 1px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  &.noscroll {
+    position: fixed;
+    overflow: hidden;
+  }
 }
 
 #__next {
@@ -177,11 +182,12 @@ p {
   }
 }
 
-#footer {
+#header, #footer {
   transition: opacity 0.25s;
-  &.hidden {
-    opacity: 0;
-  }
+}
+
+.hidden {
+  opacity: 0;
 }
 
 ::selection {

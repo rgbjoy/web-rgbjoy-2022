@@ -48,6 +48,7 @@ const SiteLayout = ({ children }) => {
       </motion.div>
 
       <motion.header
+        id="header"
         initial={{ top: -20 }}
         animate={{ top: width < 800 ? 20 : 60 }}
         transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
