@@ -77,7 +77,7 @@ $grid: 30px;
       width: 90%;
       height: auto;
 
-      @media screen and (max-height:1080px) {
+      @media screen and (max-height:1080px) and (min-width:$mobile) {
         object-fit: contain;
         height: 90%;
       }
