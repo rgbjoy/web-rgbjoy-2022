@@ -47,7 +47,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   &.noscroll {
-    position: fixed;
+    position: sticky;
     overflow: hidden;
   }
 }

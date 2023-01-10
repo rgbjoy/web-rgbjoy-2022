@@ -30,7 +30,6 @@ const Media = ({media, thumbnail = null}) => {
         src={media.mediaItemUrl}
         width={media.mediaDetails.width}
         height={media.mediaDetails.height}
-        sizes="(max-width: 800px) 100vw"
         placeholder="blur"
         blurDataURL={rgbDataURL(90, 90, 90)}
         alt={media.title}

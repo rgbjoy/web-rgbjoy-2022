@@ -74,9 +74,13 @@ $grid: 30px;
     align-items: center;
 
     img {
-      object-fit: contain;
       width: 90%;
-      height: 90%;
+      height: auto;
+
+      @media screen and (max-height:1080px) {
+        object-fit: contain;
+        height: 90%;
+      }
     }
 
     video {
