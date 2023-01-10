@@ -115,8 +115,8 @@ const Info = (props) => {
 
       <div dangerouslySetInnerHTML={{__html:props.page.content}} />
 
-      <Link href="/dev" scroll={false}>
-        <a className={`btn ${style.btn}`}>See some work</a>
+      <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
+        See some work
       </Link>
 
       <GetStrengths />

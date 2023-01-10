@@ -4,7 +4,7 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 
 ## Technology used
 
-- Next.js 12
+- Next.js 13
 - React 18
 - TypeScript
 - Apollo Client
@@ -12,10 +12,6 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 - [R3F](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) for intro 3D
 - [Framer Motion](https://www.framer.com/motion/) and [Greensock](https://greensock.com/) for animation
 - [SASS](https://sass-lang.com/) for styling
-
-## Todo
-- ~~Use Wordpress as headless CMS~~
-- ~~Create a section of all my art and coding doodles~~
 
 ### Conclusion
 
