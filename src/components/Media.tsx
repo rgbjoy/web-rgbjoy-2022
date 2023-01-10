@@ -6,8 +6,14 @@ import style from "../pages/art.module.scss"
 const Media = ({ media, thumbnail = null }) => {
 
   const animationVariants = {
-    visible: { opacity: 1 },
-    hidden: { opacity: 0.5 },
+    visible: {
+      opacity: 1,
+      background: "rgba(35, 35, 35, 0)",
+    },
+    hidden: {
+      opacity: 0.5,
+      background: "rgba(35, 35, 35, 1)",
+    },
   }
 
   const [loaded, setLoaded] = useState(false);
