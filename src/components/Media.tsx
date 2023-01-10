@@ -1,20 +1,25 @@
+import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image'
+import { useEffect, useState } from 'react';
+import style from "../pages/art.module.scss"
 
-const Media = ({media, thumbnail = null}) => {
+const Media = ({ media, thumbnail = null }) => {
 
-  const keyStr =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+  const animationVariants = {
+    visible: { opacity: 1 },
+    hidden: { opacity: 0.5 },
+  }
 
-  const triplet = (e1: number, e2: number, e3: number) =>
-    keyStr.charAt(e1 >> 2) +
-    keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
-    keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
-    keyStr.charAt(e3 & 63)
-
-  const rgbDataURL = (r: number, g: number, b: number) =>
-  `data:image/gif;base64,R0lGODlhAQABAPAA${
-    triplet(0, r, g) + triplet(b, 255, 255)
-  }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
+  const [loaded, setLoaded] = useState(false);
+  const animationControls = useAnimation();
+  useEffect(
+    () => {
+      if (loaded) {
+        animationControls.start("visible");
+      }
+    },
+    [loaded]
+  );
 
   if (media.mediaType !== "image") {
     return (
@@ -26,17 +31,23 @@ const Media = ({media, thumbnail = null}) => {
     )
   } else {
     return (
-      <Image
-        src={media.mediaItemUrl}
-        width={media.mediaDetails.width}
-        height={media.mediaDetails.height}
-        placeholder="blur"
-        blurDataURL={rgbDataURL(90, 90, 90)}
-        alt={media.title}
-        quality={thumbnail ? 75 : 100}
-        style={{maxWidth:media.mediaDetails.width, maxHeight:media.mediaDetails.height}}
-        className={thumbnail ? "image" : "image-fill"}
-      />
+      <motion.div
+        className={style.image_wrapper}
+        initial={"hidden"}
+        animate={animationControls}
+        variants={animationVariants}
+        transition={{ ease: "easeOut", duration: 0.25 }}
+        style={{ maxWidth: media.mediaDetails.width, maxHeight: media.mediaDetails.height }}
+      >
+        <Image
+          src={media.mediaItemUrl}
+          width={media.mediaDetails.width}
+          height={media.mediaDetails.height}
+          alt={media.title}
+          quality={thumbnail ? 75 : 100}
+          onLoad={() => setLoaded(true)}
+        />
+      </motion.div>
     )
   }
 }
