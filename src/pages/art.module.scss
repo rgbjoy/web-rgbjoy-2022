@@ -15,6 +15,7 @@ $grid: 30px;
     background-clip: padding-box;
 
     .thumbnail {
+      background: #232323;
       img, video {
         width: 100%;
         height: auto;
@@ -73,13 +74,27 @@ $grid: 30px;
     justify-content: center;
     align-items: center;
 
+    .image_wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #232323;
+    }
+
     img {
-      width: 90%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
       height: auto;
 
-      @media screen and (max-height:1080px) and (min-width:$mobile) {
-        object-fit: contain;
-        height: 90%;
+      &.lazy {
+        background: red;
       }
     }
 
