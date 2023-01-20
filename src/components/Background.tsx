@@ -15,18 +15,18 @@ let firstLoad:boolean = true
 let currentPage:string = ""
 
 const colors = {
-  "/": {
+  "home": {
     "red": {r:1, g:0, b:0},
     "green": {r:0, g:1, b:0},
     "blue": {r:0, g:0, b:1},
   },
-  "/info": {
+  "info": {
     r:1, g:0, b:0
   },
-  "/dev": {
+  "dev": {
     r:0, g:1, b:0
   },
-  "/art": {
+  "art": {
     r:0, g:0, b:1
   }
 };
@@ -80,7 +80,7 @@ const animateOut = (meshes, explode:boolean = false) => {
 }
 
 const handleClick = (e) => {
-  if (!clickable || currentPage !== "/") {
+  if (!clickable || currentPage !== "home") {
     return
   }
 
@@ -103,17 +103,17 @@ const Rig = ({ children, page }) => {
 
   const [hovered, setHovered] = useState(false)
   const ref = useRef<Group>(null!)
-  currentPage = page
+  currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
 
   useEffect(() => {
-    if (currentPage === "/") {
+    if (currentPage === "home") {
       document.body.style.cursor = hovered ? 'pointer' : 'auto'
     }
   }, [hovered])
 
   useEffect(() => {
     const meshes = ref.current && ref.current.children
-    if (currentPage === "/") {
+    if (currentPage === "home") {
       animateIn(meshes)
     } else {
       animateOut(meshes)
