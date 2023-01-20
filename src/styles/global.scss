@@ -118,7 +118,10 @@ h3 {
 
 @include mobile-only {
   h1 {
-    font-size: 1.8em;
+    font-size: 1.5em;
+  }
+  h2 {
+    font-size: 1.1em;
   }
 }
 
@@ -136,6 +139,10 @@ p {
   padding: 240px ($gutter * 2) 200px $gutter;
   width: 75%;
   max-width: 960px;
+
+  @media screen and (max-height: 640px) {
+    padding-top: 120px;
+  }
 
   &.art {
     padding-right: ($gutter / 2);
