@@ -86,10 +86,13 @@ a {
     }
   }
 
-  &:not(.btn, .underline):hover::before {
-    transform-origin: left;
-    transform: scaleX(1);
+  @media (hover) {
+    &:not(.btn, .underline):hover::before {
+      transform-origin: left;
+      transform: scaleX(1);
+    }
   }
+
 }
 
 .btn {
