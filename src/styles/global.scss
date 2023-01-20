@@ -74,18 +74,6 @@ a {
     transition: transform 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
   }
 
-  &.red::before {
-    background-color: $red;
-  }
-
-  &.green::before {
-    background-color: $green;
-  }
-
-  &.blue::before {
-    background-color: $blue;
-  }
-
   &.underline {
     &::before {
       transition: transform 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);

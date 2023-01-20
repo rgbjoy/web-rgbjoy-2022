@@ -57,13 +57,13 @@ const SiteLayout = ({ children }) => {
           {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
             .{paths < 2 ? `.` : ``}<span>/</span>
           </ActiveLink> : ""}
-          <ActiveLink className="red" activeClassName={style.active} href="/info">
+          <ActiveLink data-color="red" activeClassName={style.active} href="/info">
             Info
           </ActiveLink>
-          <ActiveLink className="green" activeClassName={style.active} href="/dev">
+          <ActiveLink data-color="green" activeClassName={style.active} href="/dev">
             Dev
           </ActiveLink>
-          <ActiveLink className="blue" activeClassName={style.active} href="/art">
+          <ActiveLink data-color="blue" activeClassName={style.active} href="/art">
             Art
           </ActiveLink>
         </nav>

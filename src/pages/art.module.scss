@@ -5,6 +5,7 @@ $grid: 30px;
 }
 
 .my-masonry-grid :global {
+  user-select: none;
   margin-top: 80px;
   display: flex;
   margin-left: -$grid;

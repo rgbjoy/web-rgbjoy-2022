@@ -7,7 +7,7 @@ export default function Document() {
         <meta name="description" content="Multidisciplinary digital creator & web engineer"/>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
 
         <link rel="apple-touch-icon" sizes="180x180" href="/social/apple-touch-icon.png"/>
