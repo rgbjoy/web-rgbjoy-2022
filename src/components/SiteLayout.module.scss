@@ -15,19 +15,41 @@
     display: flex;
     justify-content: space-around;
 
+
     :first-child span {
       padding-left: 3px;
-    }
-
-    .active {
-      pointer-events: none;
-      opacity: 0.2;
     }
   }
 
   a {
     display: block;
     margin-left: 20px;
+    transition: all 0.25s ease-in-out;
+
+    &.active {
+      pointer-events: none;
+      &[data-color="red"] {
+        color: $red;
+      }
+      &[data-color="green"] {
+        color: $green;
+      }
+      &[data-color="blue"] {
+        color: $blue;
+      }
+    }
+
+    &[data-color="red"]::before {
+      background-color: $red;
+    }
+
+    &[data-color="green"]::before {
+      background-color: $green;
+    }
+
+    &[data-color="blue"]::before {
+      background-color: $blue;
+    }
 
     &:first-child {
       margin: 0;

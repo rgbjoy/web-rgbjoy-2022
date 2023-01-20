@@ -24,7 +24,7 @@ const Media = ({ media, thumbnail = null }) => {
         animationControls.start("visible");
       }
     },
-    [loaded]
+    [loaded, animationControls]
   );
 
   if (media.mediaType !== "image") {
