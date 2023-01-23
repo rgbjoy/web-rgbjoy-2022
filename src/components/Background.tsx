@@ -63,6 +63,12 @@ const animateIn = (meshes) => {
       gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
     }
 
+    if (currentPage === "404") {
+      m.material.wireframe = true;
+    } else {
+      m.material.wireframe = false;
+    }
+
     gsap.to(m.material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
   }
   firstLoad = false
@@ -72,14 +78,14 @@ const animateOut = (meshes, explode:boolean = false) => {
   let maxDegree = 45
   let maxDistance = explode ? 2 : 1
   for (var m of meshes) {
+    gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
+    gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
+    gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true});
     if (currentPage === "404") {
       m.material.wireframe = true;
     } else {
       m.material.wireframe = false;
     }
-    gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true});
     if (!explode) {
       gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
     }
