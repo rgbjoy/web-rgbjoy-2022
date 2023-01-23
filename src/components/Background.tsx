@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Group } from 'three';
 import { Canvas, useFrame } from '@react-three/fiber'
-import {  Float } from '@react-three/drei'
+import {  Float, useCursor } from '@react-three/drei'
 
 import gsap from "gsap"
 
@@ -106,7 +106,7 @@ const handleClick = (e) => {
 
 const Plane = (props: any) => {
   return (
-    <mesh {...props} >
+    <mesh {...props}>
       <planeGeometry />
       <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} />
     </mesh>
@@ -115,15 +115,11 @@ const Plane = (props: any) => {
 
 const Rig = ({ children, page }) => {
 
-  const [hovered, setHovered] = useState(false)
+  const [hovered, set] = useState(null)
+  useCursor(hovered, 'pointer', 'auto')
+
   const ref = useRef<Group>(null!)
   currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
-
-  useEffect(() => {
-    if (currentPage === "home") {
-      document.body.style.cursor = hovered ? 'pointer' : 'auto'
-    }
-  }, [hovered])
 
   useEffect(() => {
     const meshes = ref.current && ref.current.children
@@ -142,14 +138,14 @@ const Rig = ({ children, page }) => {
 
   return (
     <group
+      onPointerOver={() => set(true)} onPointerOut={() => set(false)}
       onClick={e => handleClick(e)}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
       ref={ref}>
       {children}
     </group>
   )
 }
+
 
 const Background = ({ page }) => {
   return (
