@@ -28,6 +28,9 @@ const colors = {
   },
   "art": {
     r:0, g:0, b:1
+  },
+  "404": {
+    r:1, g:1, b:1
   }
 };
 
@@ -69,6 +72,11 @@ const animateOut = (meshes, explode:boolean = false) => {
   let maxDegree = 45
   let maxDistance = explode ? 2 : 1
   for (var m of meshes) {
+    if (currentPage === "404") {
+      m.material.wireframe = true;
+    } else {
+      m.material.wireframe = false;
+    }
     gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true});

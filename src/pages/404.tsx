@@ -7,7 +7,7 @@ const Custom404 = () => (
   <Layout page="404">
     <Head><title>404</title></Head>
     <h1>Uh oh.</h1>
-    <Link className={`btn ${style.btn}`} href="/" scroll={false}>
+    <Link className={`btn ${style.btn}`} href="/">
       Go back
     </Link>
   </Layout>
