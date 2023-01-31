@@ -116,7 +116,7 @@ const Plane = (props: any) => {
 const Rig = ({ children, page }) => {
 
   const [hovered, set] = useState(null)
-  useCursor(hovered, 'pointer', 'auto')
+  useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
   const ref = useRef<Group>(null!)
   currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
