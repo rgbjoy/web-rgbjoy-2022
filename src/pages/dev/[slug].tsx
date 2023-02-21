@@ -1,9 +1,6 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 
-// import { Client } from '../../interfaces'
-// import { clientData } from '../../data/client'
-
 import { gql } from "@apollo/client";
 import { client } from "../../data/app";
 
