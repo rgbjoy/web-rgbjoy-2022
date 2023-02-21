@@ -29,7 +29,7 @@ const Media = ({ media, thumbnail = null }) => {
 
   if (media.mediaType !== "image") {
     return (
-      <video autoPlay loop width={thumbnail ? 300 : media.mediaDetails.width} height={thumbnail ? 300 : media.mediaDetails.height}>
+      <video muted autoPlay loop width={thumbnail ? 300 : media.mediaDetails.width} height={thumbnail ? 300 : media.mediaDetails.height}>
         <source
           src={media.mediaItemUrl}
         />
