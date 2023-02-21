@@ -1,26 +1,19 @@
-import * as React from 'react'
 import Link from 'next/link'
-
-import { Client } from '../interfaces'
 
 import style from './ClientDetail.module.scss'
 
-type ClientDetailProps = {
-  item: Client
-}
-
-const ClientDetail = ({ item }: ClientDetailProps) => {
+const ClientDetail = ({ item }) => {
   return (
     <>
-      <h1 className={style.header}>{item.name}</h1>
-      <p>{item.time} • {item.title}</p>
-      <p className={style.subhead}>{item.description}</p>
+      <h1 className={style.header}>{item.title}</h1>
+      <p>{item.client.date} • {item.client.title}</p>
+      <div className={style.subhead} dangerouslySetInnerHTML={{__html:item.content}} />
       <div className={`${style.subhead} ${style.technology}`}>
         Technology:
         <ul className={style.technologyList}>
-          {item.technology.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
+          {item.client.technologies.map((item, i) => {
+            return (<li key={i}>{item.technology}</li>)
+          })}
         </ul>
       </div>
       <Link className={`${style.back} underline`} href="/dev" scroll={false}>

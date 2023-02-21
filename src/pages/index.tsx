@@ -34,7 +34,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const { errors, data } = await client.query({
     query: gql`
-      query postsQuery{
+      query {
         page(id:"cG9zdDo1") {
           home {
             header

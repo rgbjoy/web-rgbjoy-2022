@@ -82,7 +82,7 @@ const Art = (props) => {
 export const getStaticProps: GetStaticProps = async () => {
   const { errors, data } = await client.query({
     query: gql`
-      query postsQuery {
+      query {
         page(id: "cG9zdDo1MA==") {
           content(format: RENDERED)
           artwork {

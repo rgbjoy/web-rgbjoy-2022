@@ -1,8 +1,6 @@
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
 
-import { Client } from '../../interfaces'
-import { clientData } from '../../data/client'
 import Layout from '../../components/Layout';
 import Link from 'next/link'
 import style from "./dev.module.scss"
@@ -13,7 +11,7 @@ import { client } from "../../data/app";
 
 const Dev = (props) => {
   const {
-    clients: clients,
+    clients: { nodes },
     page: { dev },
   } = props;
 
@@ -49,10 +47,10 @@ const Dev = (props) => {
 
         <h2 className={style.sectionTitle}>Clients</h2>
         <ul className={style.list}>
-          {clients.map((item, i) => (
+          {nodes.map((item, i) => (
             <li className={style.item} key={"clients"+i}>
-              <div className={style.name}>{item.name}</div>
-              <div className={style.time}>{item.time}</div>
+              <div className={style.name}>{item.title}</div>
+              <div className={style.date}>{item.client.date}</div>
               <Link className={`${style.seemore} underline`} href="/dev/[slug]" as={`/dev/${item.slug}`} scroll={false}>
                 More details
               </Link>
@@ -70,10 +68,19 @@ const Dev = (props) => {
 
 
 export const getStaticProps: GetStaticProps = async () => {
-  const clients: Client[] = clientData
   const { data, errors } = await client.query({
     query: gql`
-      query postsQuery {
+      query {
+        clientPosts(where: {orderby: {order: ASC, field: MENU_ORDER}}) {
+          nodes {
+            title
+            slug
+            client {
+              date
+              title
+            }
+          }
+        }
         page(id: "cG9zdDo0MQ==") {
           dev {
             intro
@@ -96,7 +103,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props: {
-      clients,
+      clients: data.clientPosts,
       page: data.page,
     },
     revalidate: 60,
