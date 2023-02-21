@@ -127,7 +127,7 @@ const Info = (props) => {
 export const getStaticProps: GetStaticProps = async () => {
   const { errors, data } = await client.query({
     query: gql`
-      query postsQuery {
+      query {
         page(id: "cG9zdDoyNA==") {
           content(format: RENDERED)
           info {
