@@ -105,10 +105,9 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       clients: data.clientPosts,
       page: data.page,
-    }
+    },
+    revalidate: 60,
   }
 }
-
-export const revalidate = 60
 
 export default Dev

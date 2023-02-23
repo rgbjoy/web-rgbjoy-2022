@@ -54,10 +54,9 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       page: data.page,
-    }
+    },
+    revalidate: 60,
   };
 }
-
-export const revalidate = 60
 
 export default IndexPage
