@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { Metadata, GetStaticProps } from 'next';
 
 import Link from 'next/link'
 import Head from 'next/head'
@@ -7,6 +7,11 @@ import Layout from '../components/Layout'
 
 import { gql } from "@apollo/client";
 import { client } from "../data/app";
+
+export const metadata: Metadata = {
+  title: 'Tom Fletcher',
+  description: 'Multidisciplinary digital creator &amp; web engineer',
+};
 
 const IndexPage = (props) => {
   const {
@@ -57,7 +62,5 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   };
 }
-
-export const revalidate = 60
 
 export default IndexPage

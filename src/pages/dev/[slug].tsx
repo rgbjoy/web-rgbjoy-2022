@@ -75,6 +75,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 }
 
-export const revalidate = 60
+
 
 export default StaticPropsDetail
