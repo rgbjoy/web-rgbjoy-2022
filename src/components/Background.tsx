@@ -14,24 +14,25 @@ let clickable:boolean = false
 let firstLoad:boolean = true
 let currentPage:string = ""
 
-const colors = {
-  "home": {
-    "red": {r:1, g:0, b:0},
-    "green": {r:0, g:1, b:0},
-    "blue": {r:0, g:0, b:1},
-  },
-  "info": {
-    r:1, g:0, b:0
-  },
-  "dev": {
-    r:0, g:1, b:0
-  },
-  "art": {
-    r:0, g:0, b:1
-  },
-  "404": {
-    r:1, g:1, b:1
+const getColor = (page:string, color:string = "") => {
+  const colors = {
+    "home": {
+      "red": {r:1, g:0, b:0},
+      "green": {r:0, g:1, b:0},
+      "blue": {r:0, g:0, b:1},
+    },
+    "info": {
+      r:1, g:0, b:0
+    },
+    "dev": {
+      r:0, g:1, b:0
+    },
+    "art": {
+      r:0, g:0, b:1
+    },
   }
+  let selection = colors[page] ? colors[page][color] || colors[page] : {r:1, g:1, b:1}
+  return selection
 };
 
 const getRandomPick = (items: Array<number>): number => {
@@ -52,15 +53,15 @@ const animateIn = (meshes) => {
     if (m.name == "red") {
       gsap.to(m.position, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: THREE.MathUtils.degToRad(90), y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.material.color, { duration: 2, r:getColor(currentPage, m.name).r, g:getColor(currentPage, m.name).g, b:getColor(currentPage, m.name).b, ease: "Power2.easeOut" });
     } else if (m.name == "green") {
       gsap.to(m.position, { duration: 2, x: 0, y: -0.5, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.material.color, { duration: 2, r:getColor(currentPage, m.name).r, g:getColor(currentPage, m.name).g, b:getColor(currentPage, m.name).b, ease: "Power2.easeOut" });
     } else if (m.name == "blue") {
       gsap.to(m.position, { duration: 2, x: 0.5, y: 0, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: 0, y: THREE.MathUtils.degToRad(90), z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.material.color, { duration: 2, r:getColor(currentPage, m.name).r, g:getColor(currentPage, m.name).g, b:getColor(currentPage, m.name).b, ease: "Power2.easeOut" });
     }
 
     if (currentPage === "404") {
@@ -87,7 +88,7 @@ const animateOut = (meshes, explode:boolean = false) => {
       m.material.wireframe = false;
     }
     if (!explode) {
-      gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
+      gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:getColor(currentPage).r, g:getColor(currentPage).g, b:getColor(currentPage).b, ease: "Power2.easInOut"});
     }
   }
   firstLoad = false

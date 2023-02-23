@@ -20,8 +20,6 @@ const StaticPropsDetail = (props) => {
   )
 }
 
-export default StaticPropsDetail
-
 export const getStaticPaths = async () => {
   const { data, errors } = await client.query({
     query: gql`
@@ -73,7 +71,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       client: data,
-    },
-    revalidate: 60,
+    }
   }
 }
+
+export const revalidate = 60
+
+export default StaticPropsDetail
