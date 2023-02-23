@@ -2,12 +2,6 @@
 const path = require('path');
 
 const nextConfig = {
-  env: {
-    REVALIDATION_TOKEN: process.env.REVALIDATION_TOKEN
-  },
-  experimental: {
-    typedRoutes: true,
-  },
   images: {
     remotePatterns: [
       {

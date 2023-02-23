@@ -117,6 +117,6 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 }
 
-
+export const revalidate = 60
 
 export default Art
