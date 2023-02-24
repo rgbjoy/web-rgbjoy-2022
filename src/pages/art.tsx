@@ -7,7 +7,7 @@ import style from './art.module.scss'
 import Media from '../components/Media';
 
 import { gql } from "@apollo/client";
-import { client } from "../data/apolloClient";
+import { apolloClient } from "../data/apolloClient";
 
 import { useState, useEffect, useRef } from "react";
 import LightBox from '../components/Lightbox';
@@ -80,7 +80,7 @@ const Art = (props) => {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { errors, data } = await client.query({
+  const { errors, data } = await apolloClient.query({
     query: gql`
       query {
         page(id: "cG9zdDo1MA==") {

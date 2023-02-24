@@ -6,7 +6,7 @@ import Link from 'next/link'
 import style from "./dev.module.scss"
 
 import { gql } from "@apollo/client";
-import { client } from "../../data/apolloClient";
+import { apolloClient } from "../../data/apolloClient";
 
 
 const Dev = (props) => {
@@ -68,7 +68,7 @@ const Dev = (props) => {
 
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { data, errors } = await client.query({
+  const { data, errors } = await apolloClient.query({
     query: gql`
       query {
         clientPosts(where: {orderby: {order: ASC, field: MENU_ORDER}}) {

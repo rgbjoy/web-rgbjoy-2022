@@ -2,7 +2,7 @@ import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 
 import { gql } from "@apollo/client";
-import { client } from "../../data/apolloClient";
+import { apolloClient } from "../../data/apolloClient";
 
 import ClientDetail from '../../components/ClientDetail'
 import Layout from '../../components/Layout';
@@ -14,7 +14,7 @@ const StaticPropsDetail = (props) => {
 
   return (
     <Layout page="detail">
-      <Head><title>{`${client ? clientPost.title : 'Client Detail'}`}</title></Head>
+      <Head><title>{`${clientPost ? clientPost.title : 'Client Detail'}`}</title></Head>
       <ClientDetail item={clientPost} />
     </Layout>
   )
@@ -23,7 +23,7 @@ const StaticPropsDetail = (props) => {
 export default StaticPropsDetail
 
 export const getStaticPaths = async () => {
-  const { data, errors } = await client.query({
+  const { data, errors } = await apolloClient.query({
     query: gql`
       query GetPostSlugs{
         clientPosts {
@@ -47,7 +47,7 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { data, errors } = await client.query({
+  const { data, errors } = await apolloClient.query({
     query: gql`
       query GetPostBySlug($slug: ID!) {
         clientPost(id: $slug, idType: URI) {
