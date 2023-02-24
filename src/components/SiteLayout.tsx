@@ -61,10 +61,10 @@ const SiteLayout = ({ children }) => {
             Info
           </ActiveLink>
           <ActiveLink data-color="green" activeClassName={style.active} href="/dev">
-            Dev
+            Development
           </ActiveLink>
           <ActiveLink data-color="blue" activeClassName={style.active} href="/art">
-            Art
+            Art & Design
           </ActiveLink>
         </nav>
       </motion.header>

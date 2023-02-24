@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 import { gql } from "@apollo/client";
-import { client } from "../data/app";
+import { client } from "../data/apolloClient";
 
 
 const Info = (props) => {

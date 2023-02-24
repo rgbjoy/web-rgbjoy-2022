@@ -6,7 +6,7 @@ import Link from 'next/link'
 import style from "./dev.module.scss"
 
 import { gql } from "@apollo/client";
-import { client } from "../../data/app";
+import { client } from "../../data/apolloClient";
 
 
 const Dev = (props) => {
@@ -41,7 +41,7 @@ const Dev = (props) => {
       <Head><title>Developemt</title></Head>
 
       <div >
-        <h1 className={style.header}>Development Work</h1>
+        <h1 className={style.header}>Development</h1>
 
         <div dangerouslySetInnerHTML={{__html:dev.intro}} />
 

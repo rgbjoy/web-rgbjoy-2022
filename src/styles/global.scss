@@ -1,11 +1,3 @@
-@font-face {
-  font-family: "Rhode";
-  src: url("../asset/fonts/Rhode-MediumWide.woff2") format("woff2"),
-    url("../asset/fonts/Rhode-MediumWide.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -108,7 +100,7 @@ a {
 h1,
 h2,
 h3 {
-  font-family: "Rhode", sans-serif;
+  font-family: var(--rhode-font), sans-serif;
   font-weight: normal;
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -167,12 +159,12 @@ p {
 }
 
 .badge {
-  font-family: "Rhode", sans-serif;
+  font-family: var(--rhode-font), sans-serif;
   position: fixed;
   writing-mode: vertical-rl;
   right: $gutter;
   transform: translateY(-50%);
-  font-size: 80%;
+  font-size: 75%;
   letter-spacing: 1px;
   top: 50%;
 

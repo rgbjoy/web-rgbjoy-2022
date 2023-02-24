@@ -10,11 +10,7 @@
 
   p {
     margin-top: 30px;
-    max-width: 60%;
-
-    @include mobile-only {
-      max-width: 80%;
-    }
+    // max-width: 80%;
   }
 
   pointer-events: none;
