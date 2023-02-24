@@ -61,7 +61,7 @@ const SiteLayout = ({ children }) => {
             Info
           </ActiveLink>
           <ActiveLink data-color="green" activeClassName={style.active} href="/dev">
-            Development
+            Dev
           </ActiveLink>
           <ActiveLink data-color="blue" activeClassName={style.active} href="/art">
             Art & Design
