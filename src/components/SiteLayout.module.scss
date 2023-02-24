@@ -9,12 +9,15 @@
   }
 
   nav {
-    font-family: "Rhode", sans-serif;
+    font-family: var(--rhode-font), sans-serif;
     font-size: 80%;
     width: 100%;
     display: flex;
     justify-content: space-around;
 
+    @include mobile-only {
+      font-size: 70%;
+    }
 
     :first-child span {
       padding-left: 3px;

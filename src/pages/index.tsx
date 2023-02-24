@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetStaticProps, Metadata } from 'next';
 
 import Link from 'next/link'
 import Head from 'next/head'
@@ -6,7 +6,7 @@ import style from "./index.module.scss"
 import Layout from '../components/Layout'
 
 import { gql } from "@apollo/client";
-import { client } from "../data/app";
+import { apolloClient } from "../data/apolloClient";
 
 const IndexPage = (props) => {
   const {
@@ -32,7 +32,7 @@ const IndexPage = (props) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-  const { errors, data } = await client.query({
+  const { errors, data } = await apolloClient.query({
     query: gql`
       query {
         page(id:"cG9zdDo1") {

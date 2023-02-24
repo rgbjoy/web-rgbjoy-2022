@@ -7,7 +7,7 @@ import style from './art.module.scss'
 import Media from '../components/Media';
 
 import { gql } from "@apollo/client";
-import { client } from "../data/app";
+import { apolloClient } from "../data/apolloClient";
 
 import { useState, useEffect, useRef } from "react";
 import LightBox from '../components/Lightbox';
@@ -58,9 +58,9 @@ const Art = (props) => {
 
   return (
     <Layout page="art">
-      <Head><title>Artwork</title></Head>
+      <Head><title>Art & Design</title></Head>
 
-      <h1 className={style.header}>Artwork</h1>
+      <h1 className={style.header}>Art & Design</h1>
 
       <div dangerouslySetInnerHTML={{ __html: props.page.content }} />
       <Masonry
@@ -80,7 +80,7 @@ const Art = (props) => {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { errors, data } = await client.query({
+  const { errors, data } = await apolloClient.query({
     query: gql`
       query {
         page(id: "cG9zdDo1MA==") {
