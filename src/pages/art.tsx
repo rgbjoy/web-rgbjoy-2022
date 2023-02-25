@@ -93,7 +93,7 @@ export const getStaticProps: GetStaticProps = async () => {
               mediaDetails {
                 width
                 height
-                sizes(include: MEDIUM) {
+                sizes(include: MEDIUM_LARGE) {
                   sourceUrl
                   width
                   height
