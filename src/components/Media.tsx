@@ -46,9 +46,9 @@ const Media = ({ media, thumbnail = null }) => {
         style={{ maxWidth: media.mediaDetails.width, maxHeight: media.mediaDetails.height }}
       >
         <Image
-          src={media.mediaItemUrl}
-          width={media.mediaDetails.width}
-          height={media.mediaDetails.height}
+          src={thumbnail ? media.mediaDetails.sizes[0].sourceUrl : media.mediaItemUrl}
+          width={thumbnail ? media.mediaDetails.sizes[0].width : media.mediaDetails.width}
+          height={thumbnail ? media.mediaDetails.sizes[0].height : media.mediaDetails.height}
           alt={media.title}
           quality={thumbnail ? 75 : 100}
           onLoad={() => setLoaded(true)}
