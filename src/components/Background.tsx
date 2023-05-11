@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense, useMemo } from 'react';
 
-import * as THREE from "three";
+import * as THREE from 'three';
+import { Group, InstancedMesh } from 'three'
 import { ResizeObserver } from "@juggle/resize-observer"
-import { Group } from 'three';
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, useCursor } from '@react-three/drei'
+import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, InstancedRigidBodyProps } from "@react-three/rapier";
+import { Attractor } from "@react-three/rapier-addons";
 
 import gsap from "gsap"
 
@@ -63,12 +65,6 @@ const animateIn = (meshes) => {
       gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
     }
 
-    if (currentPage === "404") {
-      m.material.wireframe = true;
-    } else {
-      m.material.wireframe = false;
-    }
-
     gsap.to(m.material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
   }
   firstLoad = false
@@ -81,11 +77,7 @@ const animateOut = (meshes, explode:boolean = false) => {
     gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true});
-    if (currentPage === "404") {
-      m.material.wireframe = true;
-    } else {
-      m.material.wireframe = false;
-    }
+
     if (!explode) {
       gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
     }
@@ -113,7 +105,11 @@ const Plane = (props: any) => {
   )
 }
 
-const Rig = ({ children, page }) => {
+const RigPages = ({ page }) => {
+
+  const { camera } = useThree();
+  camera.position.set(3, 3, 3);
+  camera.lookAt(0,0,0);
 
   const [hovered, set] = useState(null)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
@@ -133,7 +129,7 @@ const Rig = ({ children, page }) => {
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
-    ref.current.rotation.y += delta / 50;
+    ref.current.rotation.y += delta / 25;
   })
 
   return (
@@ -141,30 +137,98 @@ const Rig = ({ children, page }) => {
       onPointerOver={() => set(true)} onPointerOut={() => set(false)}
       onClick={e => handleClick(e)}
       ref={ref}>
-      {children}
+      <Plane color="#FF0000" name="red" />
+      <Plane color="#00FF00" name="green" />
+      <Plane color="#0000FF" name="blue" />
     </group>
   )
 }
 
+const Rig404 = () => {
+  const COUNT = 26;
+  const refMesh = useRef<InstancedMesh>(null);
+  const rigidBodies = useRef<RapierRigidBody[]>(null);
+  const color = ["red", "green", "blue"]
+
+  const { camera } = useThree();
+  camera.position.set(0, 0, 20);
+  camera.lookAt(0,0,0);
+
+  useEffect(() => {
+    if (refMesh.current) {
+      for (let i = 0; i < COUNT*COUNT; i++) {
+        refMesh.current!.setColorAt(i, new THREE.Color(color[Math.floor(Math.random() * color.length)]));
+      }
+      refMesh.current!.instanceColor!.needsUpdate = true;
+    }
+
+  }, []);
+
+  const instances = useMemo(() => {
+    const instances: InstancedRigidBodyProps[] = [];
+    for (let row = 0; row < COUNT/2; row++) {
+      for (let column = 0; column < COUNT/2; column++) {
+        const index = row * COUNT/2 + column;
+        instances.push({
+          key: `instance_${row}_${column}`,
+          position: [-(COUNT/2)/2+row+0.5, Math.random() * 4 + 1, -(COUNT/2)/2+column+0.5],
+          collisionGroups: interactionGroups(index === 0 ? 0 : 1)
+        });
+      }
+    }
+
+    return instances;
+  }, []);
+
+  return (
+    <Physics gravity={[0,0,0]}>
+      <InstancedRigidBodies
+        ref={rigidBodies}
+        instances={instances}
+        colliders="ball"
+      >
+        <instancedMesh ref={refMesh} args={[undefined, undefined, COUNT*COUNT]} count={COUNT*COUNT}>
+          <sphereGeometry args={[0.25]} />
+          <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthTest={false} transparent={true} />
+          <Attractor
+            strength={-0.3}
+            range={2}
+            collisionGroups={interactionGroups(0, 1)}
+          />
+        </instancedMesh>
+      </InstancedRigidBodies>
+      <Attractor strength={0.01} />
+    </Physics>
+  )
+}
+
+const RenderPageContent = ({page}) => {
+  if (page === "/404") {
+    return <Rig404 />;
+  } else {
+    return (
+      <RigPages page={page} />
+    );
+  }
+};
+
 
 const Background = ({ page }) => {
   return (
-    <Canvas className={style.background} camera={{ fov: 25, position: [5, 5, 5] }} resize={{ polyfill: ResizeObserver }}
-      gl={{
-        powerPreference: "high-performance",
-        alpha: true,
-        antialias: false,
-        depth: false,
-        toneMapping: THREE.NoToneMapping,
-      }}>
-      <Float>
-        <Rig page={page}>
-          <Plane color="#FF0000" name="red" />
-          <Plane color="#00FF00" name="green" />
-          <Plane color="#0000FF" name="blue" />
-        </Rig>
-      </Float>
-    </Canvas>
+    <Suspense fallback={null}>
+      <Canvas className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
+        gl={{
+          powerPreference: "high-performance",
+          alpha: true,
+          antialias: false,
+          depth: false,
+          toneMapping: THREE.NoToneMapping,
+        }}>
+          <Float>
+            <RenderPageContent page={page} />
+          </Float>
+      </Canvas>
+    </Suspense>
   )
 }
 

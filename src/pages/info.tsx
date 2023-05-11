@@ -12,7 +12,7 @@ import { gql } from "@apollo/client";
 import { apolloClient } from "../data/apolloClient";
 
 
-const Info = (props) => {
+const Info = props => {
 
   const {
     page: { info },

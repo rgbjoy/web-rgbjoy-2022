@@ -7,7 +7,7 @@ import { apolloClient } from "../../data/apolloClient";
 import ClientDetail from '../../components/ClientDetail'
 import Layout from '../../components/Layout';
 
-const StaticPropsDetail = (props) => {
+const StaticPropsDetail = props => {
   const {
     client: { clientPost },
   } = props;
