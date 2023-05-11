@@ -5,7 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#121212" />
+        <meta name="theme-color" content="#000000" />
 
         <meta name="description" content="Multidisciplinary digital creator & web engineer"/>
 
@@ -17,7 +17,7 @@ export default function Document() {
         <link rel="shortcut icon" href="/social/favicon.ico"/>
         <meta name="msapplication-TileColor" content="#da532c"/>
         <meta name="msapplication-config" content="/social/browserconfig.xml"/>
-        <meta name="theme-color" content="#121212"/>
+        <meta name="theme-color" content="#000000"/>
 
         <meta property="og:url" content="https://rgbjoy.com"/>
         <meta property="og:site_name" content="RGBJOY"/>
