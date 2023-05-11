@@ -1,5 +1,5 @@
-import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import type { AppProps } from 'next/app'
 import { Analytics } from '@vercel/analytics/react';
 
 import { AnimatePresence } from 'framer-motion'
@@ -25,21 +25,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   return (
-    <main className={`${montserrat.className} ${myFont.variable}`}>
+    <>
       <Head>
-        <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta name="theme-color" content="#121212" />
       </Head>
-      <SiteLayout>
-        <AnimatePresence
-          mode="wait"
-          onExitComplete={() => {window.scrollTo(0, 0)}}
-        >
-          <Component {...pageProps} key={router.pathname} />
-        </AnimatePresence>
-      </SiteLayout>
-      <Analytics />
-    </main>
+      <main className={`${montserrat.className} ${myFont.variable}`}>
+        <SiteLayout>
+          <AnimatePresence
+            mode="wait"
+            onExitComplete={() => { window.scrollTo(0, 0) }}
+          >
+            <Component {...pageProps} key={router.pathname} />
+          </AnimatePresence>
+        </SiteLayout>
+        <Analytics />
+      </main>
+    </>
   )
 }

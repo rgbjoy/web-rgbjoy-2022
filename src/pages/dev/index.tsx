@@ -9,7 +9,7 @@ import { gql } from "@apollo/client";
 import { apolloClient } from "../../data/apolloClient";
 
 
-const Dev = (props) => {
+const Dev = props => {
   const {
     clients: { nodes },
     page: { dev },

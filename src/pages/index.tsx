@@ -8,7 +8,12 @@ import Layout from '../components/Layout'
 import { gql } from "@apollo/client";
 import { apolloClient } from "../data/apolloClient";
 
-const IndexPage = (props) => {
+export const metadata: Metadata = {
+  title: '...',
+  description: '...',
+};
+
+const Home = props => {
   const {
     page: { home },
   } = props;
@@ -59,4 +64,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 }
 
-export default IndexPage
+export default Home

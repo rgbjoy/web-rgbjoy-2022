@@ -12,7 +12,7 @@ import { apolloClient } from "../data/apolloClient";
 import { useState, useEffect, useRef } from "react";
 import LightBox from '../components/Lightbox';
 
-const Art = (props) => {
+const Art = props => {
 
   const {
     page: { artwork },

@@ -4,6 +4,9 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        <meta charSet="utf-8" />
+        <meta name="theme-color" content="#121212" />
+
         <meta name="description" content="Multidisciplinary digital creator & web engineer"/>
 
         <link rel="apple-touch-icon" sizes="180x180" href="/social/apple-touch-icon.png"/>
