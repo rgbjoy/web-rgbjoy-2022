@@ -108,7 +108,8 @@ const Plane = (props: any) => {
 const RigPages = ({ page }) => {
 
   const { camera } = useThree();
-  camera.position.set(0, 0, 5);
+  camera.position.set(3, 3, 3);
+  camera.lookAt(0,0,0);
 
   const [hovered, set] = useState(null)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
@@ -128,7 +129,7 @@ const RigPages = ({ page }) => {
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
-    ref.current.rotation.y += delta / 50;
+    ref.current.rotation.y += delta / 25;
   })
 
   return (
@@ -151,6 +152,7 @@ const Rig404 = () => {
 
   const { camera } = useThree();
   camera.position.set(0, 0, 20);
+  camera.lookAt(0,0,0);
 
   useEffect(() => {
     if (refMesh.current) {
@@ -205,9 +207,7 @@ const RenderPageContent = ({page}) => {
     return <Rig404 />;
   } else {
     return (
-      <Float>
-        <RigPages page={page} />
-      </Float>
+      <RigPages page={page} />
     );
   }
 };
@@ -224,7 +224,9 @@ const Background = ({ page }) => {
           depth: false,
           toneMapping: THREE.NoToneMapping,
         }}>
-        <RenderPageContent page={page} />
+          <Float>
+            <RenderPageContent page={page} />
+          </Float>
       </Canvas>
     </Suspense>
   )
