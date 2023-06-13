@@ -148,13 +148,13 @@ const Rig404 = () => {
   const COUNT = 26;
   const refMesh = useRef<InstancedMesh>(null);
   const rigidBodies = useRef<RapierRigidBody[]>(null);
-  const color = ["red", "green", "blue"]
 
   const { camera } = useThree();
   camera.position.set(0, 0, 20);
   camera.lookAt(0,0,0);
 
   useEffect(() => {
+    const color = ["red", "green", "blue"]
     if (refMesh.current) {
       for (let i = 0; i < COUNT*COUNT; i++) {
         refMesh.current!.setColorAt(i, new THREE.Color(color[Math.floor(Math.random() * color.length)]));
