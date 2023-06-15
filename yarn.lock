@@ -138,10 +138,10 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@mediapipe/tasks-vision@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@mediapipe/tasks-vision/-/tasks-vision-0.10.1.tgz#68047459352019cc141dc9c1d15c05b8ab689423"
-  integrity sha512-/zIKjOAIABx+KVfqe8hA6X2pxBGsBYlEtvD7/gpXecvzKefo/JQO6XaggmJul7+noaqiPYM0CVGZxmFJ2oTdSQ==
+"@mediapipe/tasks-vision@0.10.2-rc2":
+  version "0.10.2-rc2"
+  resolved "https://registry.yarnpkg.com/@mediapipe/tasks-vision/-/tasks-vision-0.10.2-rc2.tgz#e3fa5d84d58b9031a0e975d1e5ef8eb8e4a6fc11"
+  integrity sha512-b9ar6TEUo8I07n/jXSuKDu5HgzkDah9pe4H8BYpcubhCEahlfDD5ixE+9SQyJM4HXHXdF9nN/wRQT7rEnLz7Gg==
 
 "@next/env@13.4.5":
   version "13.4.5"
@@ -279,13 +279,13 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.6.1.tgz#913d3a68c5cbc1124fdb18eff919432f7b6abdde"
   integrity sha512-POu8Mk0hIU3lRXB3bGIGe4VHIwwDsQyoD1F394OK7STTiX9w4dG3cTLljjYswkQN+hDSHRrj4O36kuVa7KPU8Q==
 
-"@react-three/drei@^9.74.13":
-  version "9.74.13"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.74.13.tgz#bb509ed7db8eba8d9854bad6e8d58c618f045329"
-  integrity sha512-GwE7aIzkVc0hmq45AsSM56rGpvlwrgAp4qBptPg8AMGP8TsqyxGSb/6caQ2WPC/5d82qBgwNFW3/eMC5uTe0cA==
+"@react-three/drei@^9.74.15":
+  version "9.74.15"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.74.15.tgz#9d33496afe45e4f164852c99671fe5a5bb863457"
+  integrity sha512-w2c7V6SLmEKwImF2c/sB+8SmlkoXwn6CTVwGoWMqvrRbZs4Qo5UPP5VIxQwTjUyA0oeXKlAoLNhSlUXgOJsp7Q==
   dependencies:
     "@babel/runtime" "^7.11.2"
-    "@mediapipe/tasks-vision" "^0.10.1"
+    "@mediapipe/tasks-vision" "0.10.2-rc2"
     "@react-spring/three" "~9.6.1"
     "@use-gesture/react" "^10.2.24"
     camera-controls "^2.4.2"
@@ -337,9 +337,9 @@
     use-asset "1.0.4"
 
 "@rushstack/eslint-patch@^1.1.3":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.3.1.tgz#edbb85ff95f3be41eaa70c6d6ad6d8ba0a9c7e46"
-  integrity sha512-RkmuBcqiNioeeBKbgzMlOdreUkJfYaSjwgx9XDgGGpjvWgyaxWvDmZVSN9CS6LjEASadhgPv2BcFp+SeouWXXA==
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.3.2.tgz#31b9c510d8cada9683549e1dbb4284cca5001faf"
+  integrity sha512-V+MvGwaHH03hYhY+k6Ef/xKd6RYlc4q8WBx+2ANmipHJcKuktNcI/NgEsJgdSUF6Lw32njT6OnrRsKYCdgHjYw==
 
 "@swc/helpers@0.5.1":
   version "0.5.1"
@@ -729,14 +729,14 @@ callsites@^3.0.0:
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
 camera-controls@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-2.4.2.tgz#815aa5d7c4c43054fc55fb8b6cc685a56540fea2"
-  integrity sha512-blYDPECYFT/4egDMNWqKc2lBrpOfIAjPPRUNVswQELPi8naGBXUvZM3sDJSNuIRaHqid+JKPtlcoZk+Cb+X5qg==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-2.5.0.tgz#32b48efc7f37354551287e3422d06b96cb7b48b1"
+  integrity sha512-/x3/EgizbpkmJiRHI2qs7nY2Po42+honbQd570CFdQFIxEitO74dArJI+TGHnjG1zGjOifPpbAGkl9V82+IQJg==
 
 caniuse-lite@^1.0.30001406:
-  version "1.0.30001502"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001502.tgz#f7e4a76eb1d2d585340f773767be1fefc118dca8"
-  integrity sha512-AZ+9tFXw1sS0o0jcpJQIXvFTOB/xGiQ4OQ2t98QX3NDn2EZTSRBC801gxrsGgViuq2ak/NLkNgSNEPtCr5lfKg==
+  version "1.0.30001503"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001503.tgz#88b6ff1b2cf735f1f3361dc1a15b59f0561aa398"
+  integrity sha512-Sf9NiF+wZxPfzv8Z3iS0rXM1Do+iOy2Lxvib38glFX+08TCYYYGR5fRJXk4d77C4AYwhUjgYgMsMudbh2TqCKw==
 
 chalk@^4.0.0:
   version "4.1.2"
@@ -2387,10 +2387,10 @@ safe-regex-test@^1.0.0:
     get-intrinsic "^1.1.3"
     is-regex "^1.1.4"
 
-sass@^1.63.3:
-  version "1.63.3"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.63.3.tgz#527746aa43bf2e4eac1ab424f67f6f18a081061a"
-  integrity sha512-ySdXN+DVpfwq49jG1+hmtDslYqpS7SkOR5GpF6o2bmb1RL/xS+wvPmegMvMywyfsmAV6p7TgwXYGrCZIFFbAHg==
+sass@^1.63.4:
+  version "1.63.4"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.63.4.tgz#caf60643321044c61f6a0fe638a07abbd31cfb5d"
+  integrity sha512-Sx/+weUmK+oiIlI+9sdD0wZHsqpbgQg8wSwSnGBjwb5GwqFhYNwwnI+UWZtLjKvKyFlKkatRK235qQ3mokyPoQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -2616,9 +2616,9 @@ three-stdlib@2.21.6:
     zstddec "^0.0.2"
 
 three-stdlib@^2.23.9:
-  version "2.23.9"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.9.tgz#09c74fc6acced3d124e4f9d695156136c587a355"
-  integrity sha512-fYBClVGQptD7UZcoRZGNlR3sKcUW37hVPoEW1v68E4XuiwD0Ml/VqDUJ0yEMVE2DlooDvqgqv/rIcHC/B4N5pg==
+  version "2.23.10"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.10.tgz#94907a558a00da327bd74308c92078fea72f77fc"
+  integrity sha512-y0DlxaN5HZXI9hKjEtqO2xlCEt7XyDCOMvD2M3JJFBmYjwbU+PbJ1n3Z+7Hr/6BeVGE6KZYcqPMnfKrTK5WTJg==
   dependencies:
     "@types/draco3d" "^1.4.0"
     "@types/offscreencanvas" "^2019.6.4"
