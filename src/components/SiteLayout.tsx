@@ -27,7 +27,7 @@ const Footer = () => {
 const SiteLayout = ({ children }) => {
   const router = useRouter()
 
-  const { width } = useWindowDimensions() || {};
+  const { width } = useWindowDimensions();
 
   const paths = router.pathname.split("/").filter(a => a.length > 0).length
 
@@ -50,7 +50,7 @@ const SiteLayout = ({ children }) => {
       <motion.header
         id="header"
         initial={{ top: -20 }}
-        animate={{ top: width ?? (800 < 800 ? 20 : 60) }}
+        animate={{ top: width && (width < 800 ? 20 : 60) }}
         transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
         className={style.header}>
         <nav>
@@ -71,7 +71,7 @@ const SiteLayout = ({ children }) => {
 
       <motion.footer
         id="footer"
-        initial={{ bottom: width ?? (800 < 800 ? -80 : -110) }}
+        initial={{ bottom: width && (width < 800 ? -80 : -110) }}
         animate={{ bottom: 0 }}
         transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
         className={style.footer}>
