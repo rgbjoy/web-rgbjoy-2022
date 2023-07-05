@@ -76,7 +76,7 @@ const animateOut = (meshes, explode:boolean = false) => {
   for (var m of meshes) {
     gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => clickable = true});
+    gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => {clickable = true}});
 
     if (!explode) {
       gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
@@ -111,7 +111,7 @@ const RigPages = ({ page }) => {
   camera.position.set(3, 3, 3);
   camera.lookAt(0,0,0);
 
-  const [hovered, set] = useState(null)
+  const [hovered, set] = useState(Boolean)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
   const ref = useRef<Group>(null!)

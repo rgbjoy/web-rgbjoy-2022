@@ -14,7 +14,7 @@ const ActiveLink = ({ children, activeClassName, ...props }) => {
       : thisClassName
 
   return (
-    <Link className={className} href={null} {...props} scroll={false}>
+    <Link className={className} href={asPath} {...props} scroll={false}>
       {children}
     </Link>
   )
