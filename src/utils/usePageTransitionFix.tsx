@@ -27,6 +27,6 @@ export const usePageTransitionFix = () => {
 
   useEffect(() => {
     const asPath = Router.router?.asPath
-    Router.router?.push(asPath)
+    Router.router?.push(asPath ?? "")
   }, [])
 }

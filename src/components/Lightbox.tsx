@@ -8,13 +8,13 @@ const LightBox = ({ children, media }) => {
 	const toggleIsOpen = () => {
 		setIsOpen(!isOpen);
 		if (!isOpen) {
-			document.querySelector("body").classList.add("noscroll")
-			document.querySelector("#header").classList.add("hidden")
-			document.querySelector("#footer").classList.add("hidden")
+			document.querySelector("body")?.classList.add("noscroll")
+			document.querySelector("#header")?.classList.add("hidden")
+			document.querySelector("#footer")?.classList.add("hidden")
 		} else {
-			document.querySelector("body").classList.remove("noscroll")
-			document.querySelector("#header").classList.remove("hidden")
-			document.querySelector("#footer").classList.remove("hidden")
+			document.querySelector("body")?.classList.remove("noscroll")
+			document.querySelector("#header")?.classList.remove("hidden")
+			document.querySelector("#footer")?.classList.remove("hidden")
 		}
 	};
 

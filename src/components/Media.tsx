@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react';
 import style from "../pages/art.module.scss"
 
-const Media = ({ media, thumbnail = null }) => {
+const Media = ({ media, thumbnail = false }) => {
 
   const animationVariants = {
     visible: {

@@ -63,7 +63,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         }
       }
     `,
-    variables: { slug: params.slug }
+    variables: { slug: params!.slug }
   });
 
   if (errors) {
