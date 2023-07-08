@@ -1,22 +1,16 @@
-import { GetStaticProps } from 'next'
+
+"use client"
 
 import Image from 'next/image'
 import Head from 'next/head'
-import Layout from '../components/Layout';
+import Layout from '@/components/Layout';
 import style from './info.module.scss'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
-import { gql } from "@apollo/client";
-import { apolloClient } from "../data/apolloClient";
 
-
-const Info = props => {
-
-  const {
-    page: { info },
-  } = props;
+const Info = info => {
 
   const animationVariants = {
     visible: { opacity: 1 },
@@ -113,7 +107,7 @@ const Info = props => {
 
       <GetLinks />
 
-      <div dangerouslySetInnerHTML={{__html:props.page.content}} />
+      <div dangerouslySetInnerHTML={{__html:info.content}} />
 
       <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
         See some work
@@ -122,51 +116,6 @@ const Info = props => {
       <GetStrengths />
     </Layout>
   )
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const { errors, data } = await apolloClient.query({
-    query: gql`
-      query {
-        page(id: "cG9zdDoyNA==") {
-          content(format: RENDERED)
-          info {
-            profileImage {
-              mediaDetails {
-                sizes {
-                  sourceUrl
-                  width
-                  height
-                  name
-                }
-              }
-            }
-            links {
-              link {
-                title
-                url
-              }
-            }
-            strengths {
-              title
-              strength
-            }
-          }
-        }
-      }
-    `,
-  });
-
-  if (errors) {
-    return <div className="error">My CMS must be down.</div>
-  }
-
-  return {
-    props: {
-      page: data.page,
-    },
-    revalidate: 60,
-  };
 }
 
 export default Info

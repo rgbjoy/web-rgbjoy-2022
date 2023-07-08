@@ -1,0 +1,130 @@
+.header {
+  position: fixed;
+  top: $gutter;
+  right: $gutter;
+
+  @include mobile-only {
+    top: $gutter-mobile;
+    right: $gutter-mobile;
+  }
+
+  nav {
+    font-family: var(--rhode-font), sans-serif;
+    font-size: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+    @include mobile-only {
+      font-size: 70%;
+    }
+
+    :first-child span {
+      padding-left: 3px;
+    }
+  }
+
+  a {
+    display: block;
+    margin-left: 20px;
+    transition: all 0.25s ease-in-out;
+
+    &.active {
+      pointer-events: none;
+      &[data-color="red"] {
+        color: $red;
+      }
+      &[data-color="green"] {
+        color: $green;
+      }
+      &[data-color="blue"] {
+        color: $blue;
+      }
+    }
+
+    &[data-color="red"]::before {
+      background-color: $red;
+    }
+
+    &[data-color="green"]::before {
+      background-color: $green;
+    }
+
+    &[data-color="blue"]::before {
+      background-color: $blue;
+    }
+
+    &:first-child {
+      margin: 0;
+    }
+  }
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  &:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, rgba($colorBackground, 0), rgba($colorBackground, 0.9) 100%);
+    width: 100%;
+    height: 10em;
+    z-index: -1;
+
+    @include mobile-only {
+      background-image: linear-gradient(to bottom, rgba($colorBackground, 0), rgba($colorBackground, 0.9) 100%);
+      height: 5em;
+    }
+  }
+
+  .footerWrapper {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin-left: $gutter;
+    margin-right: $gutter;
+    margin-bottom: $gutter;
+
+    &:after {
+      content: "";
+      display: block;
+      width: 90px;
+      height: 1px;
+      background: white;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+
+      @include mobile-only {
+        width: 1px;
+        height: 90px;
+      }
+    }
+
+    @include mobile-only {
+      margin-left: $gutter-mobile;
+      margin-right: $gutter-mobile;
+      margin-bottom: $gutter-mobile;
+    }
+  }
+
+  .footerLinks a {
+    margin-right: 10px;
+    font-size: 80%;
+
+    @include mobile-only {
+      font-size: 65%;
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}

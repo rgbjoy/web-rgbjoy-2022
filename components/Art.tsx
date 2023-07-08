@@ -1,22 +1,17 @@
-import { GetStaticProps } from 'next'
+"use client"
 
 import Head from 'next/head'
 import Layout from '../components/Layout';
 import Masonry from 'react-masonry-css'
 import style from './art.module.scss'
-import Media from '../components/Media';
-
-import { gql } from "@apollo/client";
-import { apolloClient } from "../data/apolloClient";
+import Media from '@/components/Media';
+import LightBox from '@/components/Lightbox';
 
 import { useState, useEffect, useRef } from "react";
-import LightBox from '../components/Lightbox';
 
-const Art = props => {
+const Art = page => {
 
-  const {
-    page: { artwork },
-  } = props;
+  const artwork = page.artwork;
 
   function useHover<HTMLDivElement>() {
     const [value, setValue] = useState<boolean>(false);
@@ -62,7 +57,7 @@ const Art = props => {
 
       <h1 className={style.header}>Art & Design</h1>
 
-      <div dangerouslySetInnerHTML={{ __html: props.page.content }} />
+      <div dangerouslySetInnerHTML={{ __html: page.content }} />
       <Masonry
         breakpointCols={2}
         className={style['my-masonry-grid']}
@@ -77,45 +72,6 @@ const Art = props => {
       </Masonry>
     </Layout>
   )
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const { errors, data } = await apolloClient.query({
-    query: gql`
-      query {
-        page(id: "cG9zdDo1MA==") {
-          content(format: RENDERED)
-          artwork {
-            gallery {
-              title
-              mediaItemUrl
-              mediaType
-              mediaDetails {
-                width
-                height
-                sizes(include: MEDIUM_LARGE) {
-                  sourceUrl
-                  width
-                  height
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-  });
-
-  if (errors) {
-    return <div className="error">My CMS must be down.</div>
-  }
-
-  return {
-    props: {
-      page: data.page,
-    },
-    revalidate: 60,
-  };
 }
 
 export default Art

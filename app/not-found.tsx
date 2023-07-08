@@ -1,7 +1,7 @@
 import Head from "next/head"
 import Link from "next/link"
-import Layout from "../components/Layout"
-import style from "./404.module.scss"
+import Layout from "@/components/Layout"
+import style from "./not-found.module.scss"
 
 const Custom404 = () => (
   <Layout page="404">
