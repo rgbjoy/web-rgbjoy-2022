@@ -116,7 +116,6 @@ const RigPages = ({ page }) => {
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
   const ref = useRef<Group>(null!)
-  console.log(page)
   currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
 
   useEffect(() => {

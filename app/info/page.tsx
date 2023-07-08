@@ -31,9 +31,9 @@ export default async function page() {
       }
     }
   `;
-  const { data: { page: { info } } } = await getData(query)
+  const { data: { page } } = await getData(query)
 
   return (
-    <Info {...info} />
+    <Info {...page} />
   );
 }

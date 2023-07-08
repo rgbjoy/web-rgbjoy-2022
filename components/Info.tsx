@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 
-const Info = info => {
+const Info = page => {
 
   const animationVariants = {
     visible: { opacity: 1 },
@@ -32,14 +32,14 @@ const Info = info => {
   const GetLinks = () => {
     return (
       <div className={style.links}>
-      {info["links"].map((value, i) => {
+      {page.info["links"].map((value, i) => {
         const title = value["link"]["title"]
         const url = value["link"]["url"]
 
         return (
           <span key={"lins"+i}>
             <a className="underline" href={url} target="_blank" rel="noreferrer">{title}</a>
-            <span>{i < info["links"].length-1 ? " • " : ""}</span>
+            <span>{i < page.info["links"].length-1 ? " • " : ""}</span>
           </span>
         )
       })}
@@ -50,7 +50,7 @@ const Info = info => {
   const GetStrengths = () => {
     return (
       <div>
-      {info["strengths"].map((value, i) => {
+      {page.info["strengths"].map((value, i) => {
         const title = value["title"]
         const detail = value["strength"]
 
@@ -68,7 +68,7 @@ const Info = info => {
   const getImageData = () => {
     let smallImage = {}
     let bigImage = {}
-    info.profileImage.mediaDetails.sizes.map((mediaDetails) =>{
+    page.info.profileImage.mediaDetails.sizes.map((mediaDetails) =>{
       if(mediaDetails.name === "medium_large") {
         smallImage = mediaDetails
       }
@@ -107,7 +107,7 @@ const Info = info => {
 
       <GetLinks />
 
-      <div dangerouslySetInnerHTML={{__html:info.content}} />
+      <div dangerouslySetInnerHTML={{__html:page.content}} />
 
       <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
         See some work

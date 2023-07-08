@@ -1,5 +1,5 @@
 import 'normalize.css/normalize.css';
-import '../styles/variables.scss';
+// import '../styles/variables.scss';
 import '../styles/global.scss';
 
 import { Analytics } from '@vercel/analytics/react';
@@ -10,7 +10,7 @@ import SiteLayout from "@/components/SiteLayout"
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
-  src: './fonts/Rhode-Regular.woff2',
+  src: '../public/fonts/Rhode-Regular.woff2',
   variable: '--rhode-font',
 })
 

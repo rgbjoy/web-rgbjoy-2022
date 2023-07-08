@@ -19,7 +19,8 @@ const ClientDetail = ({ item }) => {
       <Link className={`${style.back} underline`} href="/dev" scroll={false}>
         Back to work
       </Link>
-    </>)
+    </>
+  )
 }
 
 export default ClientDetail

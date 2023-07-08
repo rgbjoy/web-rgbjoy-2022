@@ -1,4 +1,4 @@
-export const getData = async query => {
+export const getData = async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;
 
   if (!wordpressApiUrl) {
@@ -7,7 +7,7 @@ export const getData = async query => {
   const response = await fetch(wordpressApiUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, variables }),
   });
 
   return response.json();
