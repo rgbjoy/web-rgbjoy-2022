@@ -21,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout>{children}</SiteLayout>
+        <SiteLayout>
+          {children}
+        </SiteLayout>
         <Analytics />
       </body>
     </html>

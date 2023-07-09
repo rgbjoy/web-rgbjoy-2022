@@ -1,5 +1,5 @@
 import Art from "@/pages/Art";
-import { getData } from "../../utilities/getData";
+import { getData } from "@/utilities/getData";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

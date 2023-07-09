@@ -1,4 +1,3 @@
-"use client"
 import { useState, useRef, useEffect, Suspense, useMemo } from 'react';
 
 import * as THREE from 'three';

@@ -1,5 +1,5 @@
 import Dev from "@/pages/Dev";
-import { getData } from "../../utilities/getData";
+import { getData } from "@/utilities/getData";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

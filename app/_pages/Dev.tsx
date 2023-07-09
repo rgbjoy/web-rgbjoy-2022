@@ -31,7 +31,7 @@ const Dev = data => {
   }
 
   return (
-    <Layout>
+    <Layout page="dev">
         <h1 className={style.header}>Development</h1>
 
         <div dangerouslySetInnerHTML={{__html:dev.intro}} />

@@ -1,5 +1,3 @@
-"use client"
-
 import Link from 'next/link'
 import style from "./Home.module.scss"
 import Layout from '@/components/Layout'

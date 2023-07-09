@@ -1,4 +1,4 @@
-import { getData } from "../../../utilities/getData";
+import { getData } from "@/utilities/getData";
 import Layout from '@/components/Layout';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
