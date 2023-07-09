@@ -1,5 +1,11 @@
-import Home from "../components/Home";
-import { getData } from "../utilites/getData";
+import Home from "@/pages//Home";
+import { getData } from "@/utilities/getData";
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Tom Fletcher - Multidisciplinary digital creator & web engineer',
+  description: 'Multidisciplinary digital creator & web engineer',
+}
 
 export default async function index() {
   const query = `

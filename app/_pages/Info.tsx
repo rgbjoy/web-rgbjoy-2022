@@ -2,9 +2,8 @@
 "use client"
 
 import Image from 'next/image'
-import Head from 'next/head'
 import Layout from '@/components/Layout';
-import style from './info.module.scss'
+import style from './Info.module.scss'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
@@ -32,7 +31,7 @@ const Info = page => {
   const GetLinks = () => {
     return (
       <div className={style.links}>
-      {page.info["links"].map((value, i) => {
+      {page.info.links.map((value, i) => {
         const title = value["link"]["title"]
         const url = value["link"]["url"]
 
@@ -50,7 +49,7 @@ const Info = page => {
   const GetStrengths = () => {
     return (
       <div>
-      {page.info["strengths"].map((value, i) => {
+      {page.info.strengths.map((value, i) => {
         const title = value["title"]
         const detail = value["strength"]
 
@@ -81,7 +80,6 @@ const Info = page => {
 
   return (
     <Layout page="info">
-      <Head><title>Info</title></Head>
       <div className={style.selfie}>
         <h1 className={style.header}>Info</h1>
         <div className={style.selfieWrapper}>

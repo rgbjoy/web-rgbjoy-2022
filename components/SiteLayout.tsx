@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react'
 import { usePathname } from 'next/navigation'
-import Link from 'next/link'
 import style from './SiteLayout.module.scss'
-import useWindowDimensions from '../utilites/useWindowDimensions'
+import useWindowDimensions from '../utilities/useWindowDimensions'
+import NavLink from "./NavLink";
 
 const DynamicBackground = dynamic(
   () => import('./Background'),
@@ -29,6 +29,13 @@ const Footer = () => {
 const SiteLayout = ({ children }) => {
   const pathname = usePathname()
 
+  const links = [
+    { label: "/", path: '/', targetSegment: null, color: null },
+    { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
+    { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
+    { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
+  ]
+
   const { width } = useWindowDimensions();
 
   return (
@@ -42,7 +49,7 @@ const SiteLayout = ({ children }) => {
       <motion.div
         initial={{ right: -20 }}
         animate={{ right: 60 }}
-        transition={{ delay: 1, duration: 0.75, ease:"easeOut" }}
+        transition={{ delay: 1, duration: 0.75, ease: "easeOut" }}
         className={"badge"}>
         2023 Portfolio
       </motion.div>
@@ -51,21 +58,12 @@ const SiteLayout = ({ children }) => {
         id="header"
         initial={{ top: -20 }}
         animate={{ top: width && (width < 800 ? 20 : 60) }}
-        transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
+        transition={{ delay: 0.25, duration: 0.75, ease: "easeOut" }}
         className={style.header}>
         <nav>
-          <Link href="/">
-            \
-          </Link>
-          <Link data-color="red" href="/info">
-            Info
-          </Link>
-          <Link data-color="green" href="/dev">
-            Dev
-          </Link>
-          <Link data-color="blue" href="/art">
-            Art & Design
-          </Link>
+          {links.map((l, i) =>
+            pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} />
+          )}
         </nav>
       </motion.header>
 
@@ -73,7 +71,7 @@ const SiteLayout = ({ children }) => {
         id="footer"
         initial={{ bottom: width && (width < 800 ? -80 : -110) }}
         animate={{ bottom: 0 }}
-        transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
+        transition={{ delay: 0.25, duration: 0.75, ease: "easeOut" }}
         className={style.footer}>
         <Footer />
       </motion.footer>

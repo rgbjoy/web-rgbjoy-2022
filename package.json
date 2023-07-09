@@ -16,11 +16,11 @@
     "@react-three/fiber": "^8.13.4",
     "@react-three/rapier": "^1.1.1",
     "@react-three/rapier-addons": "^3.0.1",
-    "@types/three": "^0.152.1",
+    "@types/three": "^0.153.0",
     "@vercel/analytics": "^1.0.1",
     "framer-motion": "^10.12.18",
     "gsap": "^3.12.2",
-    "next": "13.4.8",
+    "next": "13.4.9",
     "next-sitemap": "^4.1.8",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
@@ -30,12 +30,12 @@
     "three": "^0.154.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.7.16",
-    "@types/node": "^20.3.3",
+    "@apollo/client": "^3.7.17",
+    "@types/node": "^20.4.1",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "eslint": "8.44.0",
-    "eslint-config-next": "13.4.8",
+    "eslint-config-next": "13.4.9",
     "graphql": "^16.7.1",
     "typescript": "5.1.6"
   }

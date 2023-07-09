@@ -1,16 +1,14 @@
-import Head from 'next/head'
-
 import Layout from '@/components/Layout';
 import Link from 'next/link'
-import style from "./dev.module.scss"
+import style from "./Dev.module.scss"
 
 
 const Dev = data => {
+
   const {
     clientPosts: { nodes },
     page: { dev },
   } = data;
-
 
   const GetProjects = () => {
     return (
@@ -34,9 +32,6 @@ const Dev = data => {
 
   return (
     <Layout>
-      <Head><title>Developemt</title></Head>
-
-      <div >
         <h1 className={style.header}>Development</h1>
 
         <div dangerouslySetInnerHTML={{__html:dev.intro}} />
@@ -56,8 +51,6 @@ const Dev = data => {
 
         <h2 className={style.sectionTitle}>Past Projects</h2>
         <GetProjects />
-
-      </div>
     </Layout>
   )
 }

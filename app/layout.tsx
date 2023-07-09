@@ -1,5 +1,4 @@
 import 'normalize.css/normalize.css';
-// import '../styles/variables.scss';
 import '../styles/global.scss';
 
 import { Analytics } from '@vercel/analytics/react';

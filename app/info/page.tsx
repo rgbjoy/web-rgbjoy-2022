@@ -1,5 +1,11 @@
-import Info from "@/components/Info";
-import { getData } from "../../utilites/getData";
+import Info from "@/pages/Info";
+import { getData } from "../../utilities/getData";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Info',
+  description: 'Multidisciplinary digital creator & web engineer',
+}
 
 export default async function page() {
   const query = `

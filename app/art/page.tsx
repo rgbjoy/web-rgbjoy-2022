@@ -1,5 +1,11 @@
-import Art from "@/components/Art";
-import { getData } from "../../utilites/getData";
+import Art from "@/pages/Art";
+import { getData } from "../../utilities/getData";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Art & Design',
+  description: 'Multidisciplinary digital creator & web engineer',
+}
 
 export default async function page() {
   const query = `

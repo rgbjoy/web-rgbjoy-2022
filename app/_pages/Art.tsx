@@ -1,9 +1,8 @@
 "use client"
 
-import Head from 'next/head'
-import Layout from '../components/Layout';
+import Layout from '@/components/Layout';
 import Masonry from 'react-masonry-css'
-import style from './art.module.scss'
+import style from './Art.module.scss'
 import Media from '@/components/Media';
 import LightBox from '@/components/Lightbox';
 
@@ -53,8 +52,6 @@ const Art = page => {
 
   return (
     <Layout page="art">
-      <Head><title>Art & Design</title></Head>
-
       <h1 className={style.header}>Art & Design</h1>
 
       <div dangerouslySetInnerHTML={{ __html: page.content }} />
@@ -63,7 +60,7 @@ const Art = page => {
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
           {
-            artwork.gallery.map((media, i) => {
+            artwork?.gallery.map((media, i) => {
               return (
                 <DoodleImage key={"media"+i} media={media} />
               )
