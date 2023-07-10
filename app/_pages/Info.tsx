@@ -3,6 +3,7 @@
 
 import Image from 'next/image'
 import Layout from '@/components/Layout';
+import { SplitText } from '@/components/SplitText';
 import style from './Info.module.scss'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -31,17 +32,17 @@ const Info = page => {
   const GetLinks = () => {
     return (
       <div className={style.links}>
-      {page.info.links.map((value, i) => {
-        const title = value["link"]["title"]
-        const url = value["link"]["url"]
+        {page.info.links.map((value, i) => {
+          const title = value["link"]["title"]
+          const url = value["link"]["url"]
 
-        return (
-          <span key={"lins"+i}>
-            <a className="underline" href={url} target="_blank" rel="noreferrer">{title}</a>
-            <span>{i < page.info["links"].length-1 ? " • " : ""}</span>
-          </span>
-        )
-      })}
+          return (
+            <span key={"lins" + i}>
+              <a className="underline" href={url} target="_blank" rel="noreferrer">{title}</a>
+              <span>{i < page.info["links"].length - 1 ? " • " : ""}</span>
+            </span>
+          )
+        })}
       </div>
     )
   }
@@ -49,17 +50,17 @@ const Info = page => {
   const GetStrengths = () => {
     return (
       <div>
-      {page.info.strengths.map((value, i) => {
-        const title = value["title"]
-        const detail = value["strength"]
+        {page.info.strengths.map((value, i) => {
+          const title = value["title"]
+          const detail = value["strength"]
 
-        return (
-          <div className={style.strengths} key={"strenths"+i}>
-            <div>{title}</div>
-            <div className={style.detail}>{detail}</div>
-          </div>
-        )
-      })}
+          return (
+            <div className={style.strengths} key={"strenths" + i}>
+              <div>{title}</div>
+              <div className={style.detail}>{detail}</div>
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -67,21 +68,25 @@ const Info = page => {
   const getImageData = () => {
     let smallImage = {}
     let bigImage = {}
-    page.info.profileImage.mediaDetails.sizes.map((mediaDetails) =>{
-      if(mediaDetails.name === "medium_large") {
+    page.info.profileImage.mediaDetails.sizes.map((mediaDetails) => {
+      if (mediaDetails.name === "medium_large") {
         smallImage = mediaDetails
       }
-      if(mediaDetails.name === "1536x1536" || "2048x2048") {
+      if (mediaDetails.name === "1536x1536" || "2048x2048") {
         bigImage = mediaDetails
       }
     })
-    return {smallImage, bigImage}
+    return { smallImage, bigImage }
   }
 
   return (
     <Layout page="info">
       <div className={style.selfie}>
-        <h1 className={style.header}>Info</h1>
+        <h1 className={style.header}>
+          <SplitText>
+            Info
+          </SplitText>
+        </h1>
         <div className={style.selfieWrapper}>
           <motion.div
             initial={"hidden"}
@@ -105,7 +110,7 @@ const Info = page => {
 
       <GetLinks />
 
-      <div dangerouslySetInnerHTML={{__html:page.content}} />
+      <div dangerouslySetInnerHTML={{ __html: page.content }} />
 
       <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
         See some work

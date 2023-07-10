@@ -1,7 +1,9 @@
+"use client"
+
 import Layout from '@/components/Layout';
 import Link from 'next/link'
 import style from "./Dev.module.scss"
-
+import { SplitText } from '@/components/SplitText';
 
 const Dev = data => {
 
@@ -32,7 +34,11 @@ const Dev = data => {
 
   return (
     <Layout page="dev">
-        <h1 className={style.header}>Development</h1>
+        <h1 className={style.header}>
+          <SplitText>
+            Development
+          </SplitText>
+        </h1>
 
         <div dangerouslySetInnerHTML={{__html:dev.intro}} />
 

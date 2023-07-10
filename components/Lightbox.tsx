@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Media from "@/components/Media"
 import style from "@/pages/Art.module.scss"
 

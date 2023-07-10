@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { Suspense } from 'react'
 import { usePathname } from 'next/navigation'
 import style from './SiteLayout.module.scss'
-import useWindowDimensions from '../utilities/useWindowDimensions'
+import useWindowDimensions from '@/utilities/useWindowDimensions'
 import NavLink from "./NavLink";
 
 const DynamicBackground = dynamic(
