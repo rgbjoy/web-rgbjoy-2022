@@ -20,6 +20,7 @@ export async function generateMetadata({ params }) {
     title: clientPost?.title,
   }
 }
+
 export async function generateStaticParams() {
   const query = `
     query {
