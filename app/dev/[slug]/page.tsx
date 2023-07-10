@@ -5,20 +5,8 @@ import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-static'
 
-export async function generateMetadata({ params }) {
-  const { slug } = params
-  const query = `
-    query GetPostBySlug($slug: ID!) {
-      clientPost(id: $slug, idType: URI) {
-        title
-      }
-    }
-  `;
-
-  const { data: {clientPost} } = await getData(query, { slug });
-  return {
-    title: clientPost?.title,
-  }
+export const metadata = {
+  title: '...',
 }
 
 export async function generateStaticParams() {
@@ -62,6 +50,8 @@ export default async function Page({ params }) {
   if (!clientPost) {
     notFound()
   }
+
+  metadata.title = clientPost.title;
 
   return (
     <Layout page="detail">
