@@ -1,5 +1,4 @@
 import Link from 'next/link'
-
 import style from './ClientDetail.module.scss'
 
 const ClientDetail = ({ item }) => {
@@ -19,7 +18,8 @@ const ClientDetail = ({ item }) => {
       <Link className={`${style.back} underline`} href="/dev" scroll={false}>
         Back to work
       </Link>
-    </>)
+    </>
+  )
 }
 
 export default ClientDetail

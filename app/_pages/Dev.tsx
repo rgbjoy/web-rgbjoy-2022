@@ -1,25 +1,21 @@
-import { GetStaticProps } from 'next'
-import Head from 'next/head'
+"use client"
 
-import Layout from '../../components/Layout';
+import Layout from '@/components/Layout';
 import Link from 'next/link'
-import style from "./dev.module.scss"
+import style from "./Dev.module.scss"
+import { SplitText } from '@/components/SplitText';
 
-import { gql } from "@apollo/client";
-import { apolloClient } from "../../data/apolloClient";
+const Dev = data => {
 
-
-const Dev = props => {
   const {
-    clients: { nodes },
+    clientPosts: { nodes },
     page: { dev },
-  } = props;
-
+  } = data;
 
   const GetProjects = () => {
     return (
       <ul className={style.list}>
-      {dev["pastProjects"].map((value, i) => {
+      {dev.pastProjects.map((value, i) => {
         const title = value["title"]
         const description = value["description"]
         const link = value["link"]["url"]
@@ -37,11 +33,12 @@ const Dev = props => {
   }
 
   return (
-    <Layout>
-      <Head><title>Developemt</title></Head>
-
-      <div >
-        <h1 className={style.header}>Development</h1>
+    <Layout page="dev">
+        <h1 className={style.header}>
+          <SplitText>
+            Development
+          </SplitText>
+        </h1>
 
         <div dangerouslySetInnerHTML={{__html:dev.intro}} />
 
@@ -60,54 +57,8 @@ const Dev = props => {
 
         <h2 className={style.sectionTitle}>Past Projects</h2>
         <GetProjects />
-
-      </div>
     </Layout>
   )
-}
-
-
-export const getStaticProps: GetStaticProps = async () => {
-  const { data, errors } = await apolloClient.query({
-    query: gql`
-      query {
-        clientPosts(where: {orderby: {order: ASC, field: MENU_ORDER}}) {
-          nodes {
-            title
-            slug
-            client {
-              date
-              title
-            }
-          }
-        }
-        page(id: "cG9zdDo0MQ==") {
-          dev {
-            intro
-            pastProjects {
-              title
-              link {
-                url
-              }
-              description
-            }
-          }
-        }
-      }
-    `,
-  });
-
-  if (errors) {
-    return <div className="error">My CMS must be down.</div>
-  }
-
-  return {
-    props: {
-      clients: data.clientPosts,
-      page: data.page,
-    },
-    revalidate: 60,
-  }
 }
 
 export default Dev

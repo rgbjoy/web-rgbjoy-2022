@@ -12,7 +12,7 @@ const nextConfig = {
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
-    prependData: `@import "./src/styles/variables.scss";`
+    prependData: `@import "./styles/variables.scss";`
   },
   webpack(config) {
     config.module.rules.push({

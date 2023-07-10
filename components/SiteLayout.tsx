@@ -1,10 +1,12 @@
+"use client"
+
 import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react'
-import { useRouter } from 'next/router';
-import ActiveLink from "./ActiveLink";
+import { usePathname } from 'next/navigation'
 import style from './SiteLayout.module.scss'
-import useWindowDimensions from '../utils/useWindowDimensions'
+import useWindowDimensions from '@/utilities/useWindowDimensions'
+import NavLink from "./NavLink";
 
 const DynamicBackground = dynamic(
   () => import('./Background'),
@@ -25,16 +27,21 @@ const Footer = () => {
 }
 
 const SiteLayout = ({ children }) => {
-  const router = useRouter()
+  const pathname = usePathname()
+
+  const links = [
+    { label: "/", path: '/', targetSegment: null, color: null },
+    { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
+    { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
+    { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
+  ]
 
   const { width } = useWindowDimensions();
-
-  const paths = router.pathname.split("/").filter(a => a.length > 0).length
 
   return (
     <>
       <Suspense fallback={<div className="loadingBackground">...</div>}>
-        <DynamicBackground page={router.pathname} />
+        <DynamicBackground page={pathname} />
       </Suspense>
 
       {children}
@@ -42,7 +49,7 @@ const SiteLayout = ({ children }) => {
       <motion.div
         initial={{ right: -20 }}
         animate={{ right: 60 }}
-        transition={{ delay: 1, duration: 0.75, ease:"easeOut" }}
+        transition={{ delay: 1, duration: 0.75, ease: "easeOut" }}
         className={"badge"}>
         2023 Portfolio
       </motion.div>
@@ -50,30 +57,21 @@ const SiteLayout = ({ children }) => {
       <motion.header
         id="header"
         initial={{ top: -20 }}
-        animate={{ top: width < 800 ? 20 : 60 }}
-        transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
+        animate={{ top: width && (width < 800 ? 20 : 60) }}
+        transition={{ delay: 0.25, duration: 0.75, ease: "easeOut" }}
         className={style.header}>
         <nav>
-          {router.pathname !== "/" ? <ActiveLink activeClassName={style.active} href="/">
-            .{paths < 2 ? `.` : ``}<span>/</span>
-          </ActiveLink> : ""}
-          <ActiveLink data-color="red" activeClassName={style.active} href="/info">
-            Info
-          </ActiveLink>
-          <ActiveLink data-color="green" activeClassName={style.active} href="/dev">
-            Dev
-          </ActiveLink>
-          <ActiveLink data-color="blue" activeClassName={style.active} href="/art">
-            Art & Design
-          </ActiveLink>
+          {links.map((l, i) =>
+            pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} />
+          )}
         </nav>
       </motion.header>
 
       <motion.footer
         id="footer"
-        initial={{ bottom: width < 800 ? -80 : -110 }}
+        initial={{ bottom: width && (width < 800 ? -80 : -110) }}
         animate={{ bottom: 0 }}
-        transition={{ delay: 0.25, duration: 0.75, ease:"easeOut" }}
+        transition={{ delay: 0.25, duration: 0.75, ease: "easeOut" }}
         className={style.footer}>
         <Footer />
       </motion.footer>
