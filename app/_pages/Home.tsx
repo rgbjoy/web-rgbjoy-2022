@@ -5,7 +5,7 @@ import style from "./Home.module.scss"
 import Layout from '@/components/Layout'
 import { SplitText } from '@/components/SplitText'
 
-export default function Home({ home }) {
+export default function Home(home) {
   return (
     <Layout page="intro">
       <div className={style.intro}>

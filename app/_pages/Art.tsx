@@ -9,7 +9,7 @@ import { SplitText } from '@/components/SplitText';
 
 import { useState, useEffect, useRef } from "react";
 
-export default function Art({ page }) {
+export default function Art(page) {
 
   const artwork = page.artwork;
 

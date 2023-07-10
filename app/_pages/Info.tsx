@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 
-export default function Info({ page }) {
+export default function Info(page) {
 
   const animationVariants = {
     visible: { opacity: 1 },
