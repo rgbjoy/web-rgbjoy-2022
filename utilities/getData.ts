@@ -1,4 +1,8 @@
-export const getData = async (query, variables = {}) => {
+import { cache } from 'react'
+
+import 'server-only'
+
+export const getData = cache(async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;
 
   if (!wordpressApiUrl) {
@@ -12,4 +16,4 @@ export const getData = async (query, variables = {}) => {
   });
 
   return response.json();
-}
+})
