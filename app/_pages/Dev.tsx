@@ -5,7 +5,7 @@ import Link from 'next/link'
 import style from "./Dev.module.scss"
 import { SplitText } from '@/components/SplitText';
 
-const Dev = data => {
+export default function Dev({ data }) {
 
   const {
     clientPosts: { nodes },
@@ -60,5 +60,3 @@ const Dev = data => {
     </Layout>
   )
 }
-
-export default Dev

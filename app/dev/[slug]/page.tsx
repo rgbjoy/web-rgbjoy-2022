@@ -18,9 +18,24 @@ export async function generateMetadata({ params }) {
     title: clientPost?.title,
   }
 }
+export async function generateStaticParams() {
+  const query = `
+    query {
+      clientPosts {
+        nodes {
+          slug
+        }
+      }
+    }
+  `;
 
-export default async function page({ params }) {
-  // console.log(params)
+  const { data: {clientPosts} } = await getData(query);
+  return clientPosts.nodes.map(({slug}) => ({
+    params: { slug }
+  }))
+}
+
+export default async function Page({ params }) {
   const { slug } = params
   const query = `
     query GetPostBySlug($slug: ID!) {
