@@ -5,10 +5,9 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 ## Technology used
 
 - Next.js 13
+- Wordpress GraphQL + ACF
 - React 18
 - TypeScript
-- Apollo Client
-- Wordpress GraphQL + ACF
 - [R3F](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) for intro 3D
 - [Framer Motion](https://www.framer.com/motion/) and [Greensock](https://greensock.com/) for animation
 - [SASS](https://sass-lang.com/) for styling
