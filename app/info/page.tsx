@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Multidisciplinary digital creator & web engineer',
 }
 
-export default async function page() {
+export default async function Page() {
   const query = `
     query getInfo {
       page(id: "cG9zdDoyNA==") {

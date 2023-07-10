@@ -3,6 +3,8 @@ import Layout from '@/components/Layout';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
 
+export const dynamic = 'force-static'
+
 export async function generateMetadata({ params }) {
   const { slug } = params
   const query = `
