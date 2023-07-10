@@ -1,15 +1,14 @@
 import { motion } from 'framer-motion'
 
 export function SplitText({ children }) {
-  let letters = children.split('')
-  return letters.map((letter, i) => {
+  return children.split('').map((letter, i) => {
     return (
       <div
         key={children + i}
         style={{ display: 'inline-block', overflow: 'hidden' }}
       >
         <motion.div
-          initial={{ opacity: 0, y: '10%' }}
+          initial={{ opacity: 0, y: '100%' }}
           animate="visible"
           variants={{
             visible: i => ({
@@ -17,7 +16,8 @@ export function SplitText({ children }) {
               y: 0,
               transition: {
                 type: "circOut",
-                delay: i * 0.1
+                duration: 0.25,
+                delay: i * 0.01
               }
             })
           }}
