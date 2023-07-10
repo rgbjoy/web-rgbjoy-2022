@@ -3,7 +3,7 @@ import Layout from '@/components/Layout';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
 
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 
 export const metadata = {
   title: '...',
