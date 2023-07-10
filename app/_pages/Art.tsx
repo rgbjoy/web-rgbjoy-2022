@@ -9,7 +9,7 @@ import { SplitText } from '@/components/SplitText';
 
 import { useState, useEffect, useRef } from "react";
 
-const Art = page => {
+export default function Art(page) {
 
   const artwork = page.artwork;
 
@@ -77,5 +77,3 @@ const Art = page => {
     </Layout>
   )
 }
-
-export default Art

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 
 import * as THREE from 'three';
 import { Group, InstancedMesh } from 'three'
@@ -215,20 +215,18 @@ const RenderPageContent = ({page}) => {
 
 const Background = ({ page }) => {
   return (
-    <Suspense fallback={null}>
-      <Canvas className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
-        gl={{
-          powerPreference: "high-performance",
-          alpha: true,
-          antialias: false,
-          depth: false,
-          toneMapping: THREE.NoToneMapping,
-        }}>
-          <Float>
-            <RenderPageContent page={page} />
-          </Float>
-      </Canvas>
-    </Suspense>
+    <Canvas className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
+      gl={{
+        powerPreference: "high-performance",
+        alpha: true,
+        antialias: false,
+        depth: false,
+        toneMapping: THREE.NoToneMapping,
+      }}>
+        <Float>
+          <RenderPageContent page={page} />
+        </Float>
+    </Canvas>
   )
 }
 
