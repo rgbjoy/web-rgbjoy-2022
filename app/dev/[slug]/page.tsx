@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
 
 export async function generateStaticParams() {
   const query = `
-    query {
+    query GetPosts {
       clientPosts {
         nodes {
           slug

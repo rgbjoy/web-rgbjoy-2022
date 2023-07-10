@@ -112,7 +112,7 @@ export default function Info(page) {
 
       <div dangerouslySetInnerHTML={{ __html: page.content }} />
 
-      <Link className={`btn ${style.btn}`} href="/dev" scroll={false}>
+      <Link className={`btn ${style.btn}`} href="/dev">
         See some work
       </Link>
 

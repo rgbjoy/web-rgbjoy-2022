@@ -48,7 +48,7 @@ export default function Dev(data) {
           <li className={style.item} key={"clients" + i}>
             <div className={style.name}>{item.title}</div>
             <div className={style.date}>{item.client.date}</div>
-            <Link className={`${style.seemore} underline`} href="/dev/[slug]" as={`/dev/${item.slug}`} scroll={false}>
+            <Link className={`${style.seemore} underline`} href={`/dev/${item.slug}`}>
               More details
             </Link>
           </li>

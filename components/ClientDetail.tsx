@@ -22,7 +22,7 @@ const ClientDetail = ({ item }) => {
           })}
         </ul>
       </div>
-      <Link className={`${style.back} underline`} href="/dev" scroll={false}>
+      <Link className={`${style.back} underline`} href="/dev">
         Back to work
       </Link>
     </>
