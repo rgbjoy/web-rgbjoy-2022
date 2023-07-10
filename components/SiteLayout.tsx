@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
-import { Suspense } from 'react'
 import { usePathname } from 'next/navigation'
 import style from './SiteLayout.module.scss'
 import useWindowDimensions from '@/utilities/useWindowDimensions'
@@ -10,7 +9,7 @@ import NavLink from "./NavLink";
 
 const DynamicBackground = dynamic(
   () => import('./Background'),
-  { loading: () => <div className="loadingBackground">...</div>, ssr: false }
+  { loading: () => <div className="loading">...</div>, ssr: false }
 )
 
 const Footer = () => {
@@ -40,9 +39,7 @@ const SiteLayout = ({ children }) => {
 
   return (
     <>
-      <Suspense fallback={<div className="loadingBackground">...</div>}>
-        <DynamicBackground page={pathname} />
-      </Suspense>
+      <DynamicBackground page={pathname} />
 
       {children}
 

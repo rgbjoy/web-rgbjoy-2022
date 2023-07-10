@@ -19,7 +19,7 @@ export default function Home(home) {
         <h2>{home.subhead}</h2>
         <p>{home.intro}</p>
 
-        <Link className={`btn ${style.btn}`} href="/info" scroll={false}>
+        <Link className={`btn ${style.btn}`} href="/info">
           {home.button}
         </Link>
       </div>
