@@ -13,6 +13,52 @@ const myFont = localFont({
   variable: '--rhode-font',
 })
 
+export const metadata = {
+  metadataBase: new URL('https://rgbjoy.com'),
+  icons: {
+    icon: '/social/icon.png',
+  },
+  themeColor: 'black',
+  openGraph: {
+    title: 'Tom Fletcher',
+    description: 'Multidisciplinary digital creator & web engineer',
+    url: 'https://rgbjoy.com',
+    siteName: 'RGBJOY',
+    images: [
+      {
+        url: '/social/opengraph-image.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    creator: '@rgbjoy',
+    images: [
+      {
+        url: '/social/opengraph-image.png',
+        width: 1200,
+        height: 630,
+      },
+    ]
+  },
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+
 export default function RootLayout({
   children,
 }: {
