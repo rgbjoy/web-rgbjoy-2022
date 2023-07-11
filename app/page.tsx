@@ -1,9 +1,8 @@
 import Home from "@/pages//Home";
 import { getData } from "@/utilities/getData";
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Tom Fletcher - Multidisciplinary digital creator & web engineer',
+export const metadata = {
+  title: 'Tom Fletcher',
   description: 'Multidisciplinary digital creator & web engineer',
 }
 
