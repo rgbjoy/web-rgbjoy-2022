@@ -40,7 +40,7 @@ export default function Dev(data) {
         </SplitText>
       </h1>
 
-      <div dangerouslySetInnerHTML={{ __html: dev.intro }} />
+      <div dangerouslySetInnerHTML={{ __html: data.page.content }} />
 
       <h2 className={style.sectionTitle}>Clients</h2>
       <ul className={style.list}>
