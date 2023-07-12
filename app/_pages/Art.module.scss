@@ -66,9 +66,11 @@ $grid: 30px;
       border: 20px solid white;
     }
 
-    .hovered + .caption {
-      opacity: 1;
-      background: rgba(0, 0, 0, 0.9);
+    @media (hover: hover) {
+      .hovered + .caption {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.9);
+      }
     }
   }
 

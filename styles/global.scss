@@ -66,14 +66,14 @@ a {
       transform: scaleX(1);
       transform-origin: left;
     }
-    @media (hover) {
+    @media (hover: hover) {
       &:hover::before {
         transform: scaleX(0);
       }
     }
   }
 
-  @media (hover) {
+  @media (hover: hover) {
     &:not(.btn, .underline):hover::before {
       transform-origin: left;
       transform: scaleX(1);
