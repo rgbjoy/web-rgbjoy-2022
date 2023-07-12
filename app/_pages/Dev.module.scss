@@ -1,46 +1,54 @@
-.header {
-  color: $green;
-}
+.dev {
 
-.sectionTitle {
-  margin-bottom: 30px;
-  margin-top: 80px;
-}
-
-.description {
-  margin-top: 5px;
-  font-size: 90%;
-}
-
-.name {
-  font-size: 120%;
-}
-
-.date {
-  margin-top: 5px;
-}
-
-.seemore {
-  font-size: 80%;
-  margin-top: 20px;
-  display: inline-block;
-}
-
-.list {
-  list-style-type: none;
-  padding: 0;
-
-  @include mobile-up {
-    margin-right: 60px;
+  ::selection {
+    background: black;
+    color: $green;
   }
 
-  .item {
-    padding: 30px 30px;
-    border-top: 1px dotted rgba(255, 255, 255, 0.25);
+  .header {
+    color: $green;
+  }
 
-    &:first-child {
-      border: none;
-      // border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+  .sectionTitle {
+    margin-bottom: 30px;
+    margin-top: 80px;
+  }
+
+  .description {
+    margin-top: 5px;
+    font-size: 90%;
+  }
+
+  .name {
+    font-size: 120%;
+  }
+
+  .date {
+    margin-top: 5px;
+  }
+
+  .seemore {
+    font-size: 80%;
+    margin-top: 20px;
+    display: inline-block;
+  }
+
+  .list {
+    list-style-type: none;
+    padding: 0;
+
+    @include mobile-up {
+      margin-right: 60px;
+    }
+
+    .item {
+      padding: 30px 30px;
+      border-top: 1px dotted rgba(255, 255, 255, 0.25);
+
+      &:first-child {
+        border: none;
+        // border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+      }
     }
   }
 }

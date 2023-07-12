@@ -7,10 +7,8 @@ import { SplitText } from '@/components/SplitText'
 
 export default function Home(home) {
   return (
-    <Layout page="intro">
-      <div className={style.intro}>
-
-        <h1>
+    <Layout className={style.intro}>
+      <h1>
           <SplitText>
             {home.header}
           </SplitText>
@@ -22,7 +20,6 @@ export default function Home(home) {
         <Link className={`btn ${style.btn}`} href="/info">
           {home.button}
         </Link>
-      </div>
     </Layout>
   )
 }

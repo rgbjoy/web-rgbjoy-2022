@@ -137,20 +137,6 @@ p {
     padding-top: 120px;
   }
 
-  &.art {
-    padding-right: $gutter;
-    width: 100%;
-    max-width: 1080px;
-
-    + .badge {
-      display: none;
-    }
-  }
-
-  &.intro {
-    pointer-events: none;
-  }
-
   @include mobile-only {
     padding: 120px 20px 100px 20px;
     width: 100%;
@@ -158,6 +144,7 @@ p {
 }
 
 .badge {
+  pointer-events: none;
   font-family: var(--rhode-font), sans-serif;
   position: fixed;
   writing-mode: vertical-rl;

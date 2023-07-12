@@ -1,4 +1,6 @@
 .intro {
+  pointer-events: none;
+
   @include mobile-only {
     margin-top: 10px;
   }
@@ -10,18 +12,15 @@
 
   p {
     margin-top: 30px;
-    // max-width: 80%;
   }
 
-  pointer-events: none;
-}
+  .btn {
+    margin-top: 60px;
+    pointer-events: all;
 
-.btn {
-  margin-top: 60px;
-  pointer-events: all;
-
-  @include mobile-only {
-    margin-top: 20px;
-    font-size: 80%;
+    @include mobile-only {
+      margin-top: 20px;
+      font-size: 80%;
+    }
   }
 }

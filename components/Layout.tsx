@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const Layout = ({ children, page }) => {
+const Layout = ({ children, page = "", className = "" }) => {
   useEffect(() => {
     window.scrollTo({
       top:0,
@@ -10,7 +10,7 @@ const Layout = ({ children, page }) => {
     })
   }, []);
   return (
-    <div className={`wrapper ${page ? page : ""}`}>
+    <div className={`wrapper ${page ? page : ""} ${className}`}>
       {children}
     </div>
   )

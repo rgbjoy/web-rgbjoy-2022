@@ -80,7 +80,7 @@ export default function Info(page) {
   }
 
   return (
-    <Layout page="info">
+    <Layout className={style.info}>
       <div className={style.selfie}>
         <h1 className={style.header}>
           <SplitText>

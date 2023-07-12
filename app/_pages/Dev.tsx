@@ -33,7 +33,7 @@ export default function Dev(data) {
   }
 
   return (
-    <Layout page="dev">
+    <Layout className={style.dev}>
       <h1 className={style.header}>
         <SplitText>
           Development
