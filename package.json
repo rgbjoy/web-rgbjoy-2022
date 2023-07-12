@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
-    "@react-three/drei": "^9.78.1",
-    "@react-three/fiber": "^8.13.4",
+    "@react-three/drei": "^9.78.2",
+    "@react-three/fiber": "^8.13.5",
     "@react-three/rapier": "^1.1.1",
     "@react-three/rapier-addons": "^3.0.1",
     "@vercel/analytics": "^1.0.1",

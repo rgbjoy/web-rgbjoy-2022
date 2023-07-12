@@ -2,8 +2,7 @@ import { getData } from "@/utilities/getData";
 import Layout from '@/components/Layout';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
-
-// export const dynamic = 'force-static'
+import style from "@/pages/Dev.module.scss"
 
 export const metadata = {
   title: '...',
@@ -54,7 +53,7 @@ export default async function Page({ params }) {
   metadata.title = clientPost.title;
 
   return (
-    <Layout page="detail">
+    <Layout className={style.dev}>
       <ClientDetail item={clientPost} />
     </Layout>
   );

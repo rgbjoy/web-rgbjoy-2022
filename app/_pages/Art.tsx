@@ -52,7 +52,7 @@ export default function Art(page) {
   }
 
   return (
-    <Layout page="art">
+    <Layout className={style.art}>
       <h1 className={style.header}>
         <SplitText
 

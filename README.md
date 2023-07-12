@@ -4,7 +4,7 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 
 ## Technology used
 
-- Next.js 13
+- Next.js 13 using App Router
 - Wordpress GraphQL + ACF
 - React 18
 - TypeScript

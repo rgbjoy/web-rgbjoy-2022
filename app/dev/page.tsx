@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const query = `
-    query {
+    query GetDev {
       clientPosts(where: {orderby: {order: ASC, field: MENU_ORDER}}) {
         nodes {
           title
@@ -21,8 +21,8 @@ export default async function Page() {
         }
       }
       page(id: "cG9zdDo0MQ==") {
+        content(format: RENDERED)
         dev {
-          intro
           pastProjects {
             title
             link {

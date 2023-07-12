@@ -42,11 +42,6 @@ body {
   }
 }
 
-#__next {
-  position: relative;
-  height: 100%;
-}
-
 a {
   position: relative;
   color: #fff;
@@ -71,12 +66,14 @@ a {
       transform: scaleX(1);
       transform-origin: left;
     }
-    &:hover::before {
-      transform: scaleX(0);
+    @media (hover: hover) {
+      &:hover::before {
+        transform: scaleX(0);
+      }
     }
   }
 
-  @media (hover) {
+  @media (hover: hover) {
     &:not(.btn, .underline):hover::before {
       transform-origin: left;
       transform: scaleX(1);
@@ -137,20 +134,6 @@ p {
     padding-top: 120px;
   }
 
-  &.art {
-    padding-right: $gutter;
-    width: 100%;
-    max-width: 1080px;
-
-    + .badge {
-      display: none;
-    }
-  }
-
-  &.intro {
-    pointer-events: none;
-  }
-
   @include mobile-only {
     padding: 120px 20px 100px 20px;
     width: 100%;
@@ -158,6 +141,7 @@ p {
 }
 
 .badge {
+  pointer-events: none;
   font-family: var(--rhode-font), sans-serif;
   position: fixed;
   writing-mode: vertical-rl;

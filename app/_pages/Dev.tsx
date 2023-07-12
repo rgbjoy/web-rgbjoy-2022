@@ -33,14 +33,14 @@ export default function Dev(data) {
   }
 
   return (
-    <Layout page="dev">
+    <Layout className={style.dev}>
       <h1 className={style.header}>
         <SplitText>
           Development
         </SplitText>
       </h1>
 
-      <div dangerouslySetInnerHTML={{ __html: dev.intro }} />
+      <div dangerouslySetInnerHTML={{ __html: data.page.content }} />
 
       <h2 className={style.sectionTitle}>Clients</h2>
       <ul className={style.list}>
