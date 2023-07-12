@@ -66,8 +66,10 @@ a {
       transform: scaleX(1);
       transform-origin: left;
     }
-    &:hover::before {
-      transform: scaleX(0);
+    @media (hover) {
+      &:hover::before {
+        transform: scaleX(0);
+      }
     }
   }
 

@@ -1,10 +1,6 @@
 .intro {
   pointer-events: none;
 
-  @include mobile-only {
-    margin-top: 10px;
-  }
-
   h2 {
     margin-top: 10px;
     font-size: 16px;
