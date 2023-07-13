@@ -110,15 +110,14 @@ const Plane = (props: any) => {
     anisotropy: 0.2,
     distortion: 0.6,
     color:props.color,
-    // distortionScale:0.2,
-    // temporalDistortion:0.1,
+    distortionScale:0.2,
+    temporalDistortion:0.1,
   }
   return (
     <mesh {...props}>
       <RoundedBox args={[1, 1, 0.01]} radius={0.01}>
         <MeshTransmissionMaterial {...config} />
       </RoundedBox>
-      {/* <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} /> */}
     </mesh>
   )
 }
