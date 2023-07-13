@@ -203,7 +203,7 @@ const Rig404 = () => {
 }
 
 const RenderPageContent = ({page}) => {
-  if (page === "/404") {
+  if (page === "404") {
     return <Rig404 />;
   } else {
     return (
