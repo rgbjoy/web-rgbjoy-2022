@@ -110,8 +110,8 @@ const Plane = (props: any) => {
     anisotropy: 0.2,
     distortion: 0.6,
     color:props.color,
-    distortionScale:0.2,
-    temporalDistortion:0.1,
+    distortionScale:0,
+    temporalDistortion:0,
   }
   return (
     <mesh {...props}>
