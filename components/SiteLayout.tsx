@@ -35,7 +35,7 @@ const SiteLayout = ({ children }) => {
     { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
   ]
 
-  const isNotFound = !links.some(link => link.path === pathname);
+  const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
 
   const { width } = useWindowDimensions();
 
