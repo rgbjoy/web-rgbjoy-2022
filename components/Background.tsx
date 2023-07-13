@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { Group, InstancedMesh } from 'three'
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor } from '@react-three/drei'
+import { Float, useCursor, MeshTransmissionMaterial, Environment, RoundedBox } from '@react-three/drei'
 import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, InstancedRigidBodyProps } from "@react-three/rapier";
 import { Attractor } from "@react-three/rapier-addons";
 
@@ -54,18 +54,18 @@ const animateIn = (meshes) => {
     if (m.name == "red") {
       gsap.to(m.position, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: THREE.MathUtils.degToRad(90), y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.children[0].material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
     } else if (m.name == "green") {
       gsap.to(m.position, { duration: 2, x: 0, y: -0.5, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.children[0].material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
     } else if (m.name == "blue") {
       gsap.to(m.position, { duration: 2, x: 0.5, y: 0, z: 0, ease: "Power2.easeOut" });
       gsap.to(m.rotation, { duration: 2, x: 0, y: THREE.MathUtils.degToRad(90), z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
+      gsap.to(m.children[0].material.color, { duration: 2, r:colors[currentPage][m.name].r, g:colors[currentPage][m.name].g, b:colors[currentPage][m.name].b, ease: "Power2.easeOut" });
     }
 
-    gsap.to(m.material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
+    gsap.to(m.children[0].material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
   }
   firstLoad = false
 }
@@ -76,10 +76,10 @@ const animateOut = (meshes, explode:boolean = false) => {
   for (var m of meshes) {
     gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
     gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => {clickable = true}});
+    gsap.to(m.children[0].material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => {clickable = true}});
 
     if (!explode) {
-      gsap.to(m.material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
+      gsap.to(m.children[0].material.color, { overwrite: true, duration: 1.5, r:colors[currentPage].r, g:colors[currentPage].g, b:colors[currentPage].b, ease: "Power2.easInOut"});
     }
   }
   firstLoad = false
@@ -97,10 +97,28 @@ const handleClick = (e) => {
 }
 
 const Plane = (props: any) => {
+  const config = {
+    ior: 1.0,
+    thickness: 0.01,
+    transmissionSampler: true,
+    backside: true,
+    side: THREE.DoubleSide,
+    samples: 1,
+    roughness: 0.1,
+    blending: THREE.AdditiveBlending,
+    chromaticAberration: 1,
+    anisotropy: 0.2,
+    distortion: 0.6,
+    color:props.color,
+    // distortionScale:0.2,
+    // temporalDistortion:0.1,
+  }
   return (
     <mesh {...props}>
-      <planeGeometry />
-      <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} />
+      <RoundedBox args={[1, 1, 0.01]} radius={0.01}>
+        <MeshTransmissionMaterial {...config} />
+      </RoundedBox>
+      {/* <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} opacity={0} depthTest={false} transparent={true} color={props.color} /> */}
     </mesh>
   )
 }
@@ -224,6 +242,7 @@ const Background = ({ page }) => {
         toneMapping: THREE.NoToneMapping,
       }}>
         <Float>
+        <Environment preset={"studio"} blur={1} />
           <RenderPageContent page={page} />
         </Float>
     </Canvas>
