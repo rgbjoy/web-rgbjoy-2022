@@ -98,8 +98,8 @@ const handleClick = (e) => {
 
 const Plane = (props: any) => {
   const config = {
-    ior: 1.0,
-    thickness: 0.01,
+    ior: 1.3,
+    thickness: 0.02,
     transmissionSampler: true,
     backside: true,
     side: THREE.DoubleSide,
@@ -109,9 +109,11 @@ const Plane = (props: any) => {
     chromaticAberration: 1,
     anisotropy: 0.2,
     distortion: 0.6,
-    color:props.color,
-    distortionScale:0,
-    temporalDistortion:0,
+    color: props.color,
+    resolution: 32,
+    clearcoat: 0,
+    distortionScale: 0,
+    temporalDistortion: 0,
   }
   return (
     <mesh {...props}>
@@ -236,12 +238,12 @@ const Background = ({ page }) => {
       gl={{
         powerPreference: "high-performance",
         alpha: true,
-        antialias: false,
+        antialias: true,
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
         <Float>
-        <Environment preset={"studio"} blur={1} />
+          <Environment preset={"studio"} />
           <RenderPageContent page={page} />
         </Float>
     </Canvas>
