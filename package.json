@@ -15,7 +15,7 @@
     "@react-three/rapier": "^1.1.1",
     "@react-three/rapier-addons": "^3.0.1",
     "@vercel/analytics": "^1.0.1",
-    "framer-motion": "^10.12.18",
+    "framer-motion": "^10.12.20",
     "gsap": "^3.12.2",
     "next": "13.4.9",
     "normalize.css": "^8.0.1",
@@ -27,10 +27,10 @@
     "three": "^0.154.0"
   },
   "devDependencies": {
-    "@types/node": "^20.4.1",
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
-    "@types/three": "^0.153.0",
+    "@types/node": "^20.4.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/three": "^0.154.0",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",
     "typescript": "5.1.6"
