@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { Group, InstancedMesh } from 'three'
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor, MeshTransmissionMaterial, Environment, RoundedBox } from '@react-three/drei'
+import { Float, useCursor, RoundedBox } from '@react-three/drei'
 import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, InstancedRigidBodyProps } from "@react-three/rapier";
 import { Attractor } from "@react-three/rapier-addons";
 
@@ -98,27 +98,17 @@ const handleClick = (e) => {
 
 const Plane = (props: any) => {
   const config = {
-    ior: 1.3,
-    thickness: 0.02,
-    transmissionSampler: true,
-    backside: true,
     side: THREE.DoubleSide,
-    samples: 1,
-    roughness: 0.1,
     blending: THREE.AdditiveBlending,
-    chromaticAberration: 1,
-    anisotropy: 0.2,
-    distortion: 0.6,
-    color: props.color,
-    resolution: 32,
-    clearcoat: 0,
-    distortionScale: 0,
-    temporalDistortion: 0,
+    opacity: 0,
+    depthTest: false,
+    transparent: true,
+    color: props.color
   }
   return (
     <mesh {...props}>
       <RoundedBox args={[1, 1, 0.01]} radius={0.01}>
-        <MeshTransmissionMaterial {...config} />
+        <meshBasicMaterial {...config} />
       </RoundedBox>
     </mesh>
   )
@@ -243,7 +233,6 @@ const Background = ({ page }) => {
         toneMapping: THREE.NoToneMapping,
       }}>
         <Float>
-          <Environment preset={"studio"} />
           <RenderPageContent page={page} />
         </Float>
     </Canvas>
