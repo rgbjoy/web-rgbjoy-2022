@@ -130,6 +130,10 @@ p {
   width: 75%;
   max-width: 960px;
 
+  @include tablet-landscape-only {
+    padding-top: 160px;
+  }
+
   @media screen and (max-height: 640px) {
     padding-top: 120px;
   }
