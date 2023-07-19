@@ -9,15 +9,16 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@14islands/r3f-scroll-rig": "^8.11.11",
     "@juggle/resize-observer": "^3.3.1",
-    "@react-three/drei": "^9.78.2",
+    "@react-three/drei": "^9.79.3",
     "@react-three/fiber": "^8.13.5",
     "@react-three/rapier": "^1.1.1",
     "@react-three/rapier-addons": "^3.0.1",
     "@vercel/analytics": "^1.0.1",
-    "framer-motion": "^10.12.20",
+    "framer-motion": "^10.13.0",
     "gsap": "^3.12.2",
-    "next": "13.4.9",
+    "next": "13.4.10",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -31,8 +32,8 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.154.0",
-    "eslint": "8.44.0",
-    "eslint-config-next": "13.4.9",
+    "eslint": "8.45.0",
+    "eslint-config-next": "13.4.10",
     "typescript": "5.1.6"
   }
 }
