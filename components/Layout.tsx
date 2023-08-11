@@ -1,7 +1,5 @@
 'use client';
 
-import { SmoothScrollbar } from '@14islands/r3f-scroll-rig'
-
 import { useEffect } from "react";
 
 const Layout = ({ children, page = "", className = "" }) => {
@@ -12,13 +10,9 @@ const Layout = ({ children, page = "", className = "" }) => {
     })
   }, []);
   return (
-    <SmoothScrollbar>
-      {(bind) => (
-        <div {...bind} className={`wrapper ${page ? page : ""} ${className}`}>
-          {children}
-        </div>
-      )}
-    </SmoothScrollbar>
+    <div className={`wrapper ${page ? page : ""} ${className}`}>
+      {children}
+    </div>
   )
 }
 
