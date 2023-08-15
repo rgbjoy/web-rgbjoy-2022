@@ -10,14 +10,14 @@
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
-    "@react-three/drei": "^9.80.2",
+    "@react-three/drei": "^9.80.3",
     "@react-three/fiber": "^8.13.6",
     "@react-three/rapier": "^1.1.1",
     "@react-three/rapier-addons": "^3.0.1",
     "@vercel/analytics": "^1.0.2",
-    "framer-motion": "^10.15.1",
+    "framer-motion": "^10.15.2",
     "gsap": "^3.12.2",
-    "next": "13.4.13",
+    "next": "13.4.16",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,12 +27,12 @@
     "three": "^0.155.0"
   },
   "devDependencies": {
-    "@types/node": "^20.4.9",
+    "@types/node": "^20.5.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/three": "^0.155.0",
-    "eslint": "8.46.0",
-    "eslint-config-next": "13.4.13",
+    "eslint": "8.47.0",
+    "eslint-config-next": "13.4.16",
     "typescript": "5.1.6"
   }
 }
