@@ -1,21 +1,33 @@
 .header {
   position: fixed;
-  top: $gutter;
-  right: $gutter;
+  top: 0;
+  left: 0;
+  right: 0;
+  height:calc($gutter * 2);
 
   @include mobile-only {
-    top: $gutter-mobile;
-    right: $gutter-mobile;
+    height: $gutter;
+  }
+
+  .header_inner {
+    position: relative;
+    height: 100%;
   }
 
   nav {
+
     font-family: var(--rhode-font), sans-serif;
     font-size: 80%;
-    width: 100%;
     display: flex;
     justify-content: space-around;
 
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: $gutter;
+
     @include mobile-only {
+      right: $gutter-mobile;
       font-size: 70%;
     }
 
