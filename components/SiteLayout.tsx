@@ -35,13 +35,15 @@ const SiteLayout = ({ children }) => {
       height: "60px",
       borderBottom: "1px dotted",
       borderColor: "rgba(255, 255, 255, 0.131)",
-      backdropFilter: "blur(8px)"
+      backdropFilter: "blur(8px)",
+      "-webkit-backdrop-filter": "blur(8px)"
     },
     notScrolled: {
       height: "100%",
       borderBottom: "1px dotted",
       borderColor: "rgba(255, 255, 255, 0)",
-      backdropFilter: "none"
+      backdropFilter: "blur(0px)",
+      "-webkit-backdrop-filter": "blur(0px)"
     }
   };
 
