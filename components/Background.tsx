@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 
 import * as THREE from 'three';
-import { Group, InstancedMesh } from 'three'
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, useCursor, RoundedBox } from '@react-three/drei'
@@ -123,7 +122,7 @@ const RigPages = ({ page }) => {
   const [hovered, set] = useState(Boolean)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
-  const ref = useRef<Group>(null!)
+  const ref = useRef<THREE.Group>(null!)
   currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
 
   useEffect(() => {
@@ -155,7 +154,7 @@ const RigPages = ({ page }) => {
 
 const Rig404 = () => {
   const COUNT = 26;
-  const refMesh = useRef<InstancedMesh>(null);
+  const refMesh = useRef<THREE.InstancedMesh>(null);
   const rigidBodies = useRef<RapierRigidBody[]>(null);
 
   const { camera } = useThree();
