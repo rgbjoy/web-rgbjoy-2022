@@ -6,6 +6,8 @@ import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 
 import SiteLayout from "@/components/SiteLayout"
+import { fetchSettings } from '@/components/FetchSettings';
+import { use } from 'react';
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
@@ -51,10 +53,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const getLinks = async () => {
+    const data = await fetchSettings();
+    return data;
+  }
+  const settings = use(getLinks());
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout>
+        <SiteLayout settings={settings}>
           {children}
         </SiteLayout>
         <Analytics />

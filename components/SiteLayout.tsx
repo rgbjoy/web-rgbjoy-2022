@@ -13,20 +13,21 @@ const DynamicBackground = dynamic(
 )
 
 
-const Footer = () => {
+const Footer = ({ footerLinks }) => {
   return (
     <div className={style.footerWrapper}>
       <div className={style.footerLinks}>
-        <a target="_blank" rel="noreferrer" href="https://instagram.com/rgbjoy">Instagram</a>
-        <a target="_blank" rel="noreferrer" href="https://twitter.com/rgbjoy">Twitter</a>
-        <a target="_blank" rel="noreferrer" href="https://codepen.io/rgbjoy/pens/popular">Codepen</a>
-        <a target="_blank" rel="noreferrer" href="https://github.com/rgbjoy/">Github</a>
+        {footerLinks.map(item => (
+          <a key={item.link.title} target="_blank" rel="noreferrer" href={item.link.url}>
+            {item.link.title}
+          </a>
+        ))}
       </div>
     </div>
-  )
+  );
 }
 
-const SiteLayout = ({ children }) => {
+const SiteLayout = ({ children, settings }) => {
   const pathname = usePathname()
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -84,13 +85,13 @@ const SiteLayout = ({ children }) => {
 
       {children}
 
-      <motion.div
+      {settings?.badge && <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
         className={"badge"}>
-        2023 Portfolio
-      </motion.div>
+        {settings.badge}
+      </motion.div>}
 
 
       <motion.header
@@ -122,13 +123,16 @@ const SiteLayout = ({ children }) => {
         </motion.div>
       </motion.header>
 
-      <motion.footer
-        id="footer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.75, duration: 0.75, ease: "easeOut" }}
-        className={style.footer}>
-        <Footer />
+      <motion.footer id="footer" className={style.footer}>
+        {settings?.footerLinks && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.75, duration: 0.75, ease: "easeOut" }}
+          >
+            <Footer footerLinks={settings.footerLinks} />
+          </motion.div>
+        )}
       </motion.footer>
     </>
   )
