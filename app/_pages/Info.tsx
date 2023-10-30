@@ -102,7 +102,7 @@ export default function Info(page) {
               width={getImageData().bigImage["width"]}
               height={getImageData().bigImage["height"]}
               priority
-              onLoadingComplete={handleImageLoad}
+              onLoad={handleImageLoad}
             />
           </motion.div>
         </div>
