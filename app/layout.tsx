@@ -20,7 +20,6 @@ export const metadata = {
   icons: {
     icon: '/social/icon.png',
   },
-  themeColor: 'black',
   openGraph: {
     title: 'Tom Fletcher',
     description: 'Multidisciplinary digital creator & web engineer',

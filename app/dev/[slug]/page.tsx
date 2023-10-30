@@ -9,6 +9,7 @@ export const metadata = {
 }
 
 export async function generateStaticParams() {
+  'use server'
   const query = `
     query GetPosts {
       clientPosts {
@@ -26,6 +27,7 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }) {
+  'use server'
   const { slug } = params
   const query = `
     query GetPostBySlug($slug: ID!) {

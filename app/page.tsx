@@ -7,6 +7,7 @@ export const metadata = {
 }
 
 export default async function Page() {
+  'use server'
   const query = `
     query getHome {
       page(id:"cG9zdDo1") {
