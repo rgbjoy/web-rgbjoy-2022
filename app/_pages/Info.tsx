@@ -2,7 +2,7 @@
 "use client"
 
 import Image from 'next/image'
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import { SplitText } from '@/components/SplitText';
 import style from './Info.module.scss'
 import Link from 'next/link';
@@ -80,7 +80,7 @@ export default function Info(page) {
   }
 
   return (
-    <Layout className={style.info}>
+    <PageWrapper className={style.info}>
       <div className={style.selfie}>
         <h1 className={style.header}>
           <SplitText>
@@ -117,6 +117,6 @@ export default function Info(page) {
       </Link>
 
       <GetStrengths />
-    </Layout>
+    </PageWrapper>
   )
 }

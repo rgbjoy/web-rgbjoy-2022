@@ -4,6 +4,7 @@ import '../styles/global.scss';
 import { Analytics } from '@vercel/analytics/react';
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
+import { Viewport } from 'next'
 
 import SiteLayout from "@/components/SiteLayout"
 import { fetchSettings } from '@/components/FetchSettings';
@@ -45,6 +46,11 @@ export const metadata = {
       },
     ]
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: 'black',
+  colorScheme: "dark",
 }
 
 export default function RootLayout({

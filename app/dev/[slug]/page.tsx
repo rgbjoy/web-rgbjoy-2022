@@ -1,5 +1,5 @@
 import { getData } from "@/utilities/getData";
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/Dev.module.scss"
@@ -55,8 +55,8 @@ export default async function Page({ params }) {
   metadata.title = clientPost.title;
 
   return (
-    <Layout className={style.dev}>
+    <PageWrapper className={style.dev}>
       <ClientDetail item={clientPost} />
-    </Layout>
+    </PageWrapper>
   );
 }

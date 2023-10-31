@@ -1,6 +1,6 @@
 "use client"
 
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import Link from 'next/link'
 import style from "./Dev.module.scss"
 import { SplitText } from '@/components/SplitText';
@@ -33,7 +33,7 @@ export default function Dev(data) {
   }
 
   return (
-    <Layout className={style.dev}>
+    <PageWrapper className={style.dev}>
       <h1 className={style.header}>
         <SplitText>
           Development
@@ -58,6 +58,6 @@ export default function Dev(data) {
         ))}
       </ul>
 
-    </Layout>
+    </PageWrapper>
   )
 }
