@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const Layout = ({ children, page = "", className = "" }) => {
+const PageWrapper = ({ children, page = "", className = "" }) => {
   useEffect(() => {
     window.scrollTo({
       top:0,
@@ -16,4 +16,4 @@ const Layout = ({ children, page = "", className = "" }) => {
   )
 }
 
-export default Layout
+export default PageWrapper

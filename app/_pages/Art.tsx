@@ -1,6 +1,6 @@
 "use client"
 
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import Masonry from 'react-masonry-css'
 import style from './Art.module.scss'
 import Media from '@/components/Media';
@@ -52,7 +52,7 @@ export default function Art(page) {
   }
 
   return (
-    <Layout className={style.art}>
+    <PageWrapper className={style.art}>
       <h1 className={style.header}>
         <SplitText
 
@@ -74,6 +74,6 @@ export default function Art(page) {
           })
         }
       </Masonry>
-    </Layout>
+    </PageWrapper>
   )
 }

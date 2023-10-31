@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
+  'use server'
   const query = `
     query getInfo {
       page(id: "cG9zdDoyNA==") {

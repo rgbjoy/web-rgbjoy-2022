@@ -1,5 +1,5 @@
 import { getData } from "@/utilities/getData";
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import ClientDetail from "@/components/ClientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/Dev.module.scss"
@@ -9,6 +9,7 @@ export const metadata = {
 }
 
 export async function generateStaticParams() {
+  'use server'
   const query = `
     query GetPosts {
       clientPosts {
@@ -26,6 +27,7 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }) {
+  'use server'
   const { slug } = params
   const query = `
     query GetPostBySlug($slug: ID!) {
@@ -53,8 +55,8 @@ export default async function Page({ params }) {
   metadata.title = clientPost.title;
 
   return (
-    <Layout className={style.dev}>
+    <PageWrapper className={style.dev}>
       <ClientDetail item={clientPost} />
-    </Layout>
+    </PageWrapper>
   );
 }

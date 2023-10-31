@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import style from "./Home.module.scss"
-import Layout from '@/components/Layout'
+import PageWrapper from '@/components/PageWrapper'
 import { SplitText } from '@/components/SplitText'
 
 export default function Home(home) {
   return (
-    <Layout className={style.intro}>
+    <PageWrapper className={style.intro}>
       <h1>
           <SplitText>
             {home.header}
@@ -20,6 +20,6 @@ export default function Home(home) {
         <Link className={`btn ${style.btn}`} href="/info">
           {home.button}
         </Link>
-    </Layout>
+    </PageWrapper>
   )
 }

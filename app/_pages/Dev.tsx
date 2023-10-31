@@ -1,6 +1,6 @@
 "use client"
 
-import Layout from '@/components/Layout';
+import PageWrapper from '@/components/PageWrapper';
 import Link from 'next/link'
 import style from "./Dev.module.scss"
 import { SplitText } from '@/components/SplitText';
@@ -16,9 +16,9 @@ export default function Dev(data) {
     return (
       <ul className={style.list}>
         {dev.pastProjects.map((value, i) => {
-          const title = value["title"]
-          const description = value["description"]
-          const link = value["link"]["url"]
+          const title = value["title"];
+          const description = value["description"];
+          const link = value["link"]["url"];
 
           return (
             <li className={style.item} key={"projects" + i}>
@@ -26,14 +26,14 @@ export default function Dev(data) {
               <div className={style.description}>{description}</div>
               <a className={`${style.seemore} underline`} href={link} target="_blank" rel="noreferrer">Project link</a>
             </li>
-          )
+          );
         })}
       </ul>
-    )
+    );
   }
 
   return (
-    <Layout className={style.dev}>
+    <PageWrapper className={style.dev}>
       <h1 className={style.header}>
         <SplitText>
           Development
@@ -41,6 +41,9 @@ export default function Dev(data) {
       </h1>
 
       <div dangerouslySetInnerHTML={{ __html: data.page.content }} />
+
+      <h2 className={style.sectionTitle}>Past Projects</h2>
+      <GetProjects />
 
       <h2 className={style.sectionTitle}>Clients</h2>
       <ul className={style.list}>
@@ -55,8 +58,6 @@ export default function Dev(data) {
         ))}
       </ul>
 
-      <h2 className={style.sectionTitle}>Past Projects</h2>
-      <GetProjects />
-    </Layout>
+    </PageWrapper>
   )
 }
