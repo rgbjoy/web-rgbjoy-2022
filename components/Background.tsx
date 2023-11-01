@@ -99,7 +99,10 @@ const RGBPlane = (props: any) => {
   const config = {
     side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
-    color: props.color
+    color: props.color,
+    opacity: 0,
+    depthTest: false,
+    transparent: true,
   }
   return (
     <mesh {...props}>
