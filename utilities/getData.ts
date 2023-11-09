@@ -5,15 +5,27 @@ import 'server-only'
 export const getData = cache(async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;
 
-  if (!wordpressApiUrl) {
-    throw new Error('WORDPRESS_API_URL is not defined');
-  }
-  const response = await fetch(wordpressApiUrl, {
-    next: { revalidate: 1800 },
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
+  try {
+    if (!wordpressApiUrl) {
+      throw new Error('WORDPRESS_API_URL is not defined');
+    }
 
-  return response.json();
+    const response = await fetch(wordpressApiUrl, {
+      next: { revalidate: 1800 },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API responded with status code ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
 })
