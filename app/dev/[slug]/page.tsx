@@ -4,12 +4,9 @@ import ClientDetail from "@/components/clientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/dev.module.scss"
 
-export const metadata = {
-  title: '...',
-}
+export const dynamic = 'force-static'
 
 export async function generateStaticParams() {
-  'use server'
   const query = `
     query GetPosts {
       clientPosts {
@@ -26,8 +23,24 @@ export async function generateStaticParams() {
   }))
 }
 
+export async function generateMetadata({ params }) {
+  const { slug } = params
+  const query = `
+    query GetPostBySlug($slug: ID!) {
+      clientPost(id: $slug, idType: URI) {
+        title
+      }
+    }
+  `;
+
+  const { data: {clientPost} } = await getData(query, { slug });
+
+  return {
+    title: clientPost.title,
+  }
+}
+
 export default async function Page({ params }) {
-  'use server'
   const { slug } = params
   const query = `
     query GetPostBySlug($slug: ID!) {
@@ -45,14 +58,11 @@ export default async function Page({ params }) {
     }
   `;
 
-  const { data } = await getData(query, { slug });
-  const { clientPost } = data;
+  const { data: {clientPost} } = await getData(query, { slug })
 
   if (!clientPost) {
     notFound()
   }
-
-  metadata.title = clientPost.title;
 
   return (
     <PageWrapper className={style.dev}>

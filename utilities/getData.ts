@@ -23,6 +23,11 @@ export const getData = cache(async (query, variables = {}) => {
     }
 
     const data = await response.json();
+    if (data.errors) {
+      const errorMessages = data.errors.map((error) => error.message).join('\n');
+      throw new Error(`GraphQL errors: ${errorMessages}`);
+    }
+
     return data;
 
   } catch (error) {
