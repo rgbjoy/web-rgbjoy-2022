@@ -4,7 +4,7 @@
 import Image from 'next/image'
 import PageWrapper from '@/components/pageWrapper';
 import { SplitText } from '@/components/splitText';
-import style from './Info.module.scss'
+import style from './info.module.scss'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';

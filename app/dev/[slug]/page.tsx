@@ -2,7 +2,7 @@ import { getData } from "@/utilities/getData";
 import PageWrapper from '@/components/pageWrapper';
 import ClientDetail from "@/components/clientDetail";
 import { notFound } from 'next/navigation'
-import style from "@/pages/Dev.module.scss"
+import style from "@/pages/dev.module.scss"
 
 export const dynamic = 'force-static'
 

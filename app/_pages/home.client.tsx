@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import style from "./Home.module.scss"
+import style from "./home.module.scss"
 import PageWrapper from '@/components/pageWrapper'
 import { SplitText } from '@/components/splitText'
 

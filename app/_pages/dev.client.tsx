@@ -2,7 +2,7 @@
 
 import PageWrapper from '@/components/pageWrapper';
 import Link from 'next/link'
-import style from "./Dev.module.scss"
+import style from "./dev.module.scss"
 import { SplitText } from '@/components/splitText';
 
 export default function Dev(data) {

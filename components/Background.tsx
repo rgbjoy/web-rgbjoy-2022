@@ -9,7 +9,7 @@ import { Attractor } from "@react-three/rapier-addons";
 
 import gsap from "gsap"
 
-import style from "./Background.module.scss"
+import style from "./background.module.scss"
 
 let clickable: boolean = false
 let firstLoad: boolean = true

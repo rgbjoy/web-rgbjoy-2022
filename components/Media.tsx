@@ -1,7 +1,7 @@
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
-import style from "@/pages/Art.module.scss"
+import style from "@/pages/art.module.scss"
 
 const Media = ({ media, thumbnail = false }) => {
 

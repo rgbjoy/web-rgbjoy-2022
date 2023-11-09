@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Media from "@/components/media"
-import style from "@/pages/Art.module.scss"
+import style from "@/pages/art.module.scss"
 
 const LightBox = ({ children, media }) => {
 	const [isOpen, setIsOpen] = useState(false);

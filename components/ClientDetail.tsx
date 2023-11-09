@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import style from './ClientDetail.module.scss'
+import style from './clientDetail.module.scss'
 import { SplitText } from '@/components/splitText'
 
 const ClientDetail = ({ item }) => {

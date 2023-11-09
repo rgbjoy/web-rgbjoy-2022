@@ -2,7 +2,7 @@
 
 import PageWrapper from '@/components/pageWrapper';
 import Masonry from 'react-masonry-css'
-import style from './Art.module.scss'
+import style from './art.module.scss'
 import Media from '@/components/media';
 import LightBox from '@/components/lightbox';
 import { SplitText } from '@/components/splitText';
