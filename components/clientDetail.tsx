@@ -12,7 +12,7 @@ const ClientDetail = ({ item }) => {
           {item.title}
         </SplitText>
       </h1>
-      <p>{item.client.date} • {item.client.title}</p>
+      {/* <p>{item.client.date} • {item.client.title}</p>
       <div className={style.subhead} dangerouslySetInnerHTML={{ __html: item.content }} />
       <div className={`${style.subhead} ${style.technology}`}>
         Technology:
@@ -24,7 +24,7 @@ const ClientDetail = ({ item }) => {
       </div>
       <Link className={`${style.back} underline`} href="/dev">
         Back to work
-      </Link>
+      </Link> */}
     </>
   )
 }

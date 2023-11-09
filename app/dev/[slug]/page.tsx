@@ -4,8 +4,6 @@ import ClientDetail from "@/components/clientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/dev.module.scss"
 
-export const dynamic = 'force-static'
-
 export async function generateStaticParams() {
   const query = `
     query GetPosts {
@@ -26,7 +24,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = params
   const query = `
-    query GetPostBySlug($slug: ID!) {
+    query GetTitles($slug: ID!) {
       clientPost(id: $slug, idType: URI) {
         title
       }
@@ -47,13 +45,7 @@ export default async function Page({ params }) {
       clientPost(id: $slug, idType: URI) {
         title
         content(format: RENDERED)
-        client {
-          title
-          technologies {
-            technology
-          }
-          date
-        }
+
       }
     }
   `;
