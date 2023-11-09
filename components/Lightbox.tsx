@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Media from "@/components/Media"
+import Media from "@/components/media"
 import style from "@/pages/Art.module.scss"
 
 const LightBox = ({ children, media }) => {

@@ -1,4 +1,4 @@
-import Art from "@/pages/Art";
+import Art from "@/pages/art.client";
 import { getData } from "@/utilities/getData";
 import { Metadata } from "next";
 

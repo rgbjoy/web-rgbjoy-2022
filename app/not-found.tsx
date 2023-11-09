@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Layout from "@/components/PageWrapper"
+import Layout from "@/components/pageWrapper"
 import style from "./not-found.module.scss"
 
 export const metadata = {

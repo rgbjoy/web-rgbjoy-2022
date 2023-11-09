@@ -1,17 +1,20 @@
 {
   "name": "rgbjoy-2022",
   "private": true,
+  "browserslist": [
+    "defaults"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "upgrade": "yarn upgrade --latest",
+    "upgrade": "npm update",
     "type-check": "tsc"
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
-    "@react-three/drei": "^9.88.10",
-    "@react-three/fiber": "^8.15.9",
+    "@react-three/drei": "^9.88.11",
+    "@react-three/fiber": "^8.15.10",
     "@react-three/rapier": "^1.1.2",
     "@react-three/rapier-addons": "^3.0.2",
     "@vercel/analytics": "^1.1.1",
@@ -28,10 +31,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.10",
-    "@types/react": "^18.2.33",
+    "@types/react": "^18.2.36",
     "@types/react-dom": "^18.2.14",
     "@types/three": "^0.158.1",
-    "eslint": "8.52.0",
+    "eslint": "8.53.0",
     "eslint-config-next": "14.0.1",
     "typescript": "5.2.2"
   }

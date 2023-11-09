@@ -1,11 +1,11 @@
 "use client"
 
-import PageWrapper from '@/components/PageWrapper';
+import PageWrapper from '@/components/pageWrapper';
 import Masonry from 'react-masonry-css'
 import style from './Art.module.scss'
-import Media from '@/components/Media';
-import LightBox from '@/components/Lightbox';
-import { SplitText } from '@/components/SplitText';
+import Media from '@/components/media';
+import LightBox from '@/components/lightbox';
+import { SplitText } from '@/components/splitText';
 
 import { useState, useEffect, useRef } from "react";
 
@@ -54,9 +54,7 @@ export default function Art(page) {
   return (
     <PageWrapper className={style.art}>
       <h1 className={style.header}>
-        <SplitText
-
-        >
+        <SplitText>
           Art & Design
         </SplitText>
       </h1>

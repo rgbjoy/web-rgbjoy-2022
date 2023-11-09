@@ -1,4 +1,4 @@
-import Home from "@/pages//Home";
+import Home from "@/pages/home.client";
 import { getData } from "@/utilities/getData";
 
 export const metadata = {

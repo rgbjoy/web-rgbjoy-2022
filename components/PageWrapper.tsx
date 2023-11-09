@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const PageWrapper = ({ children, page = "", className = "" }) => {
+const SiteWrapper = ({ children, page = "", className = "" }) => {
   useEffect(() => {
     window.scrollTo({
       top:0,
@@ -16,4 +16,4 @@ const PageWrapper = ({ children, page = "", className = "" }) => {
   )
 }
 
-export default PageWrapper
+export default SiteWrapper

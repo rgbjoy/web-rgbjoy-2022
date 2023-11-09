@@ -1,9 +1,9 @@
 "use client"
 
-import PageWrapper from '@/components/PageWrapper';
+import PageWrapper from '@/components/pageWrapper';
 import Link from 'next/link'
 import style from "./Dev.module.scss"
-import { SplitText } from '@/components/SplitText';
+import { SplitText } from '@/components/splitText';
 
 export default function Dev(data) {
 

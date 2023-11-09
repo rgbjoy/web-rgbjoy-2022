@@ -2,8 +2,8 @@
 "use client"
 
 import Image from 'next/image'
-import PageWrapper from '@/components/PageWrapper';
-import { SplitText } from '@/components/SplitText';
+import PageWrapper from '@/components/pageWrapper';
+import { SplitText } from '@/components/splitText';
 import style from './Info.module.scss'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

@@ -6,8 +6,8 @@ import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 import { Viewport } from 'next'
 
-import SiteLayout from "@/components/SiteLayout"
-import { fetchSettings } from '@/components/FetchSettings';
+import SiteLayout from "@/components/siteLayout"
+import { fetchSettings } from '@/components/fetchSettings';
 import { use } from 'react';
 
 const montserrat = Montserrat({ subsets: ['latin'] })

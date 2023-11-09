@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation'
 import style from './SiteLayout.module.scss'
-import NavLink from "./NavLink";
+import NavLink from "./navLink";
 
 const DynamicBackground = dynamic(
-  () => import('./Background'),
+  () => import('./background'),
   { loading: () => <div className="loading">...</div>, ssr: false }
 )
 

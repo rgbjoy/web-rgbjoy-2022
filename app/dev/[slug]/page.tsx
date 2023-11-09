@@ -1,6 +1,6 @@
 import { getData } from "@/utilities/getData";
-import PageWrapper from '@/components/PageWrapper';
-import ClientDetail from "@/components/ClientDetail";
+import PageWrapper from '@/components/pageWrapper';
+import ClientDetail from "@/components/clientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/Dev.module.scss"
 

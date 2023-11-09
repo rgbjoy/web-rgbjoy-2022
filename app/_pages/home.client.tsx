@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import style from "./Home.module.scss"
-import PageWrapper from '@/components/PageWrapper'
-import { SplitText } from '@/components/SplitText'
+import PageWrapper from '@/components/pageWrapper'
+import { SplitText } from '@/components/splitText'
 
 export default function Home(home) {
   return (

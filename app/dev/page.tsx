@@ -1,4 +1,4 @@
-import Dev from "@/pages/Dev";
+import Dev from "@/pages/dev.client";
 import { getData } from "@/utilities/getData";
 import { Metadata } from "next";
 

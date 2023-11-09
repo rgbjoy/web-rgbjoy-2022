@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import style from './ClientDetail.module.scss'
-import { SplitText } from '@/components/SplitText'
+import { SplitText } from '@/components/splitText'
 
 const ClientDetail = ({ item }) => {
   return (
