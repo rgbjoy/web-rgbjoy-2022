@@ -4,7 +4,8 @@ import ClientDetail from "@/components/clientDetail";
 import { notFound } from 'next/navigation'
 import style from "@/pages/dev.module.scss"
 
-export const dynamic = 'force-static'
+export const dynamicParams = true
+export const revalidate = 60
 
 export async function generateStaticParams() {
   const query = `
