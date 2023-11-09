@@ -7,7 +7,6 @@ import style from "@/pages/dev.module.scss"
 export const dynamic = 'force-static'
 
 export async function generateStaticParams() {
-  'use server'
   const query = `
     query GetPosts {
       clientPosts {
@@ -42,7 +41,6 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
-  'use server'
   const { slug } = params
   const query = `
     query GetPostBySlug($slug: ID!) {

@@ -1,7 +1,6 @@
 import { getData } from "@/utilities/getData";
 
 export async function fetchSettings() {
-  'use server'
   const query = `
     query GetDev {
       siteSettings {
