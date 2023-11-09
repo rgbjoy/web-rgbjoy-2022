@@ -21,22 +21,22 @@ export async function generateStaticParams() {
   }))
 }
 
-// export async function generateMetadata({ params }) {
-//   const { slug } = params
-//   const query = `
-//     query GetTitles($slug: ID!) {
-//       clientPost(id: $slug, idType: URI) {
-//         title
-//       }
-//     }
-//   `;
+export async function generateMetadata({ params }) {
+  const { slug } = params
+  const query = `
+    query GetTitles($slug: ID!) {
+      clientPost(id: $slug, idType: URI) {
+        title
+      }
+    }
+  `;
 
-//   const { data: {clientPost} } = await getData(query, { slug });
+  const { data: {clientPost} } = await getData(query, { slug });
 
-//   return {
-//     title: clientPost.title,
-//   }
-// }
+  return {
+    title: clientPost.title,
+  }
+}
 
 export default async function Page({ params }) {
   const { slug } = params
@@ -64,7 +64,7 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.dev}>
-      {/* <ClientDetail item={clientPost} /> */}
+      <ClientDetail item={clientPost} />
     </PageWrapper>
   );
 }
