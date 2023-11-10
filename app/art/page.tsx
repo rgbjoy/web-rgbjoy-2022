@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const query = `
-    query {
-      page(id: "cG9zdDo1MA==") {
+    query GetArt {
+      page(id: "cG9zdDoxNw==") {
         content(format: RENDERED)
         artwork {
           gallery {

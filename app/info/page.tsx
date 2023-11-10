@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const query = `
     query getInfo {
-      page(id: "cG9zdDoyNA==") {
+      page(id: "cG9zdDoxMw==") {
         content(format: RENDERED)
         info {
           profileImage {
@@ -31,7 +31,7 @@ export default async function Page() {
           }
           strengths {
             title
-            strength
+            strengths
           }
         }
       }

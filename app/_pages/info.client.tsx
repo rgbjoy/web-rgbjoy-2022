@@ -52,7 +52,7 @@ export default function Info(page) {
       <div>
         {page.info.strengths.map((value, i) => {
           const title = value["title"]
-          const detail = value["strength"]
+          const detail = value["strengths"]
 
           return (
             <div className={style.strengths} key={"strenths" + i}>
