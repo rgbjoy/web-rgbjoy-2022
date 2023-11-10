@@ -1,21 +1,19 @@
 "use client"
 
 import PageWrapper from '@/components/pageWrapper';
-import Link from 'next/link'
 import style from "./dev.module.scss"
 import { SplitText } from '@/components/splitText';
 
 export default function Dev(data) {
 
   const {
-    clientPosts: { nodes },
     page: { dev },
   } = data;
 
   const GetProjects = () => {
     return (
       <ul className={style.list}>
-        {dev.pastProjects.map((value, i) => {
+        {dev.pastProjects?.map((value, i) => {
           const title = value["title"];
           const description = value["description"];
           const link = value["link"]["url"];
@@ -44,19 +42,6 @@ export default function Dev(data) {
 
       <h2 className={style.sectionTitle}>Past Projects</h2>
       <GetProjects />
-
-      <h2 className={style.sectionTitle}>Clients</h2>
-      <ul className={style.list}>
-        {nodes.map((item, i) => (
-          <li className={style.item} key={"clients" + i}>
-            <div className={style.name}>{item.title}</div>
-            <div className={style.date}>{item.client.date}</div>
-            <Link className={`${style.seemore} underline`} href={`/dev/${item.slug}`}>
-              More details
-            </Link>
-          </li>
-        ))}
-      </ul>
 
     </PageWrapper>
   )

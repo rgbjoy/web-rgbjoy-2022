@@ -9,18 +9,8 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const query = `
-    query GetDev {
-      clientPosts(where: {orderby: {order: ASC, field: MENU_ORDER}}) {
-        nodes {
-          title
-          slug
-          client {
-            date
-            title
-          }
-        }
-      }
-      page(id: "cG9zdDo0MQ==") {
+    query GetDevPage {
+      page(id: "cG9zdDoxNQ==") {
         content(format: RENDERED)
         dev {
           pastProjects {

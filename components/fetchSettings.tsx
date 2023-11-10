@@ -2,7 +2,7 @@ import { getData } from "@/utilities/getData";
 
 export async function fetchSettings() {
   const query = `
-    query GetDev {
+    query GetOptions {
       siteSettings {
         options {
           footerLinks {

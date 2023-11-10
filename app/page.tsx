@@ -9,7 +9,7 @@ export const metadata = {
 export default async function Page() {
   const query = `
     query getHome {
-      page(id:"cG9zdDo1") {
+      page(id:"cG9zdDoxMQ==") {
         home {
           header
           subhead
