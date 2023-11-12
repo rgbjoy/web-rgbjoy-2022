@@ -75,6 +75,7 @@ const SiteLayout = ({ children, settings }) => {
     { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
     { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
     { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
+    { label: 'Posts', path: '/psots', targetSegment: 'posts', color: "yellow" },
   ]
 
   const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);

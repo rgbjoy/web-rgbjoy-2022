@@ -1,0 +1,25 @@
+.posts {
+  ::selection {
+    background: transparent;
+    color: $yellow;
+  }
+
+  .header {
+    color: $yellow;
+  }
+
+  .postLink {
+    width: max-content;
+    border-bottom: 1px solid $yellow;
+    margin-top: 20px;
+  }
+}
+
+.post {
+  .header {
+    color: $yellow;
+  }
+  .content {
+    margin-bottom: $gutter;
+  }
+}
