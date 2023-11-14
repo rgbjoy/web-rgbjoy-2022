@@ -1,7 +1,5 @@
 import { getData } from "@/utilities/getData";
-import PageWrapper from '@/components/pageWrapper';
 import { Metadata } from "next";
-import Link from "next/link";
 import Posts from "@/pages/posts.client";
 
 export const metadata: Metadata = {
@@ -10,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export const runtime = 'edge'
-export const revalidate = 60
+export const revalidate = 3600
 
 export default async function Page() {
   const query = `
