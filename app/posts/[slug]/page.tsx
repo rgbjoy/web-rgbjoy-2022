@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import style from "@/pages/posts.module.scss"
 
-export const runtime = 'edge'
 export const dynamicParams = true
 export const revalidate = 3600
 
