@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   description: 'Multidisciplinary digital creator & web engineer',
 }
 
-export const runtime = 'edge'
 export const revalidate = 3600
 
 export default async function Page() {
