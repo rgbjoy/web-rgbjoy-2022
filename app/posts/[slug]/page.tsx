@@ -13,17 +13,15 @@ export async function generateStaticParams() {
   const query = `
     query getPosts {
       posts {
-        edges {
-          node {
-            slug
-          }
+        nodes {
+          slug
         }
       }
     }
   `;
 
-  const { data: { posts: { edges } } } = await getData(query);
-  return edges.map(({ node: { slug } }) => ({
+  const { data } = await getData(query);
+  return data.posts.nodes.map(({ slug }) => ({
     params: { slug }
   }))
 }

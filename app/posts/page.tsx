@@ -13,20 +13,18 @@ export default async function Page() {
   const query = `
     query getPosts {
       posts {
-        edges {
-          node {
-            slug
-            title
-            date
-          }
+        nodes {
+          slug
+          title
+          date
         }
       }
     }
   `;
 
-  const { data: { posts: { edges } } } = await getData(query)
+  const { data: { posts } } = await getData(query)
 
   return (
-    <Posts posts={edges}  />
+    <Posts posts={posts}  />
   );
 }
