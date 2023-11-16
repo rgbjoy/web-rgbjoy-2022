@@ -85,7 +85,7 @@ export default async function Page({ params }) {
             alt={`Featured image for ${post.title}`}
             width={imageWidth || 500}
             height={imageHeight || 300}
-            layout='responsive'
+            priority
           />
         )}
       </Suspense>
