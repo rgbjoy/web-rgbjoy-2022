@@ -20,8 +20,13 @@ export async function generateStaticParams() {
     }
   `;
 
-  const { data } = await getData(query);
-  return data.posts.nodes.map(({ slug }) => ({
+  const { data: {posts: {nodes}} } = await getData(query);
+
+  if (!nodes) {
+    return []
+  }
+
+  return nodes.map(({ slug }) => ({
     params: { slug }
   }))
 }
@@ -37,6 +42,10 @@ export async function generateMetadata({ params }) {
   `;
 
   const { data: { post } } = await getData(query, { slug });
+
+  if (!post) {
+    return {}
+  }
 
   return {
     title: post?.title,
