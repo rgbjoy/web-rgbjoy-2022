@@ -243,10 +243,10 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.6.1.tgz#913d3a68c5cbc1124fdb18eff919432f7b6abdde"
   integrity sha512-POu8Mk0hIU3lRXB3bGIGe4VHIwwDsQyoD1F394OK7STTiX9w4dG3cTLljjYswkQN+hDSHRrj4O36kuVa7KPU8Q==
 
-"@react-three/drei@^9.88.14":
-  version "9.88.14"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.88.14.tgz#7d50463e38f50ab85e6171cbab489bb74ff497fe"
-  integrity sha512-DKWwFA5UkXWdA3AlJkXVPXYXecnBRThWv3kYOWxSuNW3KfznsehCemgI0Cn81cHi59+J4N8xPLO8TuF4oYbfew==
+"@react-three/drei@^9.88.15":
+  version "9.88.15"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.88.15.tgz#2b1f1892850defd6a27833d28ccf01c4a90ff855"
+  integrity sha512-nWnLLKZ14TzrBfIPzVRK74mi/iHBNyAFJChIJipWO7/Ad51p8LRd6dUdzCvbu1de2L7siip++JQnqoi0rvXaYg==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@mediapipe/tasks-vision" "0.10.8"
@@ -1470,9 +1470,9 @@ ieee754@^1.2.1:
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
 
 ignore@^5.2.0:
-  version "5.2.4"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.4.tgz#a291c0c6178ff1b960befe47fcdec301674a6324"
-  integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.0.tgz#67418ae40d34d6999c95ff56016759c718c82f78"
+  integrity sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==
 
 immutable@^4.0.0:
   version "4.3.4"

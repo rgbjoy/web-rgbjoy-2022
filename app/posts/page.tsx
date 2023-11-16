@@ -4,7 +4,7 @@ import Posts from "@/pages/posts.client";
 
 export const metadata: Metadata = {
   title: 'Info',
-  description: 'Multidisciplinary digital creator & web engineer',
+  description: 'Multidisciplinary digital creator & software engineer',
 }
 
 export const revalidate = 3600
@@ -17,7 +17,7 @@ export default async function Page() {
           node {
             slug
             title
-            content
+            date
           }
         }
       }

@@ -3,7 +3,7 @@ import { getData } from "@/utilities/getData";
 
 export const metadata = {
   title: 'Tom Fletcher',
-  description: 'Multidisciplinary digital creator & web engineer',
+  description: 'Multidisciplinary digital creator & software engineer',
 }
 
 export default async function Page() {

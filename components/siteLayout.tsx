@@ -75,7 +75,7 @@ const SiteLayout = ({ children, settings }) => {
     { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
     { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
     { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
-    { label: 'Posts', path: '/psots', targetSegment: 'posts', color: "yellow" },
+    { label: 'Posts', path: '/posts', targetSegment: 'posts', color: "yellow" },
   ]
 
   const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
@@ -85,15 +85,6 @@ const SiteLayout = ({ children, settings }) => {
       <DynamicBackground page={isNotFound ? "404" : pathname} />
 
       {children}
-
-      {settings?.badge && <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
-        className={"badge"}>
-        {settings.badge}
-      </motion.div>}
-
 
       <motion.header
         id="header"
@@ -135,6 +126,14 @@ const SiteLayout = ({ children, settings }) => {
           </motion.div>
         )}
       </motion.footer>
+
+      {settings?.badge && <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
+        className={"badge"}>
+        {settings.badge}
+      </motion.div>}
     </>
   )
 }

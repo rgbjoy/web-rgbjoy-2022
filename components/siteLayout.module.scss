@@ -56,6 +56,9 @@
       &[data-color="blue"] {
         color: $blue;
       }
+      &[data-color="yellow"] {
+        color: $yellow;
+      }
     }
 
     &[data-color="red"]::before {
@@ -68,6 +71,10 @@
 
     &[data-color="blue"]::before {
       background-color: $blue;
+    }
+
+    &[data-color="yellow"]::before {
+      background-color: $yellow;
     }
 
     &:first-child {

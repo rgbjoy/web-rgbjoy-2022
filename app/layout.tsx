@@ -23,7 +23,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'Tom Fletcher',
-    description: 'Multidisciplinary digital creator & web engineer',
+    description: 'Multidisciplinary digital creator & software engineer',
     url: 'https://rgbjoy.com',
     siteName: 'RGBJOY',
     images: [

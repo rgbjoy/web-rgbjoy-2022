@@ -1,4 +1,5 @@
 .posts {
+
   ::selection {
     background: transparent;
     color: $yellow;
@@ -10,15 +11,34 @@
 
   .postLink {
     width: max-content;
-    border-bottom: 1px solid $yellow;
-    margin-top: 20px;
+    margin-top: $gutter;
+    border-bottom: 1px solid transparent;
+    transition: all 0.25s ease-in-out;
+    font-size: 1.5rem;
+
+    &:hover {
+      color: $yellow;
+      border-color: $yellow;
+    }
+  }
+
+  .date {
+    margin-top: 0.8em;
+    font-size: 0.8rem;
   }
 }
 
 .post {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.5);
+  min-height: 100vh;
+
   .header {
-    color: $yellow;
+    margin-bottom: $gutter;
+    color: $yellow
   }
+
   .content {
     margin-bottom: $gutter;
   }

@@ -113,11 +113,13 @@ h3 {
   }
 }
 
-p {
+li {
+  margin-bottom: 1em;
+}
+
+p, li {
   line-height: 150%;
-  letter-spacing: 2px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  // letter-spacing: 2px;
 
   @include mobile-only {
     font-size: 80%;
