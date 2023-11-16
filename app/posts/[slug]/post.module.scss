@@ -11,7 +11,7 @@
   }
 
   .header {
-    margin: $gutter 0;
+    margin: $gutter 0 calc($gutter / 2);
     color: $yellow
   }
 

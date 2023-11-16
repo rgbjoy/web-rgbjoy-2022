@@ -119,7 +119,6 @@ li {
 
 p, li {
   line-height: 150%;
-  // letter-spacing: 2px;
 
   @include mobile-only {
     font-size: 80%;
