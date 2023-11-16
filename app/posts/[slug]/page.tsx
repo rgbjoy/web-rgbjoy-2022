@@ -3,7 +3,8 @@ import PageWrapper from '@/components/pageWrapper';
 import { notFound } from 'next/navigation'
 import Image from 'next/image';
 import Link from 'next/link'
-import style from "@/pages/posts.module.scss"
+import style from "./post.module.scss"
+import { Suspense } from "react";
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -77,15 +78,17 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.post}>
-      {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt={`Featured image for ${post.title}`}
-          width={imageWidth || 500}
-          height={imageHeight || 300}
-          layout='responsive'
-        />
-      )}
+      <Suspense fallback={<div>Loading...</div>}>
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            alt={`Featured image for ${post.title}`}
+            width={imageWidth || 500}
+            height={imageHeight || 300}
+            layout='responsive'
+          />
+        )}
+      </Suspense>
       <h2 className={style.header}>{post.title}</h2>
       <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
       <Link href="/posts">← Back to posts</Link>
