@@ -7,7 +7,6 @@ import style from "./post.module.scss"
 import { Suspense } from "react";
 
 export const dynamicParams = true
-export const runtime = 'edge'
 export const revalidate = 3600
 
 export async function generateStaticParams() {
