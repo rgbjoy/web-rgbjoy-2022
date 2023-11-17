@@ -4,8 +4,9 @@ import PageWrapper from '@/components/pageWrapper';
 import { SplitText } from '@/components/splitText';
 import style from './posts.module.scss'
 import Link from 'next/link';
+import { PostsData } from '@/models/types';
 
-export default function Posts({ posts }) {
+export default function Posts({ posts }: { posts: PostsData }) {
 
   const formatDate = (dateString) => {
     const options: Intl.DateTimeFormatOptions = {

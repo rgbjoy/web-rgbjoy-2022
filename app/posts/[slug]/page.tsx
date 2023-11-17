@@ -5,9 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link'
 import style from "./post.module.scss"
 import { Suspense } from "react";
+import { PostData } from "@/models/types";
 
 export const dynamicParams = true
 export const revalidate = 3600
+
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
 
 export async function generateStaticParams() {
   const query = `
@@ -72,7 +79,7 @@ export default async function Page({ params }) {
   }
   `;
 
-  const { data: { post } } = await getData(query, { slug })
+  const { data: { post } } = await getData(query, { slug }) as { data: { post: PostData } }
 
   if (!post) {
     notFound()
