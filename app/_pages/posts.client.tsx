@@ -21,7 +21,7 @@ export default function Posts({ posts }: { posts: PostsData }) {
     <PageWrapper className={style.posts}>
       <h1 className={style.header}>
         <SplitText>
-          Posts
+          Thoughts
         </SplitText>
       </h1>
       {posts.nodes.map((node) => {

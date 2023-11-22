@@ -92,7 +92,7 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.post}>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={`<div className="loading">...</div>`}>
         {imageUrl && (
           <Image
             src={imageUrl}
@@ -102,10 +102,10 @@ export default async function Page({ params }) {
             priority
           />
         )}
+        <h2 className={style.header}>{post.title}</h2>
+        <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
+        <Link href="/posts">← Back to posts</Link>
       </Suspense>
-      <h2 className={style.header}>{post.title}</h2>
-      <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
-      <Link href="/posts">← Back to posts</Link>
     </PageWrapper>
   );
 }
