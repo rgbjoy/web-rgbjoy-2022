@@ -1,11 +1,16 @@
 "use client"
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
 import { usePathname } from 'next/navigation'
+import dynamic from 'next/dynamic';
 import style from './siteLayout.module.scss'
 import NavLink from "./navLink";
-import Background from './background';
+
+const DynamicBackground = dynamic(
+  () => import('./background'),
+  { loading: () => <div className="loading">...</div>, ssr: false }
+)
 
 const Footer = ({ footerLinks }) => {
   return (
@@ -76,9 +81,7 @@ const SiteLayout = ({ children, settings }) => {
 
   return (
     <>
-      <Suspense fallback={`<div className="loading">...</div>`}>
-        <Background page={isNotFound ? "404" : pathname} />
-      </Suspense>
+      <DynamicBackground page={isNotFound ? "404" : pathname} />
 
       {children}
 
