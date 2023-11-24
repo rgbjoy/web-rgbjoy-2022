@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic';
@@ -34,16 +34,31 @@ const SiteLayout = ({ children, settings }) => {
     scrolled: {
       height: "60px",
       borderBottom: "1px dotted",
-      borderColor: "rgba(255, 255, 255, 0.131)",
+      borderColor: "rgba(0, 0, 0, 0.5)",
       backdropFilter: "blur(8px)",
       WebkitBackdropFilter: "blur(8px)"
     },
     notScrolled: {
       height: "100%",
       borderBottom: "1px dotted",
-      borderColor: "rgba(255, 255, 255, 0)",
+      borderColor: "rgba(0, 0, 0, 0)",
       backdropFilter: "blur(0px)",
       WebkitBackdropFilter: "blur(0px)"
+    }
+  };
+
+  // hamburger
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Function to toggle the menu state
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
     }
   };
 
@@ -62,9 +77,11 @@ const SiteLayout = ({ children, settings }) => {
       }
     };
 
+    document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', handleScroll);
 
     return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -94,7 +111,7 @@ const SiteLayout = ({ children, settings }) => {
           duration: 0.75,
           ease: "easeOut"
         }}
-        className={style.header}
+        className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
       >
         <motion.div
           variants={innerVariants}
@@ -105,7 +122,11 @@ const SiteLayout = ({ children, settings }) => {
             ease: "easeInOut",
           }}
           className={style.header_inner}
+          ref={menuRef}
         >
+          <button onClick={toggleMenu} className={style.hamburgerMenu}>
+            {isMenuOpen ? `Close` : `Menu`}
+          </button>
           <nav>
             {links.map((l, i) =>
               pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} />
