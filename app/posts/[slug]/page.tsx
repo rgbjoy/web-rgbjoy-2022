@@ -55,21 +55,21 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = params
   const query = `
-  query GetPost($slug: ID!) {
-    post(id: $slug, idType: SLUG) {
-      title
-      content
-      featuredImage {
-        node {
-          sourceUrl
-          mediaDetails {
-            width
-            height
+    query GetPost($slug: ID!) {
+      post(id: $slug, idType: SLUG) {
+        title
+        content
+        featuredImage {
+          node {
+            sourceUrl
+            mediaDetails {
+              width
+              height
+            }
           }
         }
       }
     }
-  }
   `;
 
   const { data: { post } } = await getData(query, { slug }) as { data: { post: PostData } }
