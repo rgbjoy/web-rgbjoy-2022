@@ -4,7 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: 'Art & Design',
-  description: 'Multidisciplinary digital creator & web engineer',
+  description: 'Multidisciplinary digital creator & software engineer',
 }
 
 export default async function Page() {

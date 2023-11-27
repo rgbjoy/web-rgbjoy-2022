@@ -4,8 +4,9 @@ import Link from 'next/link'
 import style from "./home.module.scss"
 import PageWrapper from '@/components/pageWrapper'
 import { SplitText } from '@/components/splitText'
+import { HomeData } from 'models/types'
 
-export default function Home(home) {
+export default function Home(home:HomeData) {
   return (
     <PageWrapper className={style.intro}>
       <h1>

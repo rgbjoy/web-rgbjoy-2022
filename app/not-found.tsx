@@ -4,7 +4,7 @@ import style from "./not-found.module.scss"
 
 export const metadata = {
   title: '404',
-  description: 'Multidisciplinary digital creator & web engineer',
+  description: 'Multidisciplinary digital creator & software engineer',
 }
 
 const Custom404 = () => (

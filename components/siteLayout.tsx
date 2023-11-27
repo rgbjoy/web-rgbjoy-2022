@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
-import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation'
+import dynamic from 'next/dynamic';
 import style from './siteLayout.module.scss'
 import NavLink from "./navLink";
 
@@ -11,7 +11,6 @@ const DynamicBackground = dynamic(
   () => import('./background'),
   { loading: () => <div className="loading">...</div>, ssr: false }
 )
-
 
 const Footer = ({ footerLinks }) => {
   return (
@@ -35,16 +34,31 @@ const SiteLayout = ({ children, settings }) => {
     scrolled: {
       height: "60px",
       borderBottom: "1px dotted",
-      borderColor: "rgba(255, 255, 255, 0.131)",
+      borderColor: "rgba(0, 0, 0, 0.5)",
       backdropFilter: "blur(8px)",
       WebkitBackdropFilter: "blur(8px)"
     },
     notScrolled: {
       height: "100%",
       borderBottom: "1px dotted",
-      borderColor: "rgba(255, 255, 255, 0)",
+      borderColor: "rgba(0, 0, 0, 0)",
       backdropFilter: "blur(0px)",
       WebkitBackdropFilter: "blur(0px)"
+    }
+  };
+
+  // hamburger
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Function to toggle the menu state
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
     }
   };
 
@@ -63,9 +77,11 @@ const SiteLayout = ({ children, settings }) => {
       }
     };
 
+    document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', handleScroll);
 
     return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -75,6 +91,7 @@ const SiteLayout = ({ children, settings }) => {
     { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
     { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
     { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
+    { label: 'Thoughts', path: '/posts', targetSegment: 'posts', color: "yellow" },
   ]
 
   const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
@@ -85,15 +102,6 @@ const SiteLayout = ({ children, settings }) => {
 
       {children}
 
-      {settings?.badge && <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
-        className={"badge"}>
-        {settings.badge}
-      </motion.div>}
-
-
       <motion.header
         id="header"
         initial={{ opacity: 0 }}
@@ -103,7 +111,7 @@ const SiteLayout = ({ children, settings }) => {
           duration: 0.75,
           ease: "easeOut"
         }}
-        className={style.header}
+        className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
       >
         <motion.div
           variants={innerVariants}
@@ -114,7 +122,11 @@ const SiteLayout = ({ children, settings }) => {
             ease: "easeInOut",
           }}
           className={style.header_inner}
+          ref={menuRef}
         >
+          <button onClick={toggleMenu} className={style.hamburgerMenu}>
+            {isMenuOpen ? `Close` : `Menu`}
+          </button>
           <nav>
             {links.map((l, i) =>
               pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} />
@@ -134,6 +146,14 @@ const SiteLayout = ({ children, settings }) => {
           </motion.div>
         )}
       </motion.footer>
+
+      {settings?.badge && <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
+        className={"badge"}>
+        {settings.badge}
+      </motion.div>}
     </>
   )
 }

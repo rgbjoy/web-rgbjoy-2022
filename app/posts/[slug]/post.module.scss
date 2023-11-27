@@ -1,0 +1,21 @@
+.post {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.5);
+  min-height: 100vh;
+
+  img {
+    border-radius: 7px;
+    width: 100%;
+    height: auto;
+  }
+
+  .header {
+    margin: $gutter 0 calc($gutter / 2);
+    color: $yellow
+  }
+
+  .content {
+    margin-bottom: $gutter;
+  }
+}

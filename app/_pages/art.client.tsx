@@ -8,8 +8,9 @@ import LightBox from '@/components/lightbox';
 import { SplitText } from '@/components/splitText';
 
 import { useState, useEffect, useRef } from "react";
+import { ArtData } from '@/models/types';
 
-export default function Art(page) {
+export default function Art(page:ArtData) {
 
   const artwork = page.artwork;
 
@@ -65,9 +66,9 @@ export default function Art(page) {
         className={style['my-masonry-grid']}
         columnClassName="my-masonry-grid_column">
         {
-          artwork?.gallery.map((media, i) => {
+          artwork?.gallery.map((item, i) => {
             return (
-              <DoodleImage key={"media" + i} media={media} />
+              <DoodleImage key={"media" + i} media={item} />
             )
           })
         }

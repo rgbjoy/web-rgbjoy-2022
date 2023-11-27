@@ -3,8 +3,9 @@
 import PageWrapper from '@/components/pageWrapper';
 import style from "./dev.module.scss"
 import { SplitText } from '@/components/splitText';
+import { DevData } from 'models/types';
 
-export default function Dev(data) {
+export default function Dev(data: { page: DevData }) {
 
   const {
     page: { dev },

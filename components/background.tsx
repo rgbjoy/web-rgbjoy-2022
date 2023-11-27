@@ -30,9 +30,9 @@ const colors = {
   "art": {
     r: 0, g: 0, b: 1
   },
-  "404": {
-    r: 1, g: 1, b: 1
-  }
+  "posts": {
+    r: 1, g: 1, b: 0
+  },
 };
 
 const getRandomPick = (items: Array<number>): number => {

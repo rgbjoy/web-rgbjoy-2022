@@ -2,8 +2,6 @@ import { cache } from 'react'
 
 import 'server-only'
 
-export const runtime = 'edge'
-
 export const getData = cache(async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;
 
