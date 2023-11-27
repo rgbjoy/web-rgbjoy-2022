@@ -4,17 +4,10 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image';
 import Link from 'next/link'
 import style from "./post.module.scss"
-import { Suspense } from "react";
 import { PostData } from "@/models/types";
 
 export const dynamicParams = true
 export const revalidate = 3600
-
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
 
 export async function generateStaticParams() {
   const query = `
@@ -27,7 +20,7 @@ export async function generateStaticParams() {
     }
   `;
 
-  const { data: {posts: {nodes}} } = await getData(query);
+  const { data: { posts: { nodes } } } = await getData(query);
 
   if (!nodes) {
     return []
@@ -92,20 +85,18 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.post}>
-      <Suspense fallback={`<div className="loading">...</div>`}>
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            alt={`Featured image for ${post.title}`}
-            width={imageWidth || 500}
-            height={imageHeight || 300}
-            priority
-          />
-        )}
-        <h2 className={style.header}>{post.title}</h2>
-        <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
-        <Link href="/posts">← Back to posts</Link>
-      </Suspense>
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={`Featured image for ${post.title}`}
+          width={imageWidth || 500}
+          height={imageHeight || 300}
+          priority
+        />
+      )}
+      <h2 className={style.header}>{post.title}</h2>
+      <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
+      <Link href="/posts">← Back to posts</Link>
     </PageWrapper>
   );
 }
