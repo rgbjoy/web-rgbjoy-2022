@@ -31,7 +31,8 @@ const Media = ({ media, thumbnail = false }) => {
     return (
       <video playsInline muted autoPlay loop width={thumbnail ? 300 : media.mediaDetails.width} height={thumbnail ? 300 : media.mediaDetails.height}>
         <source
-          src={media.mediaItemUrl}
+          src={media.mediaItemUrl+"?cache-bust="+Math.random()}
+          type="video/mp4"
         />
       </video>
     )
