@@ -112,12 +112,14 @@
 .hamburgerMenu {
   font-family: var(--rhode-font), sans-serif;
   font-size: 0.7em;
+  color: white;
   cursor: pointer;
   position: absolute;
-  top: 20px;
+  top: 25px;
   right: 20px;
   background-color: transparent;
   border: none;
+  padding: 0;
 
   @include mobile-up {
     display: none;

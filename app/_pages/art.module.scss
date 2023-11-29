@@ -1,9 +1,13 @@
-$grid: 30px;
+$grid: 5px;
 
 .art {
   padding-right: $gutter;
   width: 100%;
   max-width: 1080px;
+
+  @include mobile-only {
+    padding-right: 20px;
+  }
 
   + div {
     display: none;

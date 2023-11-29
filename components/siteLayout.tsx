@@ -56,6 +56,10 @@ const SiteLayout = ({ children, settings }) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setIsMenuOpen(false);
@@ -124,12 +128,12 @@ const SiteLayout = ({ children, settings }) => {
           className={style.header_inner}
           ref={menuRef}
         >
-          <button onClick={toggleMenu} className={style.hamburgerMenu}>
+          <button onClick={toggleMenu} type="button" className={style.hamburgerMenu}>
             {isMenuOpen ? `Close` : `Menu`}
           </button>
           <nav>
             {links.map((l, i) =>
-              pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} />
+              pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} closeMenu={closeMenu} />
             )}
           </nav>
         </motion.div>
