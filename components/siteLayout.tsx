@@ -106,17 +106,7 @@ const SiteLayout = ({ children, settings }) => {
 
       {children}
 
-      <motion.header
-        id="header"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          delay: 0.25,
-          duration: 0.75,
-          ease: "easeOut"
-        }}
-        className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
-      >
+      <div id="header" className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}>
         <motion.div
           variants={innerVariants}
           initial="notScrolled"
@@ -137,7 +127,7 @@ const SiteLayout = ({ children, settings }) => {
             )}
           </nav>
         </motion.div>
-      </motion.header>
+      </div>
 
       <motion.footer id="footer" className={style.footer}>
         {settings?.footerLinks && (

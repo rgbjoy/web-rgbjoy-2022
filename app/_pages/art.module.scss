@@ -9,10 +9,6 @@ $grid: 5px;
     padding-right: 20px;
   }
 
-  + div {
-    display: none;
-  }
-
   ::selection {
     background: transparent;
     color: $blue;
