@@ -31,7 +31,7 @@ const Media = ({ media, thumbnail = false }) => {
     return (
       <video playsInline muted autoPlay loop width={thumbnail ? 300 : media.mediaDetails.width} height={thumbnail ? 300 : media.mediaDetails.height}>
         <source
-          src={media.mediaItemUrl+"?cache-bust="+Math.random()}
+          src={media.mediaItemUrl}
           type="video/mp4"
         />
       </video>
@@ -44,7 +44,6 @@ const Media = ({ media, thumbnail = false }) => {
         animate={animationControls}
         variants={animationVariants}
         transition={{ ease: "easeOut", duration: 0.25 }}
-        style={{ maxWidth: media.mediaDetails.width, maxHeight: media.mediaDetails.height }}
       >
         <Image
           src={thumbnail ? media.mediaDetails.sizes[0].sourceUrl : media.mediaItemUrl}
