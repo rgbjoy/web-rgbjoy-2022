@@ -24,7 +24,6 @@ export const metadata = {
     icon: '/social/icon.png',
   },
   openGraph: {
-    title: 'Tom Fletcher',
     description: 'Multidisciplinary digital creator & software engineer',
     url: 'https://rgbjoy.com',
     siteName: 'RGBJOY',

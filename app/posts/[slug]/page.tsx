@@ -37,6 +37,12 @@ export async function generateMetadata({ params }) {
     query GetPost($slug: ID!) {
       post(id: $slug, idType: SLUG) {
         title
+        excerpt
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+          }
+        }
       }
     }
   `;
@@ -49,6 +55,14 @@ export async function generateMetadata({ params }) {
 
   return {
     title: post?.title,
+    description: post?.excerpt,
+    openGraph: {
+      images: [
+        {
+          url: post?.featuredImage?.node?.sourceUrl,
+        },
+      ],
+    },
   }
 }
 

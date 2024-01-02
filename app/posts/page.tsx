@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Posts from "@/pages/posts.client";
 
 export const metadata: Metadata = {
-  title: 'Info',
+  title: 'Thoughts',
   description: 'Multidisciplinary digital creator & software engineer',
 }
 
