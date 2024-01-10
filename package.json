@@ -19,8 +19,9 @@
     "@react-three/rapier-addons": "^3.0.3",
     "@vercel/analytics": "^1.1.1",
     "@vercel/speed-insights": "^1.0.2",
-    "framer-motion": "^10.17.9",
+    "framer-motion": "^10.17.12",
     "gsap": "^3.12.4",
+    "html-react-parser": "^5.0.11",
     "next": "14.0.4",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
@@ -32,7 +33,7 @@
     "three": "^0.160.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.7",
+    "@types/node": "^20.10.8",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@types/three": "^0.160.0",

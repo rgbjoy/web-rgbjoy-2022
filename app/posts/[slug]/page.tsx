@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link'
 import style from "./post.module.scss"
 import { PostData } from "@/models/types";
+import parse from 'html-react-parser';
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -97,6 +98,17 @@ export default async function Page({ params }) {
   const imageWidth = featuredImage?.mediaDetails?.width;
   const imageHeight = featuredImage?.mediaDetails?.height;
 
+  const replaceImageTag = (node) => {
+    if (node.type === 'tag' && node.name === 'img') {
+      let { src, alt, width, height } = node.attribs;
+      return <Image src={src} alt={alt} width={width} height={height} />;
+    }
+  };
+
+  const contentWithNextImage = parse(post.content, {
+    replace: replaceImageTag,
+  });
+
   return (
     <PageWrapper className={style.post}>
       {imageUrl && (
@@ -109,7 +121,7 @@ export default async function Page({ params }) {
         />
       )}
       <h2 className={style.header}>{post.title}</h2>
-      <div className={style.content} dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div className={style.content}>{contentWithNextImage}</div>
       <Link href="/posts">← Back to posts</Link>
     </PageWrapper>
   );
