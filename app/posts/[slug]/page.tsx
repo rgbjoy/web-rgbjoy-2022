@@ -1,5 +1,6 @@
 import { getData } from "@/utilities/getData";
 import PageWrapper from '@/components/pageWrapper';
+import formatDate from '@/components/formatDate';
 import { notFound } from 'next/navigation'
 import Image from 'next/image';
 import Link from 'next/link'
@@ -73,6 +74,7 @@ export default async function Page({ params }) {
     query GetPost($slug: ID!) {
       post(id: $slug, idType: SLUG) {
         title
+        date
         content
         featuredImage {
           node {
@@ -92,6 +94,13 @@ export default async function Page({ params }) {
   if (!post) {
     notFound()
   }
+
+  const authorStructuredData = {
+    "@context": "http://schema.org",
+    "@type": "Person",
+    "name": "Tom Fletcher",
+    "url": "https://instagram.com/rgbjoy",
+  };
 
   const featuredImage = post.featuredImage?.node;
   const imageUrl = featuredImage?.sourceUrl;
@@ -125,12 +134,17 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.post}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(authorStructuredData) }}
+      />
       {imageUrl && (
-        <Image src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
+        <Image itemProp="image" className={style.featuredImage} src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
           priority
         />
       )}
-      <h2 className={style.header}>{post.title}</h2>
+      <h2 itemProp="headline" className={style.title}>{post.title}</h2>
+      <h3 itemProp="datePublished" className={style.date}>{formatDate(post.date)}</h3>
       <div className={style.content}>{contentWithNextImage}</div>
       <Link href="/posts">← Back to posts</Link>
     </PageWrapper>

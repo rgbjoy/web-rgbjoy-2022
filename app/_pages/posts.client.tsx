@@ -2,20 +2,12 @@
 
 import PageWrapper from '@/components/pageWrapper';
 import { SplitText } from '@/components/splitText';
+import formatDate from '@/components/formatDate';
 import style from './posts.module.scss'
 import Link from 'next/link';
 import { PostsData } from '@/models/types';
 
 export default function Posts({ posts }: { posts: PostsData }) {
-
-  const formatDate = (dateString) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
-  };
 
   return (
     <PageWrapper className={style.posts}>

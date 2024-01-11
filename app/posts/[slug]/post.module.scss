@@ -4,15 +4,24 @@
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
 
-  img {
+  .featuredImage {
     border-radius: 7px;
     width: 100%;
     height: auto;
+    border: 2px solid $yellow;
   }
 
-  .header {
-    margin: $gutter 0 calc($gutter / 2);
+  .title {
+    margin: $gutter 0 10px;
     color: $yellow
+  }
+
+  .date {
+    margin: calc($gutter/2) 0 $gutter;
+    font-size: 0.8rem;
+    color: $yellow;
+    padding-top: 10px;
+    border-top: 1px solid $yellow;
   }
 
   .content {
@@ -24,5 +33,9 @@
     border-radius: 7px;
     overflow: hidden;
     margin: 20px 0;
+  }
+
+  figure {
+    margin: 0;
   }
 }

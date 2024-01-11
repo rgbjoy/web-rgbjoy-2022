@@ -84,6 +84,7 @@ interface PostsData {
 
 interface PostData {
   title: string;
+  date: string;
   content: string;
   featuredImage: FeaturedImage;
 }
