@@ -114,7 +114,7 @@ export default async function Page({ params }) {
       }
 
       return (
-        <iframe srcDoc={srcdoc} width="100%" height={height}></iframe>
+        <iframe scrolling={"no"} srcDoc={srcdoc} width="100%" height={height}></iframe>
       );
     }
   };
