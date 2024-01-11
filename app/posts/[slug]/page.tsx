@@ -103,6 +103,20 @@ export default async function Page({ params }) {
       let { src, alt, width, height } = node.attribs;
       return <Image src={src} alt={alt} width={width} height={height} />;
     }
+
+    if (node.type === 'tag' && node.name === 'iframe') {
+      let { srcdoc } = node.attribs;
+      const heightMatch = srcdoc.match(/createCanvas\(windowWidth,\s*(\d+)\)/);
+      let height = '300px'; // default height
+
+      if (heightMatch && heightMatch[1]) {
+        height = `${heightMatch[1]}px`;
+      }
+
+      return (
+        <iframe srcDoc={srcdoc} width="100%" height={height}></iframe>
+      );
+    }
   };
 
   const contentWithNextImage = parse(post.content, {
@@ -112,11 +126,7 @@ export default async function Page({ params }) {
   return (
     <PageWrapper className={style.post}>
       {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt={`Featured image for ${post.title}`}
-          width={imageWidth || 500}
-          height={imageHeight || 300}
+        <Image src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
           priority
         />
       )}
