@@ -37,5 +37,12 @@
 
   figure {
     margin: 0;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 7px;
+      border: 1px solid black;
+    }
   }
 }
