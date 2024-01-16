@@ -301,7 +301,7 @@ const RigPages = ({ page }) => {
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
-    ref.current.rotation.y += delta / (page === "/" ? 5 : 25);
+    ref.current.rotation.y += delta / (currentPage === "home" ? 5 : 25);
   })
 
   return (
