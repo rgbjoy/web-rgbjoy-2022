@@ -70,7 +70,6 @@ export default function RootLayout({
         <SiteLayout settings={settings}>
           {children}
         </SiteLayout>
-        <SpeedInsights />
         <Analytics />
       </body>
     </html>
