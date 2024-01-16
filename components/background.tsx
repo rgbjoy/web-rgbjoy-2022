@@ -113,6 +113,170 @@ const RGBPlane = (props: any) => {
   )
 }
 
+interface ParticleProps {
+  initialPosition: number[];
+  initialVelocity: number;
+  direction: number[];
+  maxVelocity: number;
+  canReset: boolean
+}
+
+const Particle: React.FC<ParticleProps> = ({
+  initialPosition,
+  initialVelocity,
+  direction,
+  maxVelocity,
+  canReset
+}) => {
+  const ref = useRef<THREE.Points>(null);
+  const [position, setPosition] = useState(initialPosition); // Set initial position
+  const [velocity, setVelocity] = useState(initialVelocity);
+  const [opacity, setOpacity] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const { camera } = useThree();
+  const geom = useMemo(
+    () =>
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(...initialPosition),
+      ]),
+    []
+  );
+
+  useFrame((state, delta) => {
+    const newElapsedTime = elapsedTime + delta;
+    setElapsedTime(newElapsedTime);
+
+    // Gradually increase velocity to maxVelocity
+    if (velocity < maxVelocity) {
+      const newVelocity = Math.min(velocity + 0.01, maxVelocity);
+      setVelocity(newVelocity);
+    } else {
+      setVelocity(maxVelocity);
+    }
+
+    const fadeDuration = 2;
+    if (canReset) {
+      const newOpacity = Math.min(newElapsedTime / fadeDuration, 1);
+    setOpacity(newOpacity);
+    }
+
+
+    // Update position based on velocity and direction
+    const newPos = position.map(
+      (p, idx) => p + velocity * direction[idx] * delta
+    );
+    setPosition(newPos);
+
+    geom.setFromPoints([new THREE.Vector3(...position)]);
+
+    // Reset position and opacity if past the camera
+    if (isPastCamera(newPos, camera.position)) {
+      setPosition(initialPosition);
+      setVelocity(maxVelocity); // Reset velocity to initial velocity
+      setOpacity(0); // Reset opacity
+      setElapsedTime(0);
+    }
+  });
+
+  return (
+    <points ref={ref} geometry={geom}>
+      <pointsMaterial color="white" size={0.01} transparent opacity={opacity} />
+    </points>
+  );
+};
+
+const isPastCamera = (particlePosition, cameraPosition) => {
+  // Calculate the distance of the particle from the origin
+  const distanceFromOrigin = Math.sqrt(
+    particlePosition[0] * particlePosition[0] +
+    particlePosition[1] * particlePosition[1] +
+    particlePosition[2] * particlePosition[2]
+  );
+
+  // Calculate the distance of the camera from the origin
+  const cameraDistance = Math.sqrt(
+    cameraPosition.x * cameraPosition.x +
+    cameraPosition.y * cameraPosition.y +
+    cameraPosition.z * cameraPosition.z
+  );
+
+  return distanceFromOrigin > cameraDistance;
+};
+
+type ParticlesProps = {
+  initialPosition: [number, number, number];
+  initialVelocity: number;
+  direction: number[];
+  maxVelocity: number;
+  canReset: boolean
+};
+
+// particles Manager Component
+const ParticlesManager = ({
+  maxparticles,
+  maxVelocity,
+  emitInterval,
+  canReset,
+}) => {
+  const [particles, setParticles] = useState<ParticlesProps[]>([]);
+  const emitCounter = useRef(0);
+  const { camera } = useThree();
+
+  useFrame((state, delta) => {
+    emitCounter.current += delta;
+    if (
+      emitCounter.current >= emitInterval &&
+      particles.length < maxparticles
+    ) {
+      emitCounter.current = 0;
+
+      // doa bunch of magic math here...
+      const depth = 1;
+      const fovInRadians = THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov);
+      const height = 2 * depth * Math.tan(fovInRadians / 2);
+      const width = height * (camera as THREE.PerspectiveCamera).aspect;
+
+      // Randomize direction within this spread
+      const direction = new THREE.Vector3(
+        (Math.random() - 0.5) * width, // x-component
+        (Math.random() - 0.5) * height, // y-component
+        depth // z-component pointing behind the camera
+      ).normalize();
+
+      // Transform the direction by the camera's rotation
+      const cameraMatrix = new THREE.Matrix4();
+      cameraMatrix.extractRotation(camera.matrixWorld);
+      direction.applyMatrix4(cameraMatrix);
+
+      const initialPosition = [0, 0, 0];
+
+      setParticles((particles: never[]) => [
+        ...particles,
+        {
+          initialPosition,
+          initialVelocity: 0,
+          direction: direction.toArray(),
+        },
+      ] as never[]);
+    }
+  });
+
+  return (
+    <>
+      {particles.map((particle, index) => (
+        <Particle
+          key={index}
+          initialPosition={particle.initialPosition}
+          initialVelocity={particle.initialVelocity}
+          direction={particle.direction}
+          maxVelocity={maxVelocity}
+          canReset={canReset}
+        />
+      ))}
+    </>
+  );
+};
+
 const RigPages = ({ page }) => {
 
   const { camera } = useThree();
@@ -137,18 +301,20 @@ const RigPages = ({ page }) => {
   useFrame((state, delta) => {
     let WIDTH = state.viewport.width * state.viewport.factor;
     ref.current.position.y = WIDTH < 768 ? -0.5 : 0;
-    ref.current.rotation.y += delta / 25;
+    ref.current.rotation.y += delta / (currentPage === "home" ? 5 : 25);
   })
 
   return (
-    <group
-      onPointerOver={() => set(true)} onPointerOut={() => set(false)}
-      onClick={e => handleClick(e)}
-      ref={ref}>
-      <RGBPlane color="#FF0000" name="red" />
-      <RGBPlane color="#00FF00" name="green" />
-      <RGBPlane color="#0000FF" name="blue" />
-    </group>
+    <>
+      <group
+        onPointerOver={() => set(true)} onPointerOut={() => set(false)}
+        onClick={e => handleClick(e)}
+        ref={ref}>
+        <RGBPlane color="#FF0000" name="red" />
+        <RGBPlane color="#00FF00" name="green" />
+        <RGBPlane color="#0000FF" name="blue" />
+      </group>
+    </>
   )
 }
 
@@ -224,15 +390,19 @@ const Background = ({ page }: { page: string }) => {
   return (
     <Canvas className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
       gl={{
-        powerPreference: "high-performance",
-        alpha: true,
-        antialias: true,
+        antialias: false,
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
       <Float>
         <RenderPageContent page={page} />
       </Float>
+      <ParticlesManager
+        maxparticles={100}
+        maxVelocity={1.5}
+        emitInterval={0.1}
+        canReset={page === "/" ? true : false}
+      />
     </Canvas>
   )
 }
