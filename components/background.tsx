@@ -146,7 +146,6 @@ const Particle: React.FC<ParticleProps> = ({
     const newElapsedTime = elapsedTime + delta;
     setElapsedTime(newElapsedTime);
 
-    // Gradually increase velocity to maxVelocity
     if (velocity < maxVelocity) {
       const newVelocity = Math.min(velocity + 0.01, maxVelocity);
       setVelocity(newVelocity);
@@ -157,11 +156,9 @@ const Particle: React.FC<ParticleProps> = ({
     const fadeDuration = 2;
     if (canReset) {
       const newOpacity = Math.min(newElapsedTime / fadeDuration, 1);
-    setOpacity(newOpacity);
+      setOpacity(newOpacity);
     }
 
-
-    // Update position based on velocity and direction
     const newPos = position.map(
       (p, idx) => p + velocity * direction[idx] * delta
     );
@@ -169,11 +166,10 @@ const Particle: React.FC<ParticleProps> = ({
 
     geom.setFromPoints([new THREE.Vector3(...position)]);
 
-    // Reset position and opacity if past the camera
     if (isPastCamera(newPos, camera.position)) {
       setPosition(initialPosition);
-      setVelocity(maxVelocity); // Reset velocity to initial velocity
-      setOpacity(0); // Reset opacity
+      setVelocity(maxVelocity);
+      setOpacity(0);
       setElapsedTime(0);
     }
   });
@@ -186,14 +182,12 @@ const Particle: React.FC<ParticleProps> = ({
 };
 
 const isPastCamera = (particlePosition, cameraPosition) => {
-  // Calculate the distance of the particle from the origin
   const distanceFromOrigin = Math.sqrt(
     particlePosition[0] * particlePosition[0] +
     particlePosition[1] * particlePosition[1] +
     particlePosition[2] * particlePosition[2]
   );
 
-  // Calculate the distance of the camera from the origin
   const cameraDistance = Math.sqrt(
     cameraPosition.x * cameraPosition.x +
     cameraPosition.y * cameraPosition.y +
@@ -211,7 +205,6 @@ type ParticlesProps = {
   canReset: boolean
 };
 
-// particles Manager Component
 const ParticlesManager = ({
   maxparticles,
   maxVelocity,
@@ -219,10 +212,11 @@ const ParticlesManager = ({
   canReset,
 }) => {
   const [particles, setParticles] = useState<ParticlesProps[]>([]);
-  const emitCounter = useRef(0);
   const { camera } = useThree();
+  const emitCounter = useRef(0);
 
   useFrame((state, delta) => {
+
     emitCounter.current += delta;
     if (
       emitCounter.current >= emitInterval &&
@@ -230,20 +224,17 @@ const ParticlesManager = ({
     ) {
       emitCounter.current = 0;
 
-      // doa bunch of magic math here...
       const depth = 1;
       const fovInRadians = THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov);
       const height = 2 * depth * Math.tan(fovInRadians / 2);
       const width = height * (camera as THREE.PerspectiveCamera).aspect;
 
-      // Randomize direction within this spread
       const direction = new THREE.Vector3(
-        (Math.random() - 0.5) * width, // x-component
-        (Math.random() - 0.5) * height, // y-component
-        depth // z-component pointing behind the camera
+        (Math.random() - 0.5) * width,
+        (Math.random() - 0.5) * height,
+        depth
       ).normalize();
 
-      // Transform the direction by the camera's rotation
       const cameraMatrix = new THREE.Matrix4();
       cameraMatrix.extractRotation(camera.matrixWorld);
       direction.applyMatrix4(cameraMatrix);
@@ -387,8 +378,20 @@ const RenderPageContent = ({ page }) => {
 };
 
 const Background = ({ page }: { page: string }) => {
+  const [isTabActive, setIsTabActive] = useState(true);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   return (
-    <Canvas className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
         depth: false,
