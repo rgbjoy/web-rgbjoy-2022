@@ -8,6 +8,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
     "upgrade": "yarn upgrade --latest",
     "type-check": "tsc"
   },

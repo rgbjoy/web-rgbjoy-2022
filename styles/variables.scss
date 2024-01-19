@@ -1,8 +1,8 @@
-$red: #FF0000;
-$green: #00FF00;
+$red: #ff0000;
+$green: #00ff00;
 $blue: #00aeff;
-$yellow: #FFFF00;
-$magenta: #FF00FF;
+$yellow: #ffff00;
+$magenta: #ff00ff;
 
 $gutter: 60px;
 $gutter-mobile: 20px;
@@ -14,19 +14,28 @@ $desktop: 1920px;
 
 $colorBackground: #000;
 
-
 @mixin mobile-only {
-  @media screen and (max-width: ($mobile - 1px)) { @content; }
+  @media screen and (max-width: ($mobile - 1px)) {
+    @content;
+  }
 }
 @mixin mobile-up {
-  @media screen and (min-width: $mobile) { @content; }
+  @media screen and (min-width: $mobile) {
+    @content;
+  }
 }
 @mixin tablet-landscape-only {
-  @media screen and (min-width: $mobile) and (max-width: ($tablet)) and (orientation : landscape) { @content; }
+  @media screen and (min-width: $mobile) and (max-width: ($tablet)) and (orientation: landscape) {
+    @content;
+  }
 }
 @mixin laptop-up {
-  @media screen and (min-width: $laptop) { @content; }
+  @media screen and (min-width: $laptop) {
+    @content;
+  }
 }
 @mixin desktop-up {
-  @media screen and (min-width: $desktop) { @content; }
+  @media screen and (min-width: $desktop) {
+    @content;
+  }
 }
