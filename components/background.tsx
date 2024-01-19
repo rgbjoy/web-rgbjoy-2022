@@ -146,14 +146,9 @@ const Particle: React.FC<ParticleProps> = ({
     const newElapsedTime = elapsedTime + delta;
     setElapsedTime(newElapsedTime);
 
-    if (velocity < maxVelocity) {
-      const newVelocity = Math.min(velocity + 0.01, maxVelocity);
-      setVelocity(newVelocity);
-    } else {
-      setVelocity(maxVelocity);
-    }
+    setVelocity(maxVelocity);
 
-    const fadeDuration = 2;
+    const fadeDuration = 1;
     if (canReset) {
       const newOpacity = Math.min(newElapsedTime / fadeDuration, 1);
       setOpacity(newOpacity);
@@ -176,7 +171,7 @@ const Particle: React.FC<ParticleProps> = ({
 
   return (
     <points ref={ref} geometry={geom}>
-      <pointsMaterial color="white" size={0.01} transparent opacity={opacity} />
+      <pointsMaterial color="white" size={0.01} depthTest={false} transparent opacity={opacity} />
     </points>
   );
 };
@@ -213,18 +208,11 @@ const ParticlesManager = ({
 }) => {
   const [particles, setParticles] = useState<ParticlesProps[]>([]);
   const { camera } = useThree();
-  const emitCounter = useRef(0);
 
-  useFrame((state, delta) => {
-
-    emitCounter.current += delta;
-    if (
-      emitCounter.current >= emitInterval &&
-      particles.length < maxparticles
-    ) {
-      emitCounter.current = 0;
-
-      const depth = 1;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (particles.length < maxparticles) {
+        const depth = 1;
       const fovInRadians = THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov);
       const height = 2 * depth * Math.tan(fovInRadians / 2);
       const width = height * (camera as THREE.PerspectiveCamera).aspect;
@@ -249,8 +237,14 @@ const ParticlesManager = ({
           direction: direction.toArray(),
         },
       ] as never[]);
-    }
-  });
+
+      } else {
+        clearInterval(interval);
+      }
+    }, emitInterval);
+
+    return () => clearInterval(interval);
+  }, [particles]);
 
   return (
     <>
@@ -271,7 +265,7 @@ const ParticlesManager = ({
 const RigPages = ({ page }) => {
 
   const { camera } = useThree();
-  camera.position.set(3, 3, 3);
+  camera.position.set(4, 4, 4);
   camera.lookAt(0, 0, 0);
 
   const [hovered, set] = useState(Boolean)
@@ -401,9 +395,9 @@ const Background = ({ page }: { page: string }) => {
         <RenderPageContent page={page} />
       </Float>
       <ParticlesManager
-        maxparticles={100}
-        maxVelocity={1.5}
-        emitInterval={0.1}
+        maxparticles={25}
+        maxVelocity={2}
+        emitInterval={200} //ms
         canReset={page === "/" ? true : false}
       />
     </Canvas>
