@@ -1,6 +1,6 @@
-import { cache } from 'react'
+"use server"
 
-import 'server-only'
+import { cache } from 'react'
 
 export const getData = cache(async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;

@@ -139,7 +139,7 @@ const Particle: React.FC<ParticleProps> = ({
       new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(...initialPosition),
       ]),
-    []
+    [initialPosition]
   );
 
   useFrame((state, delta) => {
@@ -201,7 +201,7 @@ type ParticlesProps = {
 };
 
 const ParticlesManager = ({
-  maxparticles,
+  maxParticles,
   maxVelocity,
   emitInterval,
   canReset,
@@ -211,7 +211,7 @@ const ParticlesManager = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (particles.length < maxparticles) {
+      if (particles.length < maxParticles) {
         const depth = 1;
       const fovInRadians = THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov);
       const height = 2 * depth * Math.tan(fovInRadians / 2);
@@ -244,7 +244,7 @@ const ParticlesManager = ({
     }, emitInterval);
 
     return () => clearInterval(interval);
-  }, [particles]);
+  }, [particles, camera, emitInterval, maxParticles]);
 
   return (
     <>
@@ -395,7 +395,7 @@ const Background = ({ page }: { page: string }) => {
         <RenderPageContent page={page} />
       </Float>
       <ParticlesManager
-        maxparticles={25}
+        maxParticles={25}
         maxVelocity={2}
         emitInterval={200} //ms
         canReset={page === "/" ? true : false}
