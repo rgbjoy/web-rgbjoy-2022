@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 
 const variants = {
   hidden: { opacity: 0 },
-  enter: { opacity: 1, transition: { delay: 0.25, duration: 1 } },
+  enter: { opacity: 1, transition: { delay: 0.25, duration: 0.25 } },
 }
 
 export default function Template({ children }: { children: React.ReactNode }) {
