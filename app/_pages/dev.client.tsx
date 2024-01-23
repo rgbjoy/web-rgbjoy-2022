@@ -41,7 +41,7 @@ export default function Dev(data: { page: DevData }) {
 
       <div dangerouslySetInnerHTML={{ __html: data.page.content }} />
 
-      <h2 className={style.sectionTitle}>Past Projects</h2>
+      <h2 className={style.sectionTitle}>Projects</h2>
       <GetProjects />
 
     </PageWrapper>
