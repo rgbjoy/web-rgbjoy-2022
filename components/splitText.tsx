@@ -15,9 +15,9 @@ export function SplitText({ children }) {
               opacity: 1,
               y: 0,
               transition: {
-                type: "circOut",
+                type: "sineInOut",
                 duration: 0.25,
-                delay: i * 0.01
+                delay: i * 0.03
               }
             })
           }}

@@ -9,12 +9,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "upgrade": "yarn upgrade --latest",
+    "update": "npm update --save",
     "type-check": "tsc"
   },
   "dependencies": {
-    "@juggle/resize-observer": "^3.3.1",
-    "@react-three/drei": "^9.96.4",
+    "@juggle/resize-observer": "^3.4.0",
+    "@react-three/drei": "^9.96.5",
     "@react-three/fiber": "^8.15.15",
     "@react-three/rapier": "^1.2.1",
     "@react-three/rapier-addons": "^3.0.3",
@@ -32,7 +32,7 @@
     "three": "^0.160.1"
   },
   "devDependencies": {
-    "@types/node": "^20.11.6",
+    "@types/node": "^20.11.10",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/three": "^0.160.0",
