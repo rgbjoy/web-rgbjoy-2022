@@ -21,9 +21,10 @@ export default function Dev(data: { page: DevData }) {
 
           return (
             <li className={style.item} key={"projects" + i}>
-              <div className={style.name}>{title}</div>
-              <div className={style.description}>{description}</div>
-              <a className={`${style.seemore} underline`} href={link} target="_blank" rel="noreferrer">Project link</a>
+              <a className="link" href={link} target="_blank" rel="noreferrer">
+                <div className={style.name}>{title}</div>
+                <div className={style.description}>{description}</div>
+              </a>
             </li>
           );
         })}
