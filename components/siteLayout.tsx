@@ -8,7 +8,7 @@ import style from './siteLayout.module.scss'
 import NavLink from "./navLink";
 
 const DynamicBackground = dynamic(
-  () => import('./background'),
+  () => import('./background/background'),
   { loading: () => <div className="loading">...</div>, ssr: false }
 )
 
@@ -102,7 +102,7 @@ const SiteLayout = ({ children, settings }) => {
 
   return (
     <>
-      <DynamicBackground page={isNotFound ? "404" : pathname} />
+      <DynamicBackground settings={settings} page={isNotFound ? "404" : pathname} />
 
       {children}
 
@@ -119,7 +119,7 @@ const SiteLayout = ({ children, settings }) => {
           ref={menuRef}
         >
           <button onClick={toggleMenu} type="button" className={style.hamburgerMenu}>
-            {isMenuOpen ? `Close` : `Menu`}
+            {isMenuOpen ? `- Close` : `+ Menu`}
           </button>
           <nav>
             {links.map((l, i) =>

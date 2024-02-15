@@ -1,4 +1,5 @@
 import { getData } from "@/utilities/getData";
+import { SiteSettings } from '@/models/types';
 
 export async function fetchSettings() {
   const query = `
@@ -12,10 +13,17 @@ export async function fetchSettings() {
             }
           }
           badge
+          home {
+            homeHeader
+            homeSubhead
+            intro
+            buttonText
+          }
         }
       }
     }
   `;
-  const { data: {siteSettings: { options } } } = await getData(query);
+  const response = await getData(query);
+  const options:SiteSettings = response.data.siteSettings.options;
   return options;
 }
