@@ -5,13 +5,9 @@ import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, Inst
 import { Attractor } from "@react-three/rapier-addons";
 
 const Rig404 = () => {
-  const COUNT = 26;
+  const COUNT = 12;
   const refMesh = useRef<THREE.InstancedMesh>(null);
   const rigidBodies = useRef<RapierRigidBody[]>(null);
-
-  const { camera } = useThree();
-  camera.position.set(0, 0, 20);
-  camera.lookAt(0, 0, 0);
 
   useEffect(() => {
     const color = ["red", "green", "blue"]
@@ -48,16 +44,16 @@ const Rig404 = () => {
         colliders="ball"
       >
         <instancedMesh ref={refMesh} args={[undefined, undefined, COUNT * COUNT]} count={COUNT * COUNT}>
-          <sphereGeometry args={[0.25]} />
+          <sphereGeometry args={[0.1]} />
           <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthTest={false} transparent={true} />
           <Attractor
-            strength={-0.3}
-            range={2}
+            strength={-0.008}
+            range={.45}
             collisionGroups={interactionGroups(0, 1)}
           />
         </instancedMesh>
       </InstancedRigidBodies>
-      <Attractor strength={0.01} />
+      <Attractor strength={0.002} collisionGroups={interactionGroups(0, 1)} />
     </Physics>
   )
 }

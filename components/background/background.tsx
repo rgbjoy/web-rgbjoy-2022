@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll } from '@react-three/drei'
+import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, PerspectiveCamera } from '@react-three/drei'
 import ParticlesManager from "./particleManager"
 import Rig404 from './rig404';
 
@@ -117,10 +117,6 @@ const RGBPlane = (props: any) => {
 
 const RigPages = ({ page, ...props }) => {
 
-  const { camera } = useThree();
-  camera.position.set(4, 4, 4);
-  camera.lookAt(0, 0, 0);
-
   const [hovered, set] = useState(Boolean)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
@@ -213,13 +209,13 @@ const Background = ({ page, settings }) => {
   }, []);
 
   return (
-    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={style.background} camera={{ fov: 35 }} resize={{ polyfill: ResizeObserver }}
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={style.background} camera={{ fov: 35, position: [0, 0, 7] }} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
         depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
-      <ScrollControls pages={3} damping={0.1}>
+      <ScrollControls pages={2} damping={0.1}>
         <Float>
           <RenderPageBackground page={page} />
         </Float>
