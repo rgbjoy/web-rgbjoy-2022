@@ -153,8 +153,8 @@ const RigPages = ({ page, ...props }) => {
           <RGBPlane color="#00FF00" name="green" />
           <RGBPlane color="#0000FF" name="blue" />
         </group>
-        <group>
-          <mesh position={[0, -6, 0]}>
+        <group position={[0, -4.5, 0]}>
+          <mesh>
             <planeGeometry args={[1, 1]} />
             <meshNormalMaterial />
           </mesh>
