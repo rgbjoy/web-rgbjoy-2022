@@ -26,7 +26,7 @@ const Footer = ({ footerLinks }) => {
   );
 }
 
-const SiteLayout = ({ children, settings }) => {
+const SiteLayout = ({ children, settings, homeData }) => {
   const pathname = usePathname()
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -102,7 +102,7 @@ const SiteLayout = ({ children, settings }) => {
 
   return (
     <>
-      <DynamicBackground settings={settings} page={isNotFound ? "404" : pathname} />
+      <DynamicBackground homeData={homeData} page={isNotFound ? "404" : pathname} />
 
       {children}
 

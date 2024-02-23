@@ -13,12 +13,6 @@ export async function fetchSettings() {
             }
           }
           badge
-          home {
-            homeHeader
-            homeSubhead
-            intro
-            buttonText
-          }
         }
       }
     }

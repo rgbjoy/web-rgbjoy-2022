@@ -89,6 +89,7 @@ a {
   padding: 10px;
   transition: all 0.15s cubic-bezier(0.455, 0.03, 0.515, 0.955);
   border-radius: 2px;
+  // -webkit-backface-visibility: hidden;
 
   &:hover {
     color: black;
@@ -152,6 +153,7 @@ p, li {
     }
 
     h2 {
+      margin-top: 10px;
       font-size: 16px;
     }
 
@@ -161,7 +163,6 @@ p, li {
 
     .btn {
       margin-top: 60px;
-      pointer-events: all;
 
       @include mobile-only {
         margin-top: 20px;

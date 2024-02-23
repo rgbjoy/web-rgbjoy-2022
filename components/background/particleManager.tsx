@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber'
-import { useScroll } from '@react-three/drei';
 
 interface ParticleProps {
   initialPosition: number[];
@@ -63,7 +62,7 @@ const Particle: React.FC<ParticleProps> = ({
 
   return (
     <points ref={ref} geometry={geom}>
-      <pointsMaterial color="white" size={0.02} transparent opacity={opacity} />
+      <pointsMaterial color="white" size={0.02} transparent opacity={opacity} depthTest={false} />
     </points>
   );
 };

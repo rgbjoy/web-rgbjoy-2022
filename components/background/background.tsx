@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import * as THREE from 'three';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, PerspectiveCamera } from '@react-three/drei'
+import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Html } from '@react-three/drei'
 import ParticlesManager from "./particleManager"
 import Rig404 from './rig404';
 
@@ -115,18 +115,37 @@ const RGBPlane = (props: any) => {
 
 
 
-const RigPages = ({ page, ...props }) => {
+const RigPages = ({ page }) => {
+
+  const groupAnimRef = useRef<THREE.Group>(null);
+  const { nodes, animations } = useGLTF("/Intro.glb");
+  const { actions } = useAnimations(animations, groupAnimRef);
+  useEffect(() => {
+    if (actions.animation_0) {
+      actions.animation_0.reset().play().paused = true
+    }
+  }, [])
+  useFrame(() => {
+    if (actions.animation_0) {
+      const scrollThreshold = 0;
+
+      if (scroll.offset > scrollThreshold) {
+        const adjustedScrollOffset = (scroll.offset - scrollThreshold) / (1 - scrollThreshold);
+        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset;
+      }
+    }
+  });
 
   const [hovered, set] = useState(Boolean)
   useCursor(hovered && currentPage === "home", 'pointer', 'auto')
 
-  const ref = useRef<THREE.Group>(null!)
+  const groupRef = useRef<THREE.Group>(null!)
   currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
 
   const scroll = useScroll();
 
   useEffect(() => {
-    const meshes = ref.current && ref.current.children
+    const meshes = groupRef.current && groupRef.current.children
     if (currentPage === "home") {
       animateIn(meshes)
     } else {
@@ -135,29 +154,86 @@ const RigPages = ({ page, ...props }) => {
   }, [page])
 
   useFrame((state, delta) => {
-    ref.current.rotation.y += delta / (currentPage === "home" ? 5 : 25);
+    groupRef.current.rotation.y += delta / (currentPage === "home" ? 5 : 25);
 
     if (currentPage !== "home") {
-      scroll.el.scrollTo({top: 0})
+      scroll.el.scrollTo({ top: 0 })
     }
   })
 
+  const centerBlockRef = useRef<THREE.Mesh>(null)
+  const centerBlockLightRef = useRef<THREE.PointLight>(null)
+  useFrame((state, delta) => {
+    // move chance back and forth on the x axis
+    if (centerBlockRef.current && centerBlockLightRef.current) {
+      centerBlockRef.current.position.x = Math.sin(state.clock.getElapsedTime()) * 1
+      centerBlockLightRef.current.position.x = Math.sin(state.clock.getElapsedTime()) * 1
+    }
+  })
+
+  const { height } = useThree((state) => state.viewport)
+  const config = {
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthTest: false,
+  }
+
   return (
+
     <>
       <Scroll>
         <group
           onPointerOver={() => set(true)} onPointerOut={() => set(false)}
           onClick={e => handleClick(e)}
-          ref={ref}>
+          ref={groupRef}>
           <RGBPlane color="#FF0000" name="red" />
           <RGBPlane color="#00FF00" name="green" />
           <RGBPlane color="#0000FF" name="blue" />
         </group>
-        <group position={[0, -4.5, 0]}>
-          <mesh>
-            <planeGeometry args={[1, 1]} />
-            <meshNormalMaterial />
-          </mesh>
+      </Scroll>
+      <Scroll>
+        <group ref={groupAnimRef} position={[0, -height, 0]}>
+          <group>
+            <ambientLight color={"white"} intensity={0.1} />
+            <mesh
+              name="Cube"
+              geometry={(nodes.Cube as THREE.Mesh).geometry}
+            >
+              <mesh
+                ref={centerBlockRef}
+                name="Sphere"
+                castShadow
+                receiveShadow
+                geometry={(nodes.Sphere as THREE.Mesh).geometry}
+                position={[nodes.Sphere.position.x, nodes.Sphere.position.y, nodes.Sphere.position.z]}
+              >
+                <meshBasicMaterial color={"white"} />
+              </mesh>
+              <mesh
+                name="Torus"
+                castShadow
+                receiveShadow
+                geometry={(nodes.Torus as THREE.Mesh).geometry}
+                position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
+              >
+                <meshBasicMaterial color={"white"} />
+              </mesh>
+              <meshPhysicalMaterial  roughness={1} color={"white"} />
+            </mesh>
+            <pointLight
+              ref={centerBlockLightRef}
+              name="PointLight"
+              color={"white"}
+              castShadow
+              receiveShadow
+              position={[nodes.Sphere.position.x, nodes.Sphere.position.y, nodes.Sphere.position.z]}
+              intensity={0.1}
+              />
+          </group>
+
+          <Html position={[0, 0, 0]} style={{width: "200px", top:"200vh"}}>
+            <a href="/art" className="btn">See my art</a>
+          </Html>
         </group>
       </Scroll>
     </>
@@ -189,7 +265,7 @@ const RenderPageBackground = ({ page }) => {
   )
 };
 
-const Background = ({ page, settings }) => {
+const Background = ({ page, homeData }) => {
   const [isTabActive, setIsTabActive] = useState(true);
   const [isHome, setIsHome] = useState(false);
 
@@ -212,22 +288,21 @@ const Background = ({ page, settings }) => {
     <Canvas frameloop={isTabActive ? 'always' : 'never'} className={style.background} camera={{ fov: 35, position: [0, 0, 7] }} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
-        depth: false,
         toneMapping: THREE.NoToneMapping,
       }}>
       <ScrollControls pages={2} damping={0.1}>
         <Float>
           <RenderPageBackground page={page} />
         </Float>
-        <Scroll html style={{"width":"100%"}}>
+        <Scroll html style={{ "width": "100%" }}>
           {isHome && <div className="wrapper intro">
-            <h1>{settings.home.homeHeader}</h1>
-            <h2>{settings.home.homeSubhead}</h2>
+            <h1>{homeData.header}</h1>
+            <h2>{homeData.subhead}</h2>
             <p>
-              {settings.home.intro}
+              {homeData.intro}
             </p>
-            <a className="btn" href="/info">{settings.home.buttonText}</a>
-         </div>}
+            <a className="btn" href="/info">{homeData.button}</a>
+          </div>}
         </Scroll>
       </ScrollControls>
     </Canvas>
