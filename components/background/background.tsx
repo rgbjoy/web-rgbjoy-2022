@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Html } from '@react-three/drei'
+import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Html, Text } from '@react-three/drei'
 import ParticlesManager from "./particleManager"
 import Rig404 from './rig404';
 
@@ -116,7 +116,6 @@ const RGBPlane = (props: any) => {
 
 
 const RigPages = ({ page }) => {
-
   const groupAnimRef = useRef<THREE.Group>(null);
   const { nodes, animations } = useGLTF("/Intro.glb");
   const { actions } = useAnimations(animations, groupAnimRef);
@@ -218,7 +217,7 @@ const RigPages = ({ page }) => {
               >
                 <meshBasicMaterial color={"white"} />
               </mesh>
-              <meshPhysicalMaterial  roughness={1} color={"white"} />
+              <meshPhysicalMaterial roughness={1} color={"white"} />
             </mesh>
             <pointLight
               ref={centerBlockLightRef}
@@ -228,12 +227,8 @@ const RigPages = ({ page }) => {
               receiveShadow
               position={[nodes.Sphere.position.x, nodes.Sphere.position.y, nodes.Sphere.position.z]}
               intensity={0.1}
-              />
+            />
           </group>
-
-          <Html position={[0, 0, 0]} style={{width: "200px", top:"200vh"}}>
-            <a href="/art" className="btn">See my art</a>
-          </Html>
         </group>
       </Scroll>
     </>
@@ -294,15 +289,19 @@ const Background = ({ page, homeData }) => {
         <Float>
           <RenderPageBackground page={page} />
         </Float>
-        <Scroll html style={{ "width": "100%" }}>
-          {isHome && <div className="wrapper intro">
-            <h1>{homeData.header}</h1>
-            <h2>{homeData.subhead}</h2>
-            <p>
-              {homeData.intro}
-            </p>
-            <a className="btn" href="/info">{homeData.button}</a>
-          </div>}
+        <Scroll html style={{ width: "100%", height: "100vh" }}>
+          {isHome && <>
+            <div className="wrapper intro">
+              <h1>{homeData.header}</h1>
+              <h2>{homeData.subhead}</h2>
+              <p>
+                {homeData.intro}
+              </p>
+              <a className="btn" href="/info">{homeData.button}</a>
+            </div>
+            <a className="btn" href="/art" style={{ position: 'absolute', top: '150vh', left: "50vw", transform: "translateX(-50%)" }}>See my art</a>
+          </>
+          }
         </Scroll>
       </ScrollControls>
     </Canvas>
