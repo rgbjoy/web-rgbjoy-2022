@@ -235,6 +235,18 @@ const RigPages = ({ page }) => {
   )
 }
 
+const RenderHome = ({ homeData }) => <>
+<div className="wrapper intro">
+  <h1>{homeData.header}</h1>
+  <h2>{homeData.subhead}</h2>
+  <p>
+    {homeData.intro}
+  </p>
+  <a className="btn" href="/info">{homeData.button}</a>
+</div>
+<a className="btn" href="/art" style={{ position: 'absolute', top: '150vh', left: "50vw", transform: "translateX(-50%)" }}>See my art</a>
+</>
+
 const RenderPageBackground = ({ page }) => {
   const data = useScroll()
   const [scrolledDown, setScrolledDown] = useState(false)
@@ -290,18 +302,7 @@ const Background = ({ page, homeData }) => {
           <RenderPageBackground page={page} />
         </Float>
         <Scroll html style={{ width: "100%", height: "100vh" }}>
-          {isHome && <>
-            <div className="wrapper intro">
-              <h1>{homeData.header}</h1>
-              <h2>{homeData.subhead}</h2>
-              <p>
-                {homeData.intro}
-              </p>
-              <a className="btn" href="/info">{homeData.button}</a>
-            </div>
-            <a className="btn" href="/art" style={{ position: 'absolute', top: '150vh', left: "50vw", transform: "translateX(-50%)" }}>See my art</a>
-          </>
-          }
+          {isHome && <RenderHome homeData={homeData} />}
         </Scroll>
       </ScrollControls>
     </Canvas>
