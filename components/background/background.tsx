@@ -274,14 +274,14 @@ const ModelArt = () => {
   const handleHover = (hover: boolean) => {
     setHover(hover)
     if (hover && artMatRef.current) {
-      gsap.to(artMatRef.current, { opacity:0, duration: 0.5 })
+      gsap.to(artMatRef.current, { opacity: 0, duration: 0.5 })
     } else {
-      gsap.to(artMatRef.current, { opacity:1, duration: 0.5 })
+      gsap.to(artMatRef.current, { opacity: 1, duration: 0.5 })
     }
   }
 
   return (
-    <mesh onPointerOver={() => handleHover(true)} onPointerDown={() => handleHover(true)}  onPointerOut={() => handleHover(false)} onPointerUp={() => handleHover(false)} ref={artRef}>
+    <mesh onPointerOver={() => handleHover(true)} onPointerDown={() => handleHover(true)} onPointerOut={() => handleHover(false)} onPointerUp={() => handleHover(false)} ref={artRef}>
       <sphereGeometry args={[1, 32, 16]} />
       <meshBasicMaterial ref={artMatRef} transparent={true} color={"blue"} />
       <Edges color={"blue"} threshold={1} />
@@ -415,22 +415,53 @@ const RenderPageBackground = ({ page }) => {
   )
 };
 
-const Background = ({ pathname, router, homeData }) => {
-  const [isTabActive, setIsTabActive] = useState(true);
-  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
-  const [isHome, setIsHome] = useState(page === "home");
+const HomeHTML = ({ homeData, router, pathname }) => {
+  const { height } = useThree((state) => state.viewport)
+
+  if (pathname !== "/") {
+    return null
+  }
 
   const handleNavigation = (path) => {
     router.push(path);
   };
 
-  useEffect(() => {
-    if (page === "home") {
-      setIsHome(true);
-    } else {
-      setIsHome(false);
-    }
-  }, [page])
+  return (
+    <>
+      <div className={style.sections}>
+        <div className={style.intro}>
+          <h1>{homeData.header}</h1>
+          <h2>{homeData.subhead}</h2>
+          <p><span>{homeData.intro}</span></p>
+        </div>
+      </div>
+
+      <div className={style.sections}>
+        <div className={style.info}>
+          <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
+          <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
+        </div>
+      </div>
+
+      <div className={style.sections}>
+        <div className={style.dev}>
+          <h2>Joy seeing code come to life</h2>
+          <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
+        </div>
+      </div>
+
+      <div className={style.sections}>
+        <div className={style.art}>
+          <h2>Simplicty is everything.</h2>
+          <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
+        </div>
+      </div></>
+  )
+}
+
+const Background = ({ pathname, router, homeData }) => {
+  const [isTabActive, setIsTabActive] = useState(true);
+  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -445,7 +476,7 @@ const Background = ({ pathname, router, homeData }) => {
 
   const [dpr, setDpr] = useState(1);
   return (
-    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 7], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
@@ -458,30 +489,10 @@ const Background = ({ pathname, router, homeData }) => {
 
       <color attach="background" args={["#000000"]} />
 
-      <ScrollControls pages={4} damping={0.1} >
+      <ScrollControls pages={4}>
         {page !== "posts" && <RenderPageBackground page={page} />}
-        <Scroll html style={{ width: "100%", height: "100vh" }}>
-          {isHome && <>
-            <div className={`${style.sections} ${style.intro}`}>
-              <h1>{homeData.header}</h1>
-              <h2>{homeData.subhead}</h2>
-              <p><span>{homeData.intro}</span></p>
-            </div>
-            <div className={`${style.sections} ${style.info}`}>
-              <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
-              <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
-            </div>
-
-            <div className={`${style.sections} ${style.dev}`}>
-              <h2>Joy seeing code come to life</h2>
-              <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
-            </div>
-
-            <div className={`${style.sections} ${style.art}`}>
-              <h2>Simplicty is everything.</h2>
-              <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
-            </div>
-          </>}
+        <Scroll html style={{ width: '100vw', height: '100vh' }}>
+          <HomeHTML pathname={pathname} homeData={homeData} router={router} />
         </Scroll>
       </ScrollControls>
     </Canvas>

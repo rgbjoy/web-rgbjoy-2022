@@ -17,8 +17,13 @@
 }
 
 .sections {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  > div {
+    position: absolute;
+  }
 
   h1 {
     @include mobile-only {
@@ -67,7 +72,7 @@
 }
 
 .info {
-  top: 150vh;
+  top: 50vh;
   left: 15vw;
 
   @include mobile-only {
@@ -76,22 +81,22 @@
 }
 
 .dev {
-  top: 250vh;
+  top: 50vh;
   left: 30vw;
 
   @include mobile-only {
-    top: 220vh;
+    top: 20vh;
     left: 15vw;
   }
 }
 
 .art {
   width: auto;
-  top: 350vh;
+  top: 40vh;
   right: 15vw;
 
   @include mobile-only {
-    top: 320vh;
+    top: 20vh;
     right: 0;
   }
 }
