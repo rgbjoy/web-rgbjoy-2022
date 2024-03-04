@@ -1,261 +1,368 @@
-import { useState, useRef, useEffect } from 'react';
-
 import * as THREE from 'three';
+import { useState, useRef, useEffect, useMemo, use } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, useCursor, RoundedBox, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Html, Text } from '@react-three/drei'
-import ParticlesManager from "./particleManager"
+import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
+import state from './state';
 import Rig404 from './rig404';
 
-import gsap from "gsap"
-
 import style from "./background.module.scss"
+import ParticlesManager from './particleManager';
 
-let clickable: boolean = false
-let firstLoad: boolean = true
-let currentPage: string = ""
+var FIRST_LOAD = true
 
-const colors = {
-  "home": {
-    "red": { r: 1, g: 0, b: 0 },
-    "green": { r: 0, g: 1, b: 0 },
-    "blue": { r: 0, g: 0, b: 1 },
-  },
-  "info": {
-    r: 1, g: 0, b: 0
-  },
-  "dev": {
-    r: 0, g: 1, b: 0
-  },
-  "art": {
-    r: 0, g: 0, b: 1
-  },
-  "posts": {
-    r: 1, g: 1, b: 0
-  },
+const GenerateShard = (points, thickness) => {
+  const shape = new THREE.Shape();
+  points.forEach((point, i) => {
+    if (i === 0) shape.moveTo(point.x, point.y);
+    else shape.lineTo(point.x, point.y);
+  });
+  shape.lineTo(points[0].x, points[0].y);
+
+  const extrudeSettings = {
+    steps: 1,
+    depth: thickness,
+    bevelEnabled: false,
+  };
+
+  return new THREE.ExtrudeGeometry(shape, extrudeSettings);
 };
 
-const getRandomPick = (items: Array<number>): number => {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-const getRandomRange = (min: number, max: number): number => {
-  return Math.random() * (max - min) + min;
-}
-
-const animateIn = (meshes) => {
-  for (var m of meshes) {
-
-    if (firstLoad) {
-      m.position.set(getRandomPick([-5, 5]), getRandomPick([-5, 5]), getRandomPick([-5, 5]))
+const RandomShard = ({ position, color = "#FF0000" }) => {
+  const thickness = useMemo(() => Math.random() * 0.05 + 0.01, []);
+  const numPoints = useMemo(() => (Math.random() < 0.5 ? 3 : 4), []);
+  const geometry = useMemo(() => {
+    let points: THREE.Vector2[] = []; // Explicitly define the type of the points array
+    for (let i = 0; i < numPoints; i++) {
+      const angle = 2 * Math.PI * (i / numPoints);
+      const radius = 0.3 + Math.random() * 0.1;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      points.push(new THREE.Vector2(x, y));
     }
 
-    if (m.name == "red") {
-      gsap.to(m.position, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.rotation, { duration: 2, x: THREE.MathUtils.degToRad(90), y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.children[0].material.color, { duration: 2, r: colors[currentPage][m.name].r, g: colors[currentPage][m.name].g, b: colors[currentPage][m.name].b, ease: "Power2.easeOut" });
-    } else if (m.name == "green") {
-      gsap.to(m.position, { duration: 2, x: 0, y: -0.5, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.rotation, { duration: 2, x: 0, y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.children[0].material.color, { duration: 2, r: colors[currentPage][m.name].r, g: colors[currentPage][m.name].g, b: colors[currentPage][m.name].b, ease: "Power2.easeOut" });
-    } else if (m.name == "blue") {
-      gsap.to(m.position, { duration: 2, x: 0.5, y: 0, z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.rotation, { duration: 2, x: 0, y: THREE.MathUtils.degToRad(90), z: 0, ease: "Power2.easeOut" });
-      gsap.to(m.children[0].material.color, { duration: 2, r: colors[currentPage][m.name].r, g: colors[currentPage][m.name].g, b: colors[currentPage][m.name].b, ease: "Power2.easeOut" });
-    }
+    points.sort((a, b) => a.angle() - b.angle());
 
-    gsap.to(m.children[0].material, { duration: 2, opacity: 1, ease: "Power2.easeOut", onComplete: () => { clickable = true } });
-  }
-  firstLoad = false
-}
+    return GenerateShard(points, thickness);
+  }, [numPoints, thickness]);
 
-const animateOut = (meshes, explode: boolean = false) => {
-  let maxDegree = 45
-  let maxDistance = explode ? 2 : 1
-  for (var m of meshes) {
-    gsap.to(m.rotation, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), y: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), z: THREE.MathUtils.degToRad(getRandomRange(-maxDegree, maxDegree)), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.position, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, x: getRandomRange(-maxDistance, maxDistance), y: getRandomRange(-maxDistance, maxDistance), z: getRandomRange(-maxDistance, maxDistance), ease: explode ? "Sine.easInOut" : "Power2.easInOut" });
-    gsap.to(m.children[0].material, { yoyo: explode ? true : false, repeat: explode ? 1 : 0, overwrite: true, duration: explode ? 1 : 1.5, opacity: explode ? 1 : 0.15, ease: explode ? "Sine.easInOut" : "Power2.easInOut", onComplete: () => { clickable = true } });
+  const rotation = useMemo(
+    () =>
+      new THREE.Euler(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      ),
+    []
+  );
 
-    if (!explode) {
-      gsap.to(m.children[0].material.color, { overwrite: true, duration: 1.5, r: colors[currentPage].r, g: colors[currentPage].g, b: colors[currentPage].b, ease: "Power2.easInOut" });
-    }
-  }
-  firstLoad = false
-}
-
-const handleClick = (e) => {
-  if (!clickable || currentPage !== "home") {
-    return
-  }
-
-  clickable = false
-
-  const meshes = e.eventObject.children
-  animateOut(meshes, true)
-}
-
-const RGBPlane = (props: any) => {
-  const config = {
+  const materialArgs = {
     side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
-    color: props.color,
-    opacity: 0,
+    color: color,
+    opacity: 0.7,
     depthTest: false,
     transparent: true,
-  }
+    toneMapped: false,
+  };
+
   return (
-    <mesh {...props}>
-      <RoundedBox args={[1, 1, 0.01]} radius={0.01}>
-        <meshBasicMaterial {...config} />
-      </RoundedBox>
-    </mesh>
-  )
-}
+    <Float>
+      <mesh geometry={geometry} position={position} rotation={rotation}>
+        <meshBasicMaterial {...materialArgs} />
+      </mesh>
+    </Float>
+  );
+};
 
+const getUniqueVertices = (geometry) => {
+  const positions = geometry.attributes.position.array;
+  const uniqueVerticesSet = new Set();
+  const uniqueVertices: THREE.Vector3[] = [];
 
-
-const RigPages = ({ page }) => {
-  const groupAnimRef = useRef<THREE.Group>(null);
-  const { nodes, animations } = useGLTF("/Intro.glb");
-  const { actions } = useAnimations(animations, groupAnimRef);
-  useEffect(() => {
-    if (actions.animation_0) {
-      actions.animation_0.reset().play().paused = true
+  for (let i = 0; i < positions.length; i += 3) {
+    const key = `${positions[i]},${positions[i + 1]},${positions[i + 2]}`;
+    if (!uniqueVerticesSet.has(key)) {
+      uniqueVerticesSet.add(key);
+      uniqueVertices.push(
+        new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2])
+      );
     }
-  }, [])
+  }
+  return uniqueVertices;
+};
+
+const Shards = () => {
+  const shardColors = ["red", "green", "blue"];
+  const groupRef = useRef<THREE.Group>(null);
+  const [targetScale, setTargetScale] = useState(1.5);
+
   useFrame(() => {
-    if (actions.animation_0) {
-      const scrollThreshold = 0;
-
-      if (scroll.offset > scrollThreshold) {
-        const adjustedScrollOffset = (scroll.offset - scrollThreshold) / (1 - scrollThreshold);
-        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset;
-      }
-    }
+    setTargetScale(
+      THREE.MathUtils.lerp(
+        targetScale,
+        state.scale,
+        targetScale <= state.scale ? 0.02 : 0.01
+      )
+    );
   });
 
-  const [hovered, set] = useState(Boolean)
-  useCursor(hovered && currentPage === "home", 'pointer', 'auto')
+  const geometry = new THREE.IcosahedronGeometry(targetScale, 0);
+  const uniqueVertices = getUniqueVertices(geometry);
+  const shards = uniqueVertices.map((vertex, i) => (
+    <RandomShard
+      key={i}
+      position={vertex}
+      color={shardColors[i % shardColors.length]}
+    />
+  ));
 
-  const groupRef = useRef<THREE.Group>(null!)
-  currentPage = page.split("/")[1] === "" ? "home" : page.split("/")[1]
+  return <group ref={groupRef}>{shards}</group>;
+};
 
+const Hero = () => {
+  const [isPointerOver, setIsPointerOver] = useState(false);
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!meshRef.current) return;
+
+    const speed = 0.003;
+    // meshRef.current.rotation.x += speed;
+    meshRef.current.rotation.y += speed;
+    meshRef.current.rotation.z += speed;
+  });
+
+  const handlePointerOver = () => {
+    setIsPointerOver(true);
+    state.scale = 2
+  };
+
+  const handlePointerOut = () => {
+    setIsPointerOver(false);
+    state.scale = 1
+  };
+
+  const handlePointerDown = () => {
+    state.scale = 2
+  };
+
+  const handlePointerUp = () => {
+    if (!isPointerOver) {
+      state.scale = 1
+    }
+  };
+
+  const materialArgs = {
+    opacity: 0,
+    transparent: true,
+  };
+
+  return (
+    <mesh
+      ref={meshRef}
+      onPointerOver={handlePointerOver}
+      onPointerDown={handlePointerDown}
+      onPointerOut={handlePointerOut}
+      onPointerUp={handlePointerUp}
+    >
+      <icosahedronGeometry args={[0.25, 0]} />
+      <meshBasicMaterial {...materialArgs} />
+      <Edges color={"white"} />
+    </mesh>
+  );
+};
+
+const ModelInfo = () => {
+  const modelRef = useRef<THREE.Group>(null);
+  const { nodes, animations } = useGLTF("/glb/Info.glb");
+  const { actions } = useAnimations(animations, modelRef);
+  const planet = useRef<THREE.Mesh>(null)
   const scroll = useScroll();
 
   useEffect(() => {
-    const meshes = groupRef.current && groupRef.current.children
-    if (currentPage === "home") {
-      animateIn(meshes)
-    } else {
-      animateOut(meshes)
+    if (actions.animation_0 && !actions.animation_0.paused) {
+      actions.animation_0.reset().play().paused = true
     }
-  }, [page])
+  }, [actions.animation_0])
 
-  useFrame((state, delta) => {
-    groupRef.current.rotation.y += delta / (currentPage === "home" ? 5 : 25);
-
-    if (currentPage !== "home") {
-      scroll.el.scrollTo({ top: 0 })
+  useFrame(({ clock }) => {
+    if (planet.current) {
+      const radius = 1.5; // Radius of the circle
+      const elapsedTime = clock.getElapsedTime();
+      planet.current.position.x = Math.sin(elapsedTime) * radius;
+      planet.current.position.z = Math.cos(elapsedTime) * radius;
     }
-  })
 
-  const centerBlockRef = useRef<THREE.Mesh>(null)
-  const centerBlockLightRef = useRef<THREE.PointLight>(null)
-  useFrame((state, delta) => {
-    // move chance back and forth on the x axis
-    if (centerBlockRef.current && centerBlockLightRef.current) {
-      centerBlockRef.current.position.x = Math.sin(state.clock.getElapsedTime()) * 1
-      centerBlockLightRef.current.position.x = Math.sin(state.clock.getElapsedTime()) * 1
+    if (actions.animation_0) {
+      const scrollThreshold = 0.1;
+
+      if (scroll.offset > scrollThreshold) {
+        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold);
+        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset;
+      }
     }
   })
-
-  const { height } = useThree((state) => state.viewport)
-  const config = {
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending,
-    depthTest: false,
-  }
 
   return (
+    <group ref={modelRef}>
+      <mesh
+        name="Cube"
+        geometry={(nodes.Cube as THREE.Mesh).geometry}
+      >
+        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
+      </mesh>
+      <mesh
+        name="Torus"
+        geometry={(nodes.Torus as THREE.Mesh).geometry}
+        position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
+      >
+        <meshPhysicalMaterial color={"white"} />
+        <mesh ref={planet}>
+          <pointLight
+            name="PointLight"
+            color={"white"}
 
-    <>
-      <Scroll>
-        <group
-          onPointerOver={() => set(true)} onPointerOut={() => set(false)}
-          onClick={e => handleClick(e)}
-          ref={groupRef}>
-          <RGBPlane color="#FF0000" name="red" />
-          <RGBPlane color="#00FF00" name="green" />
-          <RGBPlane color="#0000FF" name="blue" />
-        </group>
-      </Scroll>
-      <Scroll>
-        <group ref={groupAnimRef} position={[0, -height, 0]}>
-          <group>
-            <ambientLight color={"white"} intensity={0.1} />
-            <mesh
-              name="Cube"
-              geometry={(nodes.Cube as THREE.Mesh).geometry}
-            >
-              <mesh
-                ref={centerBlockRef}
-                name="Sphere"
-                castShadow
-                receiveShadow
-                geometry={(nodes.Sphere as THREE.Mesh).geometry}
-                position={[nodes.Sphere.position.x, nodes.Sphere.position.y, nodes.Sphere.position.z]}
-              >
-                <meshBasicMaterial color={"white"} />
-              </mesh>
-              <mesh
-                name="Torus"
-                castShadow
-                receiveShadow
-                geometry={(nodes.Torus as THREE.Mesh).geometry}
-                position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
-              >
-                <meshBasicMaterial color={"white"} />
-              </mesh>
-              <meshPhysicalMaterial roughness={1} color={"white"} />
-            </mesh>
-            <pointLight
-              ref={centerBlockLightRef}
-              name="PointLight"
-              color={"white"}
-              castShadow
-              receiveShadow
-              position={[nodes.Sphere.position.x, nodes.Sphere.position.y, nodes.Sphere.position.z]}
-              intensity={0.1}
-            />
-          </group>
-        </group>
-      </Scroll>
-    </>
+            intensity={0.4}
+          />
+          <sphereGeometry args={[0.2, 32, 32]} />
+        </mesh>
+      </mesh>
+    </group>
   )
 }
 
-const RenderHome = ({ homeData }) => <>
-<div className="wrapper intro">
-  <h1>{homeData.header}</h1>
-  <h2>{homeData.subhead}</h2>
-  <p>
-    {homeData.intro}
-  </p>
-  <a className="btn" href="/info">{homeData.button}</a>
-</div>
-<a className="btn" href="/art" style={{ position: 'absolute', top: '150vh', left: "50vw", transform: "translateX(-50%)" }}>See my art</a>
-</>
+const ModelDev = () => {
+  const helixRef = useRef<THREE.Group>(null);
+  const { nodes } = useGLTF("./glb/Dev.glb");
 
-const RenderPageBackground = ({ page }) => {
-  const data = useScroll()
-  const [scrolledDown, setScrolledDown] = useState(false)
-
-  useFrame((state, delta) => {
-    setScrolledDown(data.range(0, 1 / 3) >= 1 ? true : false)
+  useFrame(() => {
+    if (helixRef.current) {
+      helixRef.current.rotation.y -= 0.01
+    }
   })
 
-  if (page === "404") {
+  return (
+    <group ref={helixRef}>
+      <ambientLight color={"white"} intensity={1} />
+      <mesh
+        geometry={(nodes.Helix as THREE.Mesh).geometry}
+        scale={8.355}
+      >
+        <pointLight
+          name="PointLight"
+          color={"white"}
+
+          intensity={0.4}
+        />
+        <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.2} color={"green"} />
+      </mesh>
+    </group>
+  );
+}
+
+const RigPages = ({ page }) => {
+  const anchorHome = useRef<THREE.Mesh>(null);
+  const sectionInfo = useRef<THREE.Group>(null);
+  const anchorInfo = useRef<THREE.Mesh>(null);
+  const sectionDev = useRef<THREE.Group>(null);
+  const anchorDev = useRef<THREE.Mesh>(null);
+  const sectionArt = useRef<THREE.Group>(null);
+  const anchorArt = useRef<THREE.Mesh>(null);
+
+  const { height } = useThree((state) => state.viewport)
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (page === "home" && !FIRST_LOAD) {
+        const pageHome = document.querySelector(".page-home");
+        if (pageHome) {
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      } else if (page === "info") {
+        const pageInfo = document.querySelector(".page-info");
+        if (pageInfo) {
+          pageInfo.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "dev") {
+        const pageDev = document.querySelector(".page-dev");
+        if (pageDev) {
+          pageDev.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "art") {
+        const pageArt = document.querySelector(".page-art");
+        if (pageArt) {
+          pageArt.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "posts") {
+        const pageHome = document.querySelector(".page-home");
+        if (pageHome) {
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }
+      FIRST_LOAD = false
+    }, 10)
+  }, [page])
+
+  useFrame(({ clock }) => {
+    if (anchorInfo.current && sectionInfo.current) {
+      anchorInfo.current.position.y = sectionInfo.current.position.y + 1
+    }
+
+    if (anchorDev.current && sectionDev.current) {
+      anchorDev.current.position.y = sectionDev.current.position.y + 2 - height / 2
+    }
+
+    if (anchorArt.current && sectionArt.current) {
+      anchorArt.current.position.y = sectionArt.current.position.y + 3 - height
+    }
+  })
+
+  return (
+    <group>
+      <Hero />
+      <Scroll>
+        <Shards />
+        <group ref={sectionInfo} position={[0, -height, 0]}>
+          <ModelInfo />
+        </group>
+        <group ref={sectionDev} position={[0, -height * 2, 0]}>
+          <ModelDev />
+        </group>
+        <group ref={sectionArt} position={[0, -height * 3, 0]}>
+          <mesh>
+            <sphereGeometry args={[1, 32, 16]} />
+            <meshBasicMaterial transparent={true} opacity={1} color={"blue"} />
+            <Edges color={"white"} />
+          </mesh>
+        </group>
+      </Scroll>
+      <mesh ref={anchorHome}>
+        <Html className="page-home"></Html>
+      </mesh>
+      <mesh ref={anchorInfo}>
+        <Html className="page-info"></Html>
+      </mesh>
+      <mesh ref={anchorDev}>
+        <Html className="page-dev"></Html>
+      </mesh>
+      <mesh ref={anchorArt}>
+        <Html className="page-art"></Html>
+      </mesh>
+    </group>
+  )
+}
+
+const RenderPageBackground = ({ page }) => {
+  const scroll = useScroll()
+  const [scrolledDown, setScrolledDown] = useState(false)
+
+  useFrame(({ clock }) => {
+    state.scale = scroll.offset > 0.02 ? 2 : 1
+    setScrolledDown(scroll.range(0, 1 / 8) >= 1 ? true : false)
+  })
+
+  if (!page) {
     return <Rig404 />
   }
 
@@ -265,20 +372,29 @@ const RenderPageBackground = ({ page }) => {
         maxParticles={25}
         maxVelocity={2}
         emitInterval={200} //ms
-        canReset={page === "/" && !scrolledDown ? true : false}
+        canReset={page === "home" && !scrolledDown ? true : false}
       />
       <RigPages page={page} />
     </>
   )
 };
 
-const Background = ({ page, homeData }) => {
+const Background = ({ pathname, router, homeData }) => {
   const [isTabActive, setIsTabActive] = useState(true);
-  const [isHome, setIsHome] = useState(false);
+  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
+  const [isHome, setIsHome] = useState(page === "home");
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
 
   useEffect(() => {
-    setIsHome(page === "/");
-  }, [page]);
+    if (page === "home") {
+      setIsHome(true);
+    } else {
+      setIsHome(false);
+    }
+  }, [page])
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -291,18 +407,45 @@ const Background = ({ page, homeData }) => {
     };
   }, []);
 
+  const [dpr, setDpr] = useState(1);
   return (
-    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={style.background} camera={{ fov: 35, position: [0, 0, 7] }} resize={{ polyfill: ResizeObserver }}
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 7], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
-        toneMapping: THREE.NoToneMapping,
+        toneMapping: THREE.ACESFilmicToneMapping,
       }}>
-      <ScrollControls pages={2} damping={0.1}>
-        <Float>
-          <RenderPageBackground page={page} />
-        </Float>
+
+      <PerformanceMonitor
+        onDecline={() => setDpr(0.5)}
+        onIncline={() => setDpr(1)}
+      />
+
+      <color attach="background" args={["#000000"]} />
+
+      <ScrollControls pages={4} damping={0.1} >
+        <RenderPageBackground page={page} />
         <Scroll html style={{ width: "100%", height: "100vh" }}>
-          {isHome && <RenderHome homeData={homeData} />}
+          {isHome && <>
+            <div className={`${style.sections} ${style.intro}`}>
+              <h1>{homeData.header}</h1>
+              <h2>{homeData.subhead}</h2>
+              <p>{homeData.intro}</p>
+            </div>
+            <div className={`${style.sections} ${style.info}`}>
+              <h2>"The only Zen you can find on the tops of mountains is the Zen you bring up there."</h2>
+              <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
+            </div>
+
+            <div className={`${style.sections} ${style.dev}`}>
+              <h2>Joy seeing code come to life</h2>
+              <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
+            </div>
+
+            <div className={`${style.sections} ${style.art}`}>
+              <h2>Simplicty is everything.</h2>
+              <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
+            </div>
+          </>}
         </Scroll>
       </ScrollControls>
     </Canvas>

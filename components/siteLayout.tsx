@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic';
 import style from './siteLayout.module.scss'
 import NavLink from "./navLink";
@@ -99,10 +99,11 @@ const SiteLayout = ({ children, settings, homeData }) => {
   ]
 
   const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
+  const router = useRouter()
 
   return (
     <>
-      <DynamicBackground homeData={homeData} page={isNotFound ? "404" : pathname} />
+      <DynamicBackground router={router} pathname={isNotFound ? "404" : pathname} homeData={homeData} />
 
       {children}
 

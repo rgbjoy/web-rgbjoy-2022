@@ -9,7 +9,7 @@ export const metadata = {
 
 const Custom404 = () => (
   <Layout className={style.notFound}>
-    <h1>Uh oh. Something went wrong in the simulation.</h1>
+    <h1>Something went wrong in the simulation.</h1>
     <Link className={`btn ${style.btn}`} href="/">
       Go back
     </Link>
