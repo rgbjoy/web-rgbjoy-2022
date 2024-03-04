@@ -217,15 +217,14 @@ const ModelInfo = () => {
         geometry={(nodes.Torus as THREE.Mesh).geometry}
         position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
       >
-        <meshPhysicalMaterial color={"white"} />
+        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
         <mesh ref={planet}>
           <pointLight
             name="PointLight"
             color={"white"}
-
             intensity={0.4}
           />
-          <sphereGeometry args={[0.2, 32, 32]} />
+          <sphereGeometry args={[0.1, 32, 32]} />
         </mesh>
       </mesh>
     </group>
@@ -255,7 +254,7 @@ const ModelDev = () => {
 
           intensity={0.4}
         />
-        <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.2} color={"green"} />
+        <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.5} color={"green"} />
       </mesh>
     </group>
   );
