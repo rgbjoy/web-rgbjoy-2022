@@ -83,7 +83,7 @@
 
 .dev {
   top: 50vh;
-  left: 0vw;
+  left: 50vw;
 
   @include mobile-only {
     max-width: 50%;
@@ -95,7 +95,7 @@
 .art {
   width: auto;
   top: 40vh;
-  right: 15vw;
+  left: 30vw;
 
   @include mobile-only {
     top: 30vh;

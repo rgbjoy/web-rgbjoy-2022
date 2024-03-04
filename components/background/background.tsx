@@ -416,7 +416,12 @@ const RenderPageBackground = ({ page }) => {
 };
 
 const HomeHTML = ({ homeData, router, pathname }) => {
-  const clientHeight = document.documentElement.clientHeight
+  const [clientHeight, setClientHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => setClientHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+  }, []);
 
   if (pathname !== "/") {
     return null
