@@ -8,6 +8,7 @@ import Rig404 from './rig404';
 
 import style from "./background.module.scss"
 import ParticlesManager from './particleManager';
+import gsap from 'gsap';
 
 var FIRST_LOAD = true
 
@@ -128,7 +129,6 @@ const Hero = () => {
     if (!meshRef.current) return;
 
     const speed = 0.003;
-    // meshRef.current.rotation.x += speed;
     meshRef.current.rotation.y += speed;
     meshRef.current.rotation.z += speed;
   });
@@ -260,12 +260,44 @@ const ModelDev = () => {
   );
 }
 
+const ModelArt = () => {
+  const artRef = useRef<THREE.Mesh>(null);
+  const artMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const [hover, setHover] = useState(false);
+
+  useFrame(() => {
+    if (artRef.current) {
+      artRef.current.rotation.y += 0.001
+    }
+  })
+
+  const handleHover = (hover: boolean) => {
+    setHover(hover)
+    if (hover && artMatRef.current) {
+      gsap.to(artMatRef.current, { opacity: 0, duration: 0.5 })
+    } else {
+      gsap.to(artMatRef.current, { opacity: 1, duration: 0.5 })
+    }
+  }
+
+  return (
+    <mesh onPointerOver={() => handleHover(true)} onPointerDown={() => handleHover(true)} onPointerOut={() => handleHover(false)} onPointerUp={() => handleHover(false)} ref={artRef}>
+      <sphereGeometry args={[1, 32, 16]} />
+      <meshBasicMaterial ref={artMatRef} transparent={true} color={"blue"} />
+      <Edges color={"blue"} threshold={1} />
+    </mesh>
+  )
+}
+
 const RigPages = ({ page }) => {
   const anchorHome = useRef<THREE.Mesh>(null);
+
   const sectionInfo = useRef<THREE.Group>(null);
   const anchorInfo = useRef<THREE.Mesh>(null);
+
   const sectionDev = useRef<THREE.Group>(null);
   const anchorDev = useRef<THREE.Mesh>(null);
+
   const sectionArt = useRef<THREE.Group>(null);
   const anchorArt = useRef<THREE.Mesh>(null);
 
@@ -329,11 +361,7 @@ const RigPages = ({ page }) => {
           <ModelDev />
         </group>
         <group ref={sectionArt} position={[0, -height * 3, 0]}>
-          <mesh>
-            <sphereGeometry args={[1, 32, 16]} />
-            <meshBasicMaterial transparent={true} opacity={1} color={"blue"} />
-            <Edges color={"white"} />
-          </mesh>
+          <ModelArt />
         </group>
       </Scroll>
       <mesh ref={anchorHome}>
@@ -355,9 +383,18 @@ const RigPages = ({ page }) => {
 const RenderPageBackground = ({ page }) => {
   const scroll = useScroll()
   const [scrolledDown, setScrolledDown] = useState(false)
+  const [reset, setReset] = useState(false)
 
   useFrame(({ clock }) => {
-    state.scale = scroll.offset > 0.02 ? 2 : 1
+    if (scroll.offset > 0.02) {
+      state.scale = 2
+      setReset(false)
+    } else {
+      setReset(true)
+      if (!reset) {
+        state.scale = 1
+      }
+    }
     setScrolledDown(scroll.range(0, 1 / 8) >= 1 ? true : false)
   })
 
@@ -378,22 +415,58 @@ const RenderPageBackground = ({ page }) => {
   )
 };
 
-const Background = ({ pathname, router, homeData }) => {
-  const [isTabActive, setIsTabActive] = useState(true);
-  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
-  const [isHome, setIsHome] = useState(page === "home");
+const HomeHTML = ({ homeData, router, pathname }) => {
+  const [clientHeight, setClientHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => setClientHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+  }, []);
+
+  if (pathname !== "/") {
+    return null
+  }
 
   const handleNavigation = (path) => {
     router.push(path);
   };
 
-  useEffect(() => {
-    if (page === "home") {
-      setIsHome(true);
-    } else {
-      setIsHome(false);
-    }
-  }, [page])
+  return (
+    <>
+      <div className={style.sections} style={{height:clientHeight}}>
+        <div className={style.intro}>
+          <h1>{homeData.header}</h1>
+          <h2>{homeData.subhead}</h2>
+          <p><span>{homeData.intro}</span></p>
+        </div>
+      </div>
+
+      <div className={style.sections} style={{height:clientHeight}}>
+        <div className={style.info}>
+          <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
+          <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
+        </div>
+      </div>
+
+      <div className={style.sections} style={{height:clientHeight}}>
+        <div className={style.dev}>
+          <h2>Joy seeing code come to life</h2>
+          <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
+        </div>
+      </div>
+
+      <div className={style.sections} style={{height:clientHeight}}>
+        <div className={style.art}>
+          <h2>Simplicty is everything.</h2>
+          <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
+        </div>
+      </div></>
+  )
+}
+
+const Background = ({ pathname, router, homeData }) => {
+  const [isTabActive, setIsTabActive] = useState(true);
+  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -408,7 +481,7 @@ const Background = ({ pathname, router, homeData }) => {
 
   const [dpr, setDpr] = useState(1);
   return (
-    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 7], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
@@ -421,30 +494,10 @@ const Background = ({ pathname, router, homeData }) => {
 
       <color attach="background" args={["#000000"]} />
 
-      <ScrollControls pages={4} damping={0.1} >
-        <RenderPageBackground page={page} />
-        <Scroll html style={{ width: "100%", height: "100vh" }}>
-          {isHome && <>
-            <div className={`${style.sections} ${style.intro}`}>
-              <h1>{homeData.header}</h1>
-              <h2>{homeData.subhead}</h2>
-              <p>{homeData.intro}</p>
-            </div>
-            <div className={`${style.sections} ${style.info}`}>
-              <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
-              <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
-            </div>
-
-            <div className={`${style.sections} ${style.dev}`}>
-              <h2>Joy seeing code come to life</h2>
-              <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
-            </div>
-
-            <div className={`${style.sections} ${style.art}`}>
-              <h2>Simplicty is everything.</h2>
-              <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
-            </div>
-          </>}
+      <ScrollControls pages={4}>
+        {page !== "posts" && <RenderPageBackground page={page} />}
+        <Scroll html style={{ width: '100vw', height: '100vh' }}>
+          <HomeHTML pathname={pathname} homeData={homeData} router={router} />
         </Scroll>
       </ScrollControls>
     </Canvas>

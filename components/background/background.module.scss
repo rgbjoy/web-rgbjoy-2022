@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import "../../styles/variables";
 
 .background {
   position: fixed !important;
@@ -6,13 +6,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-  transform: scale(1.0);
-  animation: fadeInAnimation forwards cubic-bezier(0.250, 0.460, 0.450, 0.940) 3s 1;
+  transform: scale(1);
+  animation: fadeInAnimation forwards cubic-bezier(0.25, 0.46, 0.45, 0.94) 3s 1;
+
+  div {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+  }
 }
 
 .sections {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 100vw;
+
+  > div {
+    position: absolute;
+  }
 
   h1 {
     @include mobile-only {
@@ -21,11 +31,12 @@
   }
 
   h2 {
+    margin-top: 20px;
     margin-bottom: 40px;
     max-width: 50%;
 
     @include mobile-only {
-      max-width: 50%;
+      max-width: 95%;
       font-size: 0.8rem;
     }
   }
@@ -33,8 +44,19 @@
   p {
     max-width: 50%;
 
+    span {
+      color: black;
+      background-color: #ffffffde;
+      box-shadow:
+        0.5rem 0px 0px #ffffffde,
+        -0.5rem 0px 0px #ffffffde;
+      -webkit-box-decoration-break: clone;
+      -moz-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
     @include mobile-only {
-      max-width: 75%;
+      max-width: 95%;
     }
   }
 }
@@ -45,37 +67,38 @@
 
   @include mobile-only {
     top: 15vh;
-
+    left: 5%;
   }
 }
 
 .info {
-  top: 150vh;
+  top: 50vh;
   left: 15vw;
 
   @include mobile-only {
-    top: 125vh;
+
+    top: 30vh;
   }
 }
 
 .dev {
-  top: 250vh;
-  left: 30vw;
+  top: 50vh;
+  left: 50vw;
 
   @include mobile-only {
-    top: 220vh;
-    left: 15vw
+    max-width: 50%;
+    left: 30vw;
+    top: 40vh;
   }
 }
 
 .art {
   width: auto;
-  top: 350vh;
-  right: 15vw;
+  top: 40vh;
+  left: 30vw;
 
   @include mobile-only {
-    top: 320vh;
-    right: 0;
+    top: 30vh;
   }
 }
 
@@ -87,9 +110,9 @@
 
 @keyframes fadeInAnimation {
   0% {
-      opacity: 0;
+    opacity: 0;
   }
   100% {
-      opacity: 1;
-   }
+    opacity: 1;
+  }
 }

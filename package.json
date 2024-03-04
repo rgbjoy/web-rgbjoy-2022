@@ -5,7 +5,8 @@
     "defaults"
   ],
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
+    "dev turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "update": "npm update --save",
