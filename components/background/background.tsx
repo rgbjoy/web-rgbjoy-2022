@@ -432,7 +432,7 @@ const Background = ({ pathname, router, homeData }) => {
               <p>{homeData.intro}</p>
             </div>
             <div className={`${style.sections} ${style.info}`}>
-              <h2>"The only Zen you can find on the tops of mountains is the Zen you bring up there."</h2>
+              <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
               <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
             </div>
 
