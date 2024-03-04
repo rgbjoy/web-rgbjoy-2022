@@ -10,6 +10,7 @@ import localFont from 'next/font/local'
 import SiteLayout from "@/components/siteLayout"
 import { fetchSettings } from '@/components/fetchSettings';
 import { use } from 'react';
+import { getData } from '@/utilities/getData';
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
@@ -62,11 +63,30 @@ export default function RootLayout({
     const data = await fetchSettings();
     return data;
   }
-  const settings = use(getLinks());
+  const settingsData = use(getLinks());
+
+  const getHome = async () => {
+    const query = `
+    query getHome {
+      page(id:"cG9zdDoxMQ==") {
+        home {
+          header
+          subhead
+          intro
+          button
+        }
+      }
+    }
+  `;
+    const { data: { page: { home } } } = await getData(query);
+    return home;
+  }
+  const homeData = use(getHome());
+
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout settings={settings}>
+        <SiteLayout settings={settingsData} homeData={homeData}>
           {children}
         </SiteLayout>
         <Analytics />

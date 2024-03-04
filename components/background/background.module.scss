@@ -1,0 +1,95 @@
+@import '../../styles/variables';
+
+.background {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.0);
+  animation: fadeInAnimation forwards cubic-bezier(0.250, 0.460, 0.450, 0.940) 3s 1;
+}
+
+.sections {
+  position: absolute;
+  width: 100%;
+
+  h1 {
+    @include mobile-only {
+      font-size: 1.5rem;
+    }
+  }
+
+  h2 {
+    margin-bottom: 40px;
+    max-width: 50%;
+
+    @include mobile-only {
+      max-width: 50%;
+      font-size: 0.8rem;
+    }
+  }
+
+  p {
+    max-width: 50%;
+
+    @include mobile-only {
+      max-width: 75%;
+    }
+  }
+}
+
+.intro {
+  top: 25vh;
+  left: 15vw;
+
+  @include mobile-only {
+    top: 15vh;
+
+  }
+}
+
+.info {
+  top: 150vh;
+  left: 15vw;
+
+  @include mobile-only {
+    top: 125vh;
+  }
+}
+
+.dev {
+  top: 250vh;
+  left: 30vw;
+
+  @include mobile-only {
+    top: 220vh;
+    left: 15vw
+  }
+}
+
+.art {
+  width: auto;
+  top: 350vh;
+  right: 15vw;
+
+  @include mobile-only {
+    top: 320vh;
+    right: 0;
+  }
+}
+
+.disableScroll {
+  canvas + div {
+    overflow: hidden !important;
+  }
+}
+
+@keyframes fadeInAnimation {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+   }
+}

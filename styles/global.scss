@@ -89,6 +89,8 @@ a {
   padding: 10px;
   transition: all 0.15s cubic-bezier(0.455, 0.03, 0.515, 0.955);
   border-radius: 2px;
+  cursor: pointer;
+  // -webkit-backface-visibility: hidden;
 
   &:hover {
     color: black;
@@ -120,7 +122,7 @@ li {
 }
 
 p, li {
-  line-height: 175%;
+  line-height: 145%;
 
   @include mobile-only {
     font-size: 80%;

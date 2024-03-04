@@ -22,6 +22,6 @@ export default async function Page() {
   const { data: { page: { home } } } = await getData(query)
 
   return (
-    <Home {...home} />
+    null
   );
 }

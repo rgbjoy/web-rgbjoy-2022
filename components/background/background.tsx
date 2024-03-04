@@ -1,0 +1,454 @@
+import * as THREE from 'three';
+import { useState, useRef, useEffect, useMemo, use } from 'react';
+import { ResizeObserver } from "@juggle/resize-observer"
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
+import state from './state';
+import Rig404 from './rig404';
+
+import style from "./background.module.scss"
+import ParticlesManager from './particleManager';
+
+var FIRST_LOAD = true
+
+const GenerateShard = (points, thickness) => {
+  const shape = new THREE.Shape();
+  points.forEach((point, i) => {
+    if (i === 0) shape.moveTo(point.x, point.y);
+    else shape.lineTo(point.x, point.y);
+  });
+  shape.lineTo(points[0].x, points[0].y);
+
+  const extrudeSettings = {
+    steps: 1,
+    depth: thickness,
+    bevelEnabled: false,
+  };
+
+  return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+};
+
+const RandomShard = ({ position, color = "#FF0000" }) => {
+  const thickness = useMemo(() => Math.random() * 0.05 + 0.01, []);
+  const numPoints = useMemo(() => (Math.random() < 0.5 ? 3 : 4), []);
+  const geometry = useMemo(() => {
+    let points: THREE.Vector2[] = []; // Explicitly define the type of the points array
+    for (let i = 0; i < numPoints; i++) {
+      const angle = 2 * Math.PI * (i / numPoints);
+      const radius = 0.3 + Math.random() * 0.1;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      points.push(new THREE.Vector2(x, y));
+    }
+
+    points.sort((a, b) => a.angle() - b.angle());
+
+    return GenerateShard(points, thickness);
+  }, [numPoints, thickness]);
+
+  const rotation = useMemo(
+    () =>
+      new THREE.Euler(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      ),
+    []
+  );
+
+  const materialArgs = {
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    color: color,
+    opacity: 0.7,
+    depthTest: false,
+    transparent: true,
+    toneMapped: false,
+  };
+
+  return (
+    <Float>
+      <mesh geometry={geometry} position={position} rotation={rotation}>
+        <meshBasicMaterial {...materialArgs} />
+      </mesh>
+    </Float>
+  );
+};
+
+const getUniqueVertices = (geometry) => {
+  const positions = geometry.attributes.position.array;
+  const uniqueVerticesSet = new Set();
+  const uniqueVertices: THREE.Vector3[] = [];
+
+  for (let i = 0; i < positions.length; i += 3) {
+    const key = `${positions[i]},${positions[i + 1]},${positions[i + 2]}`;
+    if (!uniqueVerticesSet.has(key)) {
+      uniqueVerticesSet.add(key);
+      uniqueVertices.push(
+        new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2])
+      );
+    }
+  }
+  return uniqueVertices;
+};
+
+const Shards = () => {
+  const shardColors = ["red", "green", "blue"];
+  const groupRef = useRef<THREE.Group>(null);
+  const [targetScale, setTargetScale] = useState(1.5);
+
+  useFrame(() => {
+    setTargetScale(
+      THREE.MathUtils.lerp(
+        targetScale,
+        state.scale,
+        targetScale <= state.scale ? 0.02 : 0.01
+      )
+    );
+  });
+
+  const geometry = new THREE.IcosahedronGeometry(targetScale, 0);
+  const uniqueVertices = getUniqueVertices(geometry);
+  const shards = uniqueVertices.map((vertex, i) => (
+    <RandomShard
+      key={i}
+      position={vertex}
+      color={shardColors[i % shardColors.length]}
+    />
+  ));
+
+  return <group ref={groupRef}>{shards}</group>;
+};
+
+const Hero = () => {
+  const [isPointerOver, setIsPointerOver] = useState(false);
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!meshRef.current) return;
+
+    const speed = 0.003;
+    // meshRef.current.rotation.x += speed;
+    meshRef.current.rotation.y += speed;
+    meshRef.current.rotation.z += speed;
+  });
+
+  const handlePointerOver = () => {
+    setIsPointerOver(true);
+    state.scale = 2
+  };
+
+  const handlePointerOut = () => {
+    setIsPointerOver(false);
+    state.scale = 1
+  };
+
+  const handlePointerDown = () => {
+    state.scale = 2
+  };
+
+  const handlePointerUp = () => {
+    if (!isPointerOver) {
+      state.scale = 1
+    }
+  };
+
+  const materialArgs = {
+    opacity: 0,
+    transparent: true,
+  };
+
+  return (
+    <mesh
+      ref={meshRef}
+      onPointerOver={handlePointerOver}
+      onPointerDown={handlePointerDown}
+      onPointerOut={handlePointerOut}
+      onPointerUp={handlePointerUp}
+    >
+      <icosahedronGeometry args={[0.25, 0]} />
+      <meshBasicMaterial {...materialArgs} />
+      <Edges color={"white"} />
+    </mesh>
+  );
+};
+
+const ModelInfo = () => {
+  const modelRef = useRef<THREE.Group>(null);
+  const { nodes, animations } = useGLTF("/glb/Info.glb");
+  const { actions } = useAnimations(animations, modelRef);
+  const planet = useRef<THREE.Mesh>(null)
+  const scroll = useScroll();
+
+  useEffect(() => {
+    if (actions.animation_0 && !actions.animation_0.paused) {
+      actions.animation_0.reset().play().paused = true
+    }
+  }, [actions.animation_0])
+
+  useFrame(({ clock }) => {
+    if (planet.current) {
+      const radius = 1.5; // Radius of the circle
+      const elapsedTime = clock.getElapsedTime();
+      planet.current.position.x = Math.sin(elapsedTime) * radius;
+      planet.current.position.z = Math.cos(elapsedTime) * radius;
+    }
+
+    if (actions.animation_0) {
+      const scrollThreshold = 0.1;
+
+      if (scroll.offset > scrollThreshold) {
+        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold);
+        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset;
+      }
+    }
+  })
+
+  return (
+    <group ref={modelRef}>
+      <mesh
+        name="Cube"
+        geometry={(nodes.Cube as THREE.Mesh).geometry}
+      >
+        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
+      </mesh>
+      <mesh
+        name="Torus"
+        geometry={(nodes.Torus as THREE.Mesh).geometry}
+        position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
+      >
+        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
+        <mesh ref={planet}>
+          <pointLight
+            name="PointLight"
+            color={"white"}
+            intensity={0.4}
+          />
+          <sphereGeometry args={[0.1, 32, 32]} />
+        </mesh>
+      </mesh>
+    </group>
+  )
+}
+
+const ModelDev = () => {
+  const helixRef = useRef<THREE.Group>(null);
+  const { nodes } = useGLTF("./glb/Dev.glb");
+
+  useFrame(() => {
+    if (helixRef.current) {
+      helixRef.current.rotation.y -= 0.01
+    }
+  })
+
+  return (
+    <group ref={helixRef}>
+      <ambientLight color={"white"} intensity={1} />
+      <mesh
+        geometry={(nodes.Helix as THREE.Mesh).geometry}
+        scale={8.355}
+      >
+        <pointLight
+          name="PointLight"
+          color={"white"}
+
+          intensity={0.4}
+        />
+        <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.5} color={"green"} />
+      </mesh>
+    </group>
+  );
+}
+
+const RigPages = ({ page }) => {
+  const anchorHome = useRef<THREE.Mesh>(null);
+  const sectionInfo = useRef<THREE.Group>(null);
+  const anchorInfo = useRef<THREE.Mesh>(null);
+  const sectionDev = useRef<THREE.Group>(null);
+  const anchorDev = useRef<THREE.Mesh>(null);
+  const sectionArt = useRef<THREE.Group>(null);
+  const anchorArt = useRef<THREE.Mesh>(null);
+
+  const { height } = useThree((state) => state.viewport)
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (page === "home" && !FIRST_LOAD) {
+        const pageHome = document.querySelector(".page-home");
+        if (pageHome) {
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      } else if (page === "info") {
+        const pageInfo = document.querySelector(".page-info");
+        if (pageInfo) {
+          pageInfo.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "dev") {
+        const pageDev = document.querySelector(".page-dev");
+        if (pageDev) {
+          pageDev.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "art") {
+        const pageArt = document.querySelector(".page-art");
+        if (pageArt) {
+          pageArt.scrollIntoView({ behavior: "smooth" });
+        }
+      } else if (page === "posts") {
+        const pageHome = document.querySelector(".page-home");
+        if (pageHome) {
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }
+      FIRST_LOAD = false
+    }, 10)
+  }, [page])
+
+  useFrame(({ clock }) => {
+    if (anchorInfo.current && sectionInfo.current) {
+      anchorInfo.current.position.y = sectionInfo.current.position.y + 1
+    }
+
+    if (anchorDev.current && sectionDev.current) {
+      anchorDev.current.position.y = sectionDev.current.position.y + 2 - height / 2
+    }
+
+    if (anchorArt.current && sectionArt.current) {
+      anchorArt.current.position.y = sectionArt.current.position.y + 3 - height
+    }
+  })
+
+  return (
+    <group>
+      <Hero />
+      <Scroll>
+        <Shards />
+        <group ref={sectionInfo} position={[0, -height, 0]}>
+          <ModelInfo />
+        </group>
+        <group ref={sectionDev} position={[0, -height * 2, 0]}>
+          <ModelDev />
+        </group>
+        <group ref={sectionArt} position={[0, -height * 3, 0]}>
+          <mesh>
+            <sphereGeometry args={[1, 32, 16]} />
+            <meshBasicMaterial transparent={true} opacity={1} color={"blue"} />
+            <Edges color={"white"} />
+          </mesh>
+        </group>
+      </Scroll>
+      <mesh ref={anchorHome}>
+        <Html className="page-home"></Html>
+      </mesh>
+      <mesh ref={anchorInfo}>
+        <Html className="page-info"></Html>
+      </mesh>
+      <mesh ref={anchorDev}>
+        <Html className="page-dev"></Html>
+      </mesh>
+      <mesh ref={anchorArt}>
+        <Html className="page-art"></Html>
+      </mesh>
+    </group>
+  )
+}
+
+const RenderPageBackground = ({ page }) => {
+  const scroll = useScroll()
+  const [scrolledDown, setScrolledDown] = useState(false)
+
+  useFrame(({ clock }) => {
+    state.scale = scroll.offset > 0.02 ? 2 : 1
+    setScrolledDown(scroll.range(0, 1 / 8) >= 1 ? true : false)
+  })
+
+  if (!page) {
+    return <Rig404 />
+  }
+
+  return (
+    <>
+      <ParticlesManager
+        maxParticles={25}
+        maxVelocity={2}
+        emitInterval={200} //ms
+        canReset={page === "home" && !scrolledDown ? true : false}
+      />
+      <RigPages page={page} />
+    </>
+  )
+};
+
+const Background = ({ pathname, router, homeData }) => {
+  const [isTabActive, setIsTabActive] = useState(true);
+  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
+  const [isHome, setIsHome] = useState(page === "home");
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
+
+  useEffect(() => {
+    if (page === "home") {
+      setIsHome(true);
+    } else {
+      setIsHome(false);
+    }
+  }, [page])
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const [dpr, setDpr] = useState(1);
+  return (
+    <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 7], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+      gl={{
+        antialias: false,
+        toneMapping: THREE.ACESFilmicToneMapping,
+      }}>
+
+      <PerformanceMonitor
+        onDecline={() => setDpr(0.5)}
+        onIncline={() => setDpr(1)}
+      />
+
+      <color attach="background" args={["#000000"]} />
+
+      <ScrollControls pages={4} damping={0.1} >
+        <RenderPageBackground page={page} />
+        <Scroll html style={{ width: "100%", height: "100vh" }}>
+          {isHome && <>
+            <div className={`${style.sections} ${style.intro}`}>
+              <h1>{homeData.header}</h1>
+              <h2>{homeData.subhead}</h2>
+              <p>{homeData.intro}</p>
+            </div>
+            <div className={`${style.sections} ${style.info}`}>
+              <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
+              <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
+            </div>
+
+            <div className={`${style.sections} ${style.dev}`}>
+              <h2>Joy seeing code come to life</h2>
+              <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
+            </div>
+
+            <div className={`${style.sections} ${style.art}`}>
+              <h2>Simplicty is everything.</h2>
+              <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
+            </div>
+          </>}
+        </Scroll>
+      </ScrollControls>
+    </Canvas>
+  )
+}
+
+export default Background

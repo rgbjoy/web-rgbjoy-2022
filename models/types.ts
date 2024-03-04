@@ -74,6 +74,15 @@ interface ArtData {
   };
 }
 
+interface SiteSettings {
+  footerLinks: Link[];
+  badge: string;
+  homeHeader: String;
+  homeSubhead: String;
+  intro: String;
+  buttonText: String;
+}
+
 interface PostsData {
   nodes: {
     slug: string;
@@ -89,4 +98,4 @@ interface PostData {
   featuredImage: FeaturedImage;
 }
 
-export type { HomeData, InfoData, DevData, ArtData, PostsData, PostData };
+export type { HomeData, InfoData, DevData, ArtData, SiteSettings, PostsData, PostData };

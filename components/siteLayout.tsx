@@ -2,13 +2,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic';
 import style from './siteLayout.module.scss'
 import NavLink from "./navLink";
 
 const DynamicBackground = dynamic(
-  () => import('./background'),
+  () => import('./background/background'),
   { loading: () => <div className="loading">...</div>, ssr: false }
 )
 
@@ -26,7 +26,7 @@ const Footer = ({ footerLinks }) => {
   );
 }
 
-const SiteLayout = ({ children, settings }) => {
+const SiteLayout = ({ children, settings, homeData }) => {
   const pathname = usePathname()
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -99,10 +99,11 @@ const SiteLayout = ({ children, settings }) => {
   ]
 
   const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
+  const router = useRouter()
 
   return (
     <>
-      <DynamicBackground page={isNotFound ? "404" : pathname} />
+      <DynamicBackground router={router} pathname={isNotFound ? "404" : pathname} homeData={homeData} />
 
       {children}
 
@@ -119,7 +120,7 @@ const SiteLayout = ({ children, settings }) => {
           ref={menuRef}
         >
           <button onClick={toggleMenu} type="button" className={style.hamburgerMenu}>
-            {isMenuOpen ? `Close` : `Menu`}
+            {isMenuOpen ? `- Close` : `+ Menu`}
           </button>
           <nav>
             {links.map((l, i) =>
