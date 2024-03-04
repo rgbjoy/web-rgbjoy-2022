@@ -8,6 +8,7 @@ import Rig404 from './rig404';
 
 import style from "./background.module.scss"
 import ParticlesManager from './particleManager';
+import gsap from 'gsap';
 
 var FIRST_LOAD = true
 
@@ -128,7 +129,6 @@ const Hero = () => {
     if (!meshRef.current) return;
 
     const speed = 0.003;
-    // meshRef.current.rotation.x += speed;
     meshRef.current.rotation.y += speed;
     meshRef.current.rotation.z += speed;
   });
@@ -260,12 +260,44 @@ const ModelDev = () => {
   );
 }
 
+const ModelArt = () => {
+  const artRef = useRef<THREE.Mesh>(null);
+  const artMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const [hover, setHover] = useState(false);
+
+  useFrame(() => {
+    if (artRef.current) {
+      artRef.current.rotation.y += 0.001
+    }
+  })
+
+  const handleHover = (hover: boolean) => {
+    setHover(hover)
+    if (hover && artMatRef.current) {
+      gsap.to(artMatRef.current, { opacity:0, duration: 0.5 })
+    } else {
+      gsap.to(artMatRef.current, { opacity:1, duration: 0.5 })
+    }
+  }
+
+  return (
+    <mesh onPointerOver={() => handleHover(true)} onPointerDown={() => handleHover(true)}  onPointerOut={() => handleHover(false)} onPointerUp={() => handleHover(false)} ref={artRef}>
+      <sphereGeometry args={[1, 32, 16]} />
+      <meshBasicMaterial ref={artMatRef} transparent={true} color={"blue"} />
+      <Edges color={"blue"} threshold={1} />
+    </mesh>
+  )
+}
+
 const RigPages = ({ page }) => {
   const anchorHome = useRef<THREE.Mesh>(null);
+
   const sectionInfo = useRef<THREE.Group>(null);
   const anchorInfo = useRef<THREE.Mesh>(null);
+
   const sectionDev = useRef<THREE.Group>(null);
   const anchorDev = useRef<THREE.Mesh>(null);
+
   const sectionArt = useRef<THREE.Group>(null);
   const anchorArt = useRef<THREE.Mesh>(null);
 
@@ -329,11 +361,7 @@ const RigPages = ({ page }) => {
           <ModelDev />
         </group>
         <group ref={sectionArt} position={[0, -height * 3, 0]}>
-          <mesh>
-            <sphereGeometry args={[1, 32, 16]} />
-            <meshBasicMaterial transparent={true} opacity={1} color={"blue"} />
-            <Edges color={"white"} />
-          </mesh>
+          <ModelArt />
         </group>
       </Scroll>
       <mesh ref={anchorHome}>
@@ -355,9 +383,18 @@ const RigPages = ({ page }) => {
 const RenderPageBackground = ({ page }) => {
   const scroll = useScroll()
   const [scrolledDown, setScrolledDown] = useState(false)
+  const [reset, setReset] = useState(false)
 
   useFrame(({ clock }) => {
-    state.scale = scroll.offset > 0.02 ? 2 : 1
+    if (scroll.offset > 0.02) {
+      state.scale = 2
+      setReset(false)
+    } else {
+      setReset(true)
+      if (!reset) {
+        state.scale = 1
+      }
+    }
     setScrolledDown(scroll.range(0, 1 / 8) >= 1 ? true : false)
   })
 
@@ -422,13 +459,13 @@ const Background = ({ pathname, router, homeData }) => {
       <color attach="background" args={["#000000"]} />
 
       <ScrollControls pages={4} damping={0.1} >
-        <RenderPageBackground page={page} />
+        {page !== "posts" && <RenderPageBackground page={page} />}
         <Scroll html style={{ width: "100%", height: "100vh" }}>
           {isHome && <>
             <div className={`${style.sections} ${style.intro}`}>
               <h1>{homeData.header}</h1>
               <h2>{homeData.subhead}</h2>
-              <p>{homeData.intro}</p>
+              <p><span>{homeData.intro}</span></p>
             </div>
             <div className={`${style.sections} ${style.info}`}>
               <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
