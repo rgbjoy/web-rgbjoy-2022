@@ -33,16 +33,17 @@
   h2 {
     margin-top: 20px;
     margin-bottom: 40px;
-    max-width: 50%;
+    max-width: 600px;
 
     @include mobile-only {
+      margin-bottom: 20px;
       max-width: 95%;
       font-size: 0.8rem;
     }
   }
 
   p {
-    max-width: 50%;
+    max-width: 600px;
 
     span {
       color: black;
@@ -82,8 +83,9 @@
 }
 
 .dev {
+  text-align: right;
   top: 50vh;
-  left: 50vw;
+  left: 30vw;
 
   @include mobile-only {
     max-width: 50%;
