@@ -84,13 +84,17 @@ a {
 }
 
 .btn {
-  border: 1px solid white;
+  border: 2px solid white;
   display: inline-block;
   padding: 10px;
   transition: all 0.15s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
-  // -webkit-backface-visibility: hidden;
+
+  @include mobile-only {
+    font-size: 80%;
+    padding: 8px;
+  }
 
   &:hover {
     color: black;
@@ -134,6 +138,9 @@ p, li {
   padding: 240px ($gutter * 2) 200px $gutter;
   width: 75%;
   max-width: 960px;
+  // -webkit-backdrop-filter: blur(10px);
+  // backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.5);
 
   @include tablet-landscape-only {
     padding-top: 160px;

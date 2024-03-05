@@ -154,7 +154,8 @@ const Hero = () => {
   };
 
   const materialArgs = {
-    opacity: 0,
+    color: "black",
+    opacity: 0.2,
     transparent: true,
   };
 
@@ -350,8 +351,8 @@ const RigPages = ({ page }) => {
   })
 
   return (
-    <group>
-      <Hero />
+    <>
+     <Hero />
       <Scroll>
         <Shards />
         <group ref={sectionInfo} position={[0, -height, 0]}>
@@ -376,7 +377,7 @@ const RigPages = ({ page }) => {
       <mesh ref={anchorArt}>
         <Html className="page-art"></Html>
       </mesh>
-    </group>
+    </>
   )
 }
 
@@ -433,7 +434,7 @@ const HomeHTML = ({ homeData, router, pathname }) => {
 
   return (
     <>
-      <div className={style.sections} style={{height:clientHeight}}>
+      <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.intro}>
           <h1>{homeData.header}</h1>
           <h2>{homeData.subhead}</h2>
@@ -441,21 +442,21 @@ const HomeHTML = ({ homeData, router, pathname }) => {
         </div>
       </div>
 
-      <div className={style.sections} style={{height:clientHeight}}>
+      <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.info}>
           <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
           <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
         </div>
       </div>
 
-      <div className={style.sections} style={{height:clientHeight}}>
+      <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.dev}>
           <h2>Joy seeing code come to life</h2>
           <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
         </div>
       </div>
 
-      <div className={style.sections} style={{height:clientHeight}}>
+      <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.art}>
           <h2>Simplicty is everything.</h2>
           <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
@@ -467,6 +468,7 @@ const HomeHTML = ({ homeData, router, pathname }) => {
 const Background = ({ pathname, router, homeData }) => {
   const [isTabActive, setIsTabActive] = useState(true);
   const page = pathname !== "/" ? pathname.split("/")[1] : "home";
+  const [dpr, setDpr] = useState(1);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -479,7 +481,6 @@ const Background = ({ pathname, router, homeData }) => {
     };
   }, []);
 
-  const [dpr, setDpr] = useState(1);
   return (
     <Canvas frameloop={isTabActive ? 'always' : 'never'} className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
       gl={{
