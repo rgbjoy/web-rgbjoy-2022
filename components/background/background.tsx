@@ -441,17 +441,13 @@ const RenderPageBackground = ({ page }) => {
   )
 };
 
-const HomeHTML = ({ homeData, router, pathname }) => {
+const HomeHTML = ({ homeData, router }) => {
   const [clientHeight, setClientHeight] = useState(window.innerHeight);
 
   useEffect(() => {
     const handleResize = () => setClientHeight(window.innerHeight);
     window.addEventListener('resize', handleResize);
   }, []);
-
-  if (pathname !== "/") {
-    return null
-  }
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -512,8 +508,10 @@ const Background = ({ pathname, router, homeData }) => {
       <ScrollControls pages={4}>
         <RenderPageBackground page={page} />
         <Scroll html style={{ width: '100vw', height: '100vh' }}>
-          <HomeHTML pathname={pathname} homeData={homeData} router={router} />
+          <div style={{display: page !== "home" ? "none" : "block"}}>
+          <HomeHTML homeData={homeData} router={router} />
           <ScrollDots />
+          </div>
         </Scroll>
       </ScrollControls>
     </Canvas>
