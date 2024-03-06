@@ -25,8 +25,9 @@
   }
 
   h1 {
+    font-size: 2.5rem;
     @include mobile-only {
-      font-size: 1.5rem;
+      font-size: 1.7rem;
     }
   }
 
@@ -59,6 +60,38 @@
     @include mobile-only {
       max-width: 95%;
     }
+  }
+}
+
+.dots {
+  position:fixed;
+  bottom: $gutter;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @include mobile-only {
+    bottom: 100px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    margin: 4px;
+    animation: fadeInOut 2s infinite;
+
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
   }
 }
 

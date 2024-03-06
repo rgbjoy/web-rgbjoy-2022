@@ -3,6 +3,7 @@ import '../styles/global.scss';
 
 import { Analytics } from '@vercel/analytics/react';
 import { Viewport } from 'next'
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
@@ -89,6 +90,7 @@ export default function RootLayout({
         <SiteLayout settings={settingsData} homeData={homeData}>
           {children}
         </SiteLayout>
+        {/* <SpeedInsights /> */}
         <Analytics />
       </body>
     </html>
