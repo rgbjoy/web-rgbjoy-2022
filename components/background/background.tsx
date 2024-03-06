@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useState, useRef, useEffect, useMemo, use } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
@@ -58,21 +58,26 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
   );
 
   const materialArgs = {
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending,
-    color: color,
-    opacity: 0.8,
-    depthTest: false,
-    transparent: true,
-    toneMapped: false,
+    color: "black",
+    ior: 1.5,
+    roughness: 0.9,
+    reflectivity: 1,
+    iridescence: 1,
+    iridescenceIOR: 1,
+    metalness: 1,
   };
 
   return (
-    <Float>
-      <mesh geometry={geometry} position={position} rotation={rotation}>
-        <meshPhysicalMaterial {...materialArgs} />
-      </mesh>
-    </Float>
+    <>
+      <pointLight color={"white"} intensity={2} />
+      <pointLight color={"white"} position={[0,0,2]} intensity={2} />
+      <Float>
+
+        <mesh geometry={geometry} position={position} rotation={rotation}>
+          <meshPhysicalMaterial {...materialArgs} />
+        </mesh>
+      </Float>
+    </>
   );
 };
 
@@ -199,7 +204,7 @@ const ScrollDots = () => {
 
 const ModelInfo = () => {
   const modelRef = useRef<THREE.Group>(null);
-  const { nodes, animations } = useGLTF("/glb/Info.glb");
+  const { nodes, animations } = useGLTF("./glb/Info.glb");
   const { actions } = useAnimations(animations, modelRef);
   const planet = useRef<THREE.Mesh>(null)
   const scroll = useScroll();
@@ -234,7 +239,7 @@ const ModelInfo = () => {
         name="Cube"
         geometry={(nodes.Cube as THREE.Mesh).geometry}
       >
-        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
+        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} ior={0} roughness={0.2} color={"red"} />
       </mesh>
       <mesh
         name="Torus"
@@ -246,7 +251,7 @@ const ModelInfo = () => {
           <pointLight
             name="PointLight"
             color={"white"}
-            intensity={0.4}
+            intensity={0.1}
           />
           <sphereGeometry args={[0.1, 32, 32]} />
         </mesh>
