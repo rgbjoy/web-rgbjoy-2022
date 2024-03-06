@@ -49,6 +49,8 @@ function Stars({ canReset = true }) {
   const size = 3;
   const speed = 0.05;
 
+  const lastRenderTime = useRef(0);
+
   const mesh = useRef<THREE.Points>();
   const { positions, colors, sizes, opacity } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -84,7 +86,20 @@ function Stars({ canReset = true }) {
 
   const material = useMemo(() => new StarfieldMaterial(), []);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
+
+    const currentTime = state.clock.elapsedTime;
+    const targetFrameDuration = 1 / 60; // 60fps
+
+    if (currentTime - lastRenderTime.current < targetFrameDuration) {
+      return;
+    }
+
+    lastRenderTime.current = currentTime;
+
+    // Your existing mesh update logic here
+    if (!mesh.current) return;
+
     if (!mesh.current) return;
 
     const positions = mesh.current.geometry.attributes.position.array;
