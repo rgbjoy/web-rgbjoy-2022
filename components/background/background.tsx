@@ -7,8 +7,8 @@ import state from './state';
 import Rig404 from './rig404';
 
 import style from "./background.module.scss"
-import ParticlesManager from './particleManager';
 import gsap from 'gsap';
+import Stars from './stars';
 
 var FIRST_LOAD = true
 
@@ -30,13 +30,13 @@ const GenerateShard = (points, thickness) => {
 };
 
 const RandomShard = ({ position, color = "#FF0000" }) => {
-  const thickness = useMemo(() => Math.random() * 0.05 + 0.01, []);
+  const thickness = useMemo(() => Math.random() * 0.02 + 0.01, []);
   const numPoints = useMemo(() => (Math.random() < 0.5 ? 3 : 4), []);
   const geometry = useMemo(() => {
-    let points: THREE.Vector2[] = []; // Explicitly define the type of the points array
+    let points: THREE.Vector2[] = [];
     for (let i = 0; i < numPoints; i++) {
       const angle = 2 * Math.PI * (i / numPoints);
-      const radius = 0.3 + Math.random() * 0.1;
+      const radius = 0.3 + Math.random() * 0.2;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
       points.push(new THREE.Vector2(x, y));
@@ -61,7 +61,7 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
     side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
     color: color,
-    opacity: 0.7,
+    opacity: 0.8,
     depthTest: false,
     transparent: true,
     toneMapped: false,
@@ -70,7 +70,7 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
   return (
     <Float>
       <mesh geometry={geometry} position={position} rotation={rotation}>
-        <meshBasicMaterial {...materialArgs} />
+        <meshPhysicalMaterial {...materialArgs} />
       </mesh>
     </Float>
   );
@@ -135,21 +135,21 @@ const Hero = () => {
 
   const handlePointerOver = () => {
     setIsPointerOver(true);
-    state.scale = 2
+    state.scale = state.maxScale
   };
 
   const handlePointerOut = () => {
     setIsPointerOver(false);
-    state.scale = 1
+    state.scale = state.minScale
   };
 
   const handlePointerDown = () => {
-    state.scale = 2
+    state.scale = state.maxScale
   };
 
   const handlePointerUp = () => {
     if (!isPointerOver) {
-      state.scale = 1
+      state.scale = state.minScale
     }
   };
 
@@ -173,6 +173,29 @@ const Hero = () => {
     </mesh>
   );
 };
+
+const ScrollDots = () => {
+  const scroll = useScroll();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useFrame(() => {
+    if (!ref.current) return
+
+    if (scroll.offset > 0.01) {
+      ref.current.style.opacity = "0";
+    } else {
+      ref.current.style.opacity = "1";
+    }
+  });
+
+  return (
+    <div className={style.dots} ref={ref}>
+      <div className={style.dot}></div>
+      <div className={style.dot}></div>
+      <div className={style.dot}></div>
+    </div>
+  )
+}
 
 const ModelInfo = () => {
   const modelRef = useRef<THREE.Group>(null);
@@ -352,7 +375,7 @@ const RigPages = ({ page }) => {
 
   return (
     <>
-     <Hero />
+      <Hero />
       <Scroll>
         <Shards />
         <group ref={sectionInfo} position={[0, -height, 0]}>
@@ -388,12 +411,12 @@ const RenderPageBackground = ({ page }) => {
 
   useFrame(({ clock }) => {
     if (scroll.offset > 0.02) {
-      state.scale = 2
+      state.scale = state.maxScale;
       setReset(false)
     } else {
       setReset(true)
       if (!reset) {
-        state.scale = 1
+        state.scale = state.minScale
       }
     }
     setScrolledDown(scroll.range(0, 1 / 8) >= 1 ? true : false)
@@ -404,15 +427,12 @@ const RenderPageBackground = ({ page }) => {
   }
 
   return (
-    <>
-      <ParticlesManager
-        maxParticles={25}
-        maxVelocity={2}
-        emitInterval={200} //ms
+    <group visible={page !== "posts"}>
+      <Stars
         canReset={page === "home" && !scrolledDown ? true : false}
       />
       <RigPages page={page} />
-    </>
+    </group>
   )
 };
 
@@ -461,7 +481,8 @@ const HomeHTML = ({ homeData, router, pathname }) => {
           <h2>Simplicty is everything.</h2>
           <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
         </div>
-      </div></>
+      </div>
+    </>
   )
 }
 
@@ -496,9 +517,10 @@ const Background = ({ pathname, router, homeData }) => {
       <color attach="background" args={["#000000"]} />
 
       <ScrollControls pages={4}>
-        {page !== "posts" && <RenderPageBackground page={page} />}
+        <RenderPageBackground page={page} />
         <Scroll html style={{ width: '100vw', height: '100vh' }}>
           <HomeHTML pathname={pathname} homeData={homeData} router={router} />
+          <ScrollDots />
         </Scroll>
       </ScrollControls>
     </Canvas>
