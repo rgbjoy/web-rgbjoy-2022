@@ -90,7 +90,7 @@ export default function RootLayout({
         <SiteLayout settings={settingsData} homeData={homeData}>
           {children}
         </SiteLayout>
-        {/* <SpeedInsights /> */}
+        <SpeedInsights />
         <Analytics />
       </body>
     </html>
