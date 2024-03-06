@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
+import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, useTexture, MeshTransmissionMaterial } from '@react-three/drei'
 import state from './state';
 import Rig404 from './rig404';
 
@@ -59,12 +59,12 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
 
   const materialArgs = {
     color: "black",
-    ior: 1.5,
-    roughness: 0.9,
+    ior: 1.37,
+    roughness: 1,
     reflectivity: 1,
     iridescence: 1,
     iridescenceIOR: 1,
-    metalness: 1,
+    metalness: 0.2,
   };
 
   return (

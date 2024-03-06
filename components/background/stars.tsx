@@ -47,7 +47,7 @@ function Stars({ canReset = true }) {
   const viewDistance = 0;
   const startPoint = 0.5;
   const size = 3;
-  const speed = 0.02;
+  const speed = 0.05;
 
   const mesh = useRef<THREE.Points>();
   const { positions, colors, sizes, opacity } = useMemo(() => {
@@ -93,11 +93,7 @@ function Stars({ canReset = true }) {
     for (let i = 0; i < positions.length; i += 3) {
       positions[i + 2] += speed;
 
-      if (
-        positions[i + 2] > viewDistance &&
-        canReset &&
-        opacity[i / 3] < maxOpacity
-      ) {
+      if (positions[i + 2] > viewDistance && canReset && opacity[i / 3] < maxOpacity) {
         opacity[i / 3] += 0.02;
       }
 

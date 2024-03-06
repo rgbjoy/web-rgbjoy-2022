@@ -64,7 +64,7 @@
 }
 
 .dots {
-  position:absolute;
+  position:fixed;
   bottom: $gutter;
   left: 50%;
   transform: translateX(-50%);
@@ -73,7 +73,7 @@
   align-items: center;
 
   @include mobile-only {
-    bottom: 80px;
+    bottom: 100px;
   }
 
   .dot {
