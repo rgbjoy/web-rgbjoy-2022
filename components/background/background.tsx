@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
+import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, StatsGl } from '@react-three/drei'
 import state from './state';
 import Rig404 from './rig404';
 
@@ -58,19 +58,16 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
   );
 
   const materialArgs = {
-    color: "black",
+    color: color,
     ior: 1.37,
-    roughness: 1,
     reflectivity: 1,
-    iridescence: 1,
-    iridescenceIOR: 1,
-    metalness: 0.2,
+    metalness: 1,
   };
 
   return (
     <>
       <pointLight color={"white"} intensity={2} />
-      <pointLight color={"white"} position={[0,0,2]} intensity={2} />
+      <pointLight color={"white"} position={[0, 0, 2]} intensity={2} />
       <Float>
 
         <mesh geometry={geometry} position={position} rotation={rotation}>
@@ -159,8 +156,7 @@ const Hero = () => {
   };
 
   const materialArgs = {
-    color: "black",
-    opacity: 0.2,
+    opacity: 0,
     transparent: true,
   };
 
@@ -361,7 +357,7 @@ const RigPages = ({ page }) => {
         }
       }
       FIRST_LOAD = false
-    }, 10)
+    }, 100)
   }, [page])
 
   useFrame(({ clock }) => {
@@ -488,6 +484,13 @@ const HomeHTML = ({ homeData, router }) => {
 }
 
 const Background = ({ pathname, router, homeData }) => {
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const [showStats, setShowStats] = useState(false);
+  useEffect(() => {
+    setShowStats(searchParams.has('stats'))
+  }, [searchParams])
+
   const page = pathname !== "/" ? pathname.split("/")[1] : "home";
   const [dpr, setDpr] = useState(1);
 
@@ -497,6 +500,8 @@ const Background = ({ pathname, router, homeData }) => {
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
       }}>
+
+      {showStats && <StatsGl />}
 
       <PerformanceMonitor
         onDecline={() => setDpr(0.5)}
@@ -508,9 +513,9 @@ const Background = ({ pathname, router, homeData }) => {
       <ScrollControls pages={4}>
         <RenderPageBackground page={page} />
         <Scroll html style={{ width: '100vw', height: '100vh' }}>
-          <div style={{display: page !== "home" ? "none" : "block"}}>
-          <HomeHTML homeData={homeData} router={router} />
-          <ScrollDots />
+          <div style={{ display: page !== "home" ? "none" : "block" }}>
+            <HomeHTML homeData={homeData} router={router} />
+            <ScrollDots />
           </div>
         </Scroll>
       </ScrollControls>
