@@ -500,30 +500,30 @@ const Background = ({ pathname, router, homeData }) => {
   return (
     <Suspense fallback={null}>
       <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
-      gl={{
-        antialias: false,
-        toneMapping: THREE.ACESFilmicToneMapping,
-      }}>
+        gl={{
+          antialias: false,
+          toneMapping: THREE.ACESFilmicToneMapping,
+        }}>
 
-      {showStats && <StatsGl />}
+        {showStats && <StatsGl />}
 
-      <PerformanceMonitor
-        onDecline={() => setDpr(0.5)}
-        onIncline={() => setDpr(1)}
-      />
+        <PerformanceMonitor
+          onDecline={() => setDpr(0.5)}
+          onIncline={() => setDpr(1)}
+        />
 
-      <color attach="background" args={["#000000"]} />
+        <color attach="background" args={["#000000"]} />
 
-      <ScrollControls pages={4}>
-        <RenderPageBackground page={page} />
-        <Scroll html style={{ width: '100vw', height: '100vh' }}>
-          <div style={{ display: page !== "home" ? "none" : "block" }}>
-            <HomeHTML homeData={homeData} router={router} />
-            <ScrollDots />
-          </div>
-        </Scroll>
-      </ScrollControls>
-    </Canvas>
+        <ScrollControls pages={4}>
+          <RenderPageBackground page={page} />
+          <Scroll html style={{ width: '100vw', height: '100vh' }}>
+            <div style={{ display: page !== "home" ? "none" : "block" }}>
+              <HomeHTML homeData={homeData} router={router} />
+              <ScrollDots />
+            </div>
+          </Scroll>
+        </ScrollControls>
+      </Canvas>
     </Suspense>
   )
 }
