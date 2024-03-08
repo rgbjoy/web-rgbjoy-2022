@@ -7,6 +7,7 @@ import Link from 'next/link'
 import style from "./post.module.scss"
 import { PostData } from "@/models/types";
 import parse from 'html-react-parser';
+import { Suspense } from "react";
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -139,9 +140,11 @@ export default async function Page({ params }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(authorStructuredData) }}
       />
       {imageUrl && (
-        <Image itemProp="image" className={style.featuredImage} src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
+        <Suspense>
+          <Image itemProp="image" className={style.featuredImage} src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
           priority
         />
+        </Suspense>
       )}
       <h2 itemProp="headline" className={style.title}>{post.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>{formatDate(post.date)}</h3>
