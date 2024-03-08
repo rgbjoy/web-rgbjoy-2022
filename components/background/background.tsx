@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { Suspense, useState, useRef, useEffect, useMemo } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, StatsGl } from '@react-three/drei'
@@ -200,7 +200,7 @@ const ScrollDots = () => {
 
 const ModelInfo = () => {
   const modelRef = useRef<THREE.Group>(null);
-  const { nodes, animations } = useGLTF("./glb/Info.glb");
+  const { nodes, animations } = useGLTF("/glb/Info.glb");
   const { actions } = useAnimations(animations, modelRef);
   const planet = useRef<THREE.Mesh>(null)
   const scroll = useScroll();
@@ -258,7 +258,7 @@ const ModelInfo = () => {
 
 const ModelDev = () => {
   const helixRef = useRef<THREE.Group>(null);
-  const { nodes } = useGLTF("./glb/Dev.glb");
+  const { nodes } = useGLTF("/glb/Dev.glb");
 
   useFrame(() => {
     if (helixRef.current) {
@@ -483,19 +483,23 @@ const HomeHTML = ({ homeData, router }) => {
   )
 }
 
+const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), []);
+
 const Background = ({ pathname, router, homeData }) => {
 
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = useQueryParams();
   const [showStats, setShowStats] = useState(false);
+
   useEffect(() => {
-    setShowStats(searchParams.has('stats'))
-  }, [searchParams])
+    setShowStats(searchParams.has('stats'));
+  }, [searchParams]);
 
   const page = pathname !== "/" ? pathname.split("/")[1] : "home";
   const [dpr, setDpr] = useState(1);
 
   return (
-    <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+    <Suspense fallback={null}>
+      <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
@@ -520,6 +524,7 @@ const Background = ({ pathname, router, homeData }) => {
         </Scroll>
       </ScrollControls>
     </Canvas>
+    </Suspense>
   )
 }
 
