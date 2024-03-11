@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { Suspense, useState, useRef, useEffect, useMemo } from 'react';
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html } from '@react-three/drei'
+import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, StatsGl } from '@react-three/drei'
 import state from './state';
 import Rig404 from './rig404';
 
@@ -58,19 +58,16 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
   );
 
   const materialArgs = {
-    color: "black",
+    color: color,
     ior: 1.37,
-    roughness: 1,
     reflectivity: 1,
-    iridescence: 1,
-    iridescenceIOR: 1,
-    metalness: 0.2,
+    metalness: 1,
   };
 
   return (
     <>
       <pointLight color={"white"} intensity={2} />
-      <pointLight color={"white"} position={[0,0,2]} intensity={2} />
+      <pointLight color={"white"} position={[0, 0, 2]} intensity={2} />
       <Float>
 
         <mesh geometry={geometry} position={position} rotation={rotation}>
@@ -159,8 +156,7 @@ const Hero = () => {
   };
 
   const materialArgs = {
-    color: "black",
-    opacity: 0.2,
+    opacity: 0,
     transparent: true,
   };
 
@@ -204,7 +200,7 @@ const ScrollDots = () => {
 
 const ModelInfo = () => {
   const modelRef = useRef<THREE.Group>(null);
-  const { nodes, animations } = useGLTF("./glb/Info.glb");
+  const { nodes, animations } = useGLTF("/glb/Info.glb");
   const { actions } = useAnimations(animations, modelRef);
   const planet = useRef<THREE.Mesh>(null)
   const scroll = useScroll();
@@ -262,7 +258,7 @@ const ModelInfo = () => {
 
 const ModelDev = () => {
   const helixRef = useRef<THREE.Group>(null);
-  const { nodes } = useGLTF("./glb/Dev.glb");
+  const { nodes } = useGLTF("/glb/Dev.glb");
 
   useFrame(() => {
     if (helixRef.current) {
@@ -361,7 +357,7 @@ const RigPages = ({ page }) => {
         }
       }
       FIRST_LOAD = false
-    }, 10)
+    }, 100)
   }, [page])
 
   useFrame(({ clock }) => {
@@ -441,17 +437,13 @@ const RenderPageBackground = ({ page }) => {
   )
 };
 
-const HomeHTML = ({ homeData, router, pathname }) => {
+const HomeHTML = ({ homeData, router }) => {
   const [clientHeight, setClientHeight] = useState(window.innerHeight);
 
   useEffect(() => {
     const handleResize = () => setClientHeight(window.innerHeight);
     window.addEventListener('resize', handleResize);
   }, []);
-
-  if (pathname !== "/") {
-    return null
-  }
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -491,32 +483,48 @@ const HomeHTML = ({ homeData, router, pathname }) => {
   )
 }
 
+const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), []);
+
 const Background = ({ pathname, router, homeData }) => {
+
+  const searchParams = useQueryParams();
+  const [showStats, setShowStats] = useState(false);
+
+  useEffect(() => {
+    setShowStats(searchParams.has('stats'));
+  }, [searchParams]);
+
   const page = pathname !== "/" ? pathname.split("/")[1] : "home";
   const [dpr, setDpr] = useState(1);
 
   return (
-    <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
-      gl={{
-        antialias: false,
-        toneMapping: THREE.ACESFilmicToneMapping,
-      }}>
+    <Suspense fallback={null}>
+      <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+        gl={{
+          antialias: false,
+          toneMapping: THREE.ACESFilmicToneMapping,
+        }}>
 
-      <PerformanceMonitor
-        onDecline={() => setDpr(0.5)}
-        onIncline={() => setDpr(1)}
-      />
+        {showStats && <StatsGl />}
 
-      <color attach="background" args={["#000000"]} />
+        <PerformanceMonitor
+          onDecline={() => setDpr(0.5)}
+          onIncline={() => setDpr(1)}
+        />
 
-      <ScrollControls pages={4}>
-        <RenderPageBackground page={page} />
-        <Scroll html style={{ width: '100vw', height: '100vh' }}>
-          <HomeHTML pathname={pathname} homeData={homeData} router={router} />
-          <ScrollDots />
-        </Scroll>
-      </ScrollControls>
-    </Canvas>
+        <color attach="background" args={["#000000"]} />
+
+        <ScrollControls pages={4}>
+          <RenderPageBackground page={page} />
+          <Scroll html style={{ width: '100vw', height: '100vh' }}>
+            <div style={{ display: page !== "home" ? "none" : "block" }}>
+              <HomeHTML homeData={homeData} router={router} />
+              <ScrollDots />
+            </div>
+          </Scroll>
+        </ScrollControls>
+      </Canvas>
+    </Suspense>
   )
 }
 

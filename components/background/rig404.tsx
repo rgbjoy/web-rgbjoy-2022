@@ -1,37 +1,49 @@
-import {  useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three';
-import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, InstancedRigidBodyProps } from "@react-three/rapier";
+import { interactionGroups, Physics, InstancedRigidBodies, RapierRigidBody, InstancedRigidBodyProps, RigidBody } from "@react-three/rapier";
 import { Attractor } from "@react-three/rapier-addons";
+import { OrbitControls } from '@react-three/drei';
 
 const Rig404 = () => {
-  const COUNT = 12;
+  const COUNT = 50;
   const refMesh = useRef<THREE.InstancedMesh>(null);
   const rigidBodies = useRef<RapierRigidBody[]>(null);
 
   useEffect(() => {
-    const color = ["red", "green", "blue"]
+    if (!refMesh.current) return
+    const colors = ["rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)"]
     if (refMesh.current) {
-      for (let i = 0; i < COUNT * COUNT; i++) {
-        refMesh.current!.setColorAt(i, new THREE.Color(color[Math.floor(Math.random() * color.length)]));
+      for (let i = 0; i < COUNT; i++) {
+        const color = new THREE.Color(colors[Math.floor(Math.random() * colors.length)])
+        refMesh.current!.setColorAt(i, color);
+        refMesh.current!.instanceColor!.needsUpdate = true;
       }
-      refMesh.current!.instanceColor!.needsUpdate = true;
+
     }
 
-  }, []);
+  }, [refMesh]);
 
   const instances = useMemo(() => {
     const instances: InstancedRigidBodyProps[] = [];
-    for (let row = 0; row < COUNT / 2; row++) {
-      for (let column = 0; column < COUNT / 2; column++) {
-        const index = row * COUNT / 2 + column;
-        instances.push({
-          key: `instance_${row}_${column}`,
-          position: [-(COUNT / 2) / 2 + row + 0.5, Math.random() * 4 + 1, -(COUNT / 2) / 2 + column + 0.5],
-          collisionGroups: interactionGroups(index === 0 ? 0 : 1)
-        });
-      }
+    const radius = 2;
+    for (let i = 0; i < COUNT; i++) {
+      // Generate random angles for spherical coordinates
+    const theta = Math.random() * 2 * Math.PI;
+    const phi = Math.random() * Math.PI;
+
+    // Calculate Cartesian coordinates from spherical coordinates
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.sin(phi) * Math.sin(theta);
+    const z = radius * Math.cos(phi);
+      instances.push({
+        key: `instance_${i}}`,
+        position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
+        collisionGroups: interactionGroups(1)
+      });
     }
+
+    console.log(instances)
 
     return instances;
   }, []);
@@ -43,17 +55,29 @@ const Rig404 = () => {
         instances={instances}
         colliders="ball"
       >
-        <instancedMesh ref={refMesh} args={[undefined, undefined, COUNT * COUNT]} count={COUNT * COUNT}>
+        <instancedMesh ref={refMesh} args={[undefined, undefined, COUNT]} count={COUNT}>
           <sphereGeometry args={[0.1]} />
-          <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthTest={false} transparent={true} />
+          <meshBasicMaterial side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthTest={false} transparent={true} toneMapped={false} />
           <Attractor
-            strength={-0.008}
+            strength={-0.01}
             range={.45}
             collisionGroups={interactionGroups(0, 1)}
           />
         </instancedMesh>
       </InstancedRigidBodies>
-      <Attractor strength={0.002} collisionGroups={interactionGroups(0, 1)} />
+
+
+      <RigidBody position={[0, 0, 0]} colliders="ball" type="fixed">
+        <mesh>
+        <sphereGeometry args={[0.1]} />
+        <meshBasicMaterial color={"white"} transparent={true} opacity={0} />
+        </mesh>
+        <Attractor strength={0.001} collisionGroups={interactionGroups(0, 1)} />
+      </RigidBody>
+
+
+
+      {/* <OrbitControls /> */}
     </Physics>
   )
 }

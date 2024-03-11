@@ -1,8 +1,5 @@
 "use server"
-
-import { cache } from 'react'
-
-export const getData = cache(async (query, variables = {}) => {
+export const getData = async (query, variables = {}) => {
   const wordpressApiUrl = process.env.WORDPRESS_API_URL;
 
   try {
@@ -11,6 +8,7 @@ export const getData = cache(async (query, variables = {}) => {
     }
 
     const response = await fetch(wordpressApiUrl, {
+      next: { revalidate: 3600 },
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, variables }),
@@ -27,4 +25,4 @@ export const getData = cache(async (query, variables = {}) => {
     console.error('Error fetching data:', error);
     throw error;
   }
-})
+}
