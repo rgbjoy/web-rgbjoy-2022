@@ -7,31 +7,7 @@ import Link from 'next/link'
 import style from "./post.module.scss"
 import { PostData } from "@/models/types";
 import parse from 'html-react-parser';
-
-export const dynamicParams = true
-export const revalidate = 3600
-
-export async function generateStaticParams() {
-  const query = `
-    query getPosts {
-      posts {
-        nodes {
-          slug
-        }
-      }
-    }
-  `;
-
-  const { data: { posts: { nodes } } } = await getData(query);
-
-  if (!nodes) {
-    return []
-  }
-
-  return nodes.map(({ slug }) => ({
-    params: { slug }
-  }))
-}
+import ImageWithShimmer from "@/components/imageWithShimmer";
 
 export async function generateMetadata({ params }) {
   const { slug } = params
@@ -139,9 +115,7 @@ export default async function Page({ params }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(authorStructuredData) }}
       />
       {imageUrl && (
-        <Image itemProp="image" className={style.featuredImage} src={imageUrl} alt={`Featured image for ${post.title}`} width={imageWidth || 500} height={imageHeight || 300}
-          priority
-        />
+        <ImageWithShimmer imageUrl={imageUrl} post={post} imageWidth={imageWidth || 500} imageHeight={imageHeight || 300} />
       )}
       <h2 itemProp="headline" className={style.title}>{post.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>{formatDate(post.date)}</h3>
