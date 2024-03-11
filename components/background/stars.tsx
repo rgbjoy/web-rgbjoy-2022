@@ -42,7 +42,7 @@ function Stars({ count = 50, startRadius = 2, canReset = true }) {
   const size = 2;
   let distance = 20;
   let viewDistance = 10;
-  const particleSpeed = 0.01;
+  const particleSpeed = 0.08;
   const fadeSpeed = 0.01;
   const minOpacity = 0;
   const maxOpacity = 1;
