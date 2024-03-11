@@ -11,7 +11,7 @@ const Custom404 = () => (
   <Layout className={style.notFound}>
     <h1>Something went wrong in the simulation.</h1>
     <Link className={`btn ${style.btn}`} href="/">
-      Go back
+      Have You Tried Turning It Off And On Again?
     </Link>
   </Layout>
 )
