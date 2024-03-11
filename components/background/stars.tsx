@@ -40,8 +40,8 @@ function getRandomBetween(min = -5, max = 5) {
 
 function Stars({ count = 50, startRadius = 2, canReset = true }) {
   const size = 2;
-  let distance = 20;
-  let viewDistance = 10;
+  const distance = 20;
+  const viewDistance = 10;
   const particleSpeed = 0.08;
   const fadeSpeed = 0.01;
   const minOpacity = 0;
@@ -69,7 +69,7 @@ function Stars({ count = 50, startRadius = 2, canReset = true }) {
     }
 
     return { positions, colors, sizes, opacity };
-  }, [count]);
+  }, [count, startRadius]);
 
   const geometry = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
