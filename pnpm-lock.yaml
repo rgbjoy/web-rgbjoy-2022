@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.4.0
     version: 3.4.0
   '@react-three/drei':
-    specifier: ^9.101.0
-    version: 9.101.0(@react-three/fiber@8.15.19)(@types/react@18.2.64)(@types/three@0.160.0)(react-dom@18.2.0)(react@18.2.0)(three@0.160.1)
+    specifier: ^9.102.3
+    version: 9.102.3(@react-three/fiber@8.15.19)(@types/react@18.2.66)(@types/three@0.160.0)(react-dom@18.2.0)(react@18.2.0)(three@0.160.1)
   '@react-three/fiber':
     specifier: ^8.15.19
     version: 8.15.19(react-dom@18.2.0)(react@18.2.0)(three@0.160.1)
@@ -30,17 +30,17 @@ dependencies:
     specifier: ^1.0.10
     version: 1.0.10(next@14.1.0)(react@18.2.0)
   framer-motion:
-    specifier: ^11.0.8
-    version: 11.0.8(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^11.0.13
+    version: 11.0.13(react-dom@18.2.0)(react@18.2.0)
   gsap:
     specifier: ^3.12.5
     version: 3.12.5
   html-react-parser:
     specifier: ^5.1.8
-    version: 5.1.8(@types/react@18.2.64)(react@18.2.0)
+    version: 5.1.8(@types/react@18.2.66)(react@18.2.0)
   next:
     specifier: 14.1.0
-    version: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.71.1)
+    version: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.72.0)
   normalize.css:
     specifier: ^8.0.1
     version: 8.0.1
@@ -54,8 +54,8 @@ dependencies:
     specifier: ^1.0.16
     version: 1.0.16(react@18.2.0)
   sass:
-    specifier: ^1.71.1
-    version: 1.71.1
+    specifier: ^1.72.0
+    version: 1.72.0
   sharp:
     specifier: ^0.33.2
     version: 0.33.2
@@ -64,18 +64,18 @@ dependencies:
     version: 0.160.1
   valtio:
     specifier: ^1.13.2
-    version: 1.13.2(@types/react@18.2.64)(react@18.2.0)
+    version: 1.13.2(@types/react@18.2.66)(react@18.2.0)
 
 devDependencies:
   '@types/node':
-    specifier: ^20.11.25
-    version: 20.11.25
+    specifier: ^20.11.27
+    version: 20.11.27
   '@types/react':
-    specifier: ^18.2.64
-    version: 18.2.64
+    specifier: ^18.2.66
+    version: 18.2.66
   '@types/react-dom':
-    specifier: ^18.2.21
-    version: 18.2.21
+    specifier: ^18.2.22
+    version: 18.2.22
   '@types/three':
     specifier: ^0.160.0
     version: 0.160.0
@@ -134,20 +134,6 @@ packages:
     requiresBuild: true
     dependencies:
       tslib: 2.6.2
-    dev: false
-    optional: true
-
-  /@emotion/is-prop-valid@0.8.8:
-    resolution: {integrity: sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==}
-    requiresBuild: true
-    dependencies:
-      '@emotion/memoize': 0.7.4
-    dev: false
-    optional: true
-
-  /@emotion/memoize@0.7.4:
-    resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
-    requiresBuild: true
     dev: false
     optional: true
 
@@ -591,8 +577,8 @@ packages:
     resolution: {integrity: sha512-POu8Mk0hIU3lRXB3bGIGe4VHIwwDsQyoD1F394OK7STTiX9w4dG3cTLljjYswkQN+hDSHRrj4O36kuVa7KPU8Q==}
     dev: false
 
-  /@react-three/drei@9.101.0(@react-three/fiber@8.15.19)(@types/react@18.2.64)(@types/three@0.160.0)(react-dom@18.2.0)(react@18.2.0)(three@0.160.1):
-    resolution: {integrity: sha512-JuU8CKT0rbf7LP2XbDCqAEOdSSq5U3pk/BlxAlxZszRd7tByKhWZAEKY1QCZ/2pxBiIc0pWWR0rv8Me8BAQ6AQ==}
+  /@react-three/drei@9.102.3(@react-three/fiber@8.15.19)(@types/react@18.2.66)(@types/three@0.160.0)(react-dom@18.2.0)(react@18.2.0)(three@0.160.1):
+    resolution: {integrity: sha512-VQrzfEtoS7qOntbWN3XytplN11FnrQt2h02+I68wIpiE5SS4hfquBlytwQ5tLwkF6lRBl9SgeEe7XMy8QcZCUw==}
     peerDependencies:
       '@react-three/fiber': '>=8.0'
       react: '>=18.0'
@@ -616,14 +602,14 @@ packages:
       react: 18.2.0
       react-composer: 5.0.3(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
-      stats-gl: 2.2.2
+      stats-gl: 2.2.6
       stats.js: 0.17.0
       suspend-react: 0.1.3(react@18.2.0)
       three: 0.160.1
       three-mesh-bvh: 0.7.3(three@0.160.1)
       three-stdlib: 2.29.5(three@0.160.1)
       troika-three-text: 0.49.0(three@0.160.1)
-      tunnel-rat: 0.1.2(@types/react@18.2.64)(react@18.2.0)
+      tunnel-rat: 0.1.2(@types/react@18.2.66)(react@18.2.0)
       utility-types: 3.11.0
       uuid: 9.0.1
       zustand: 3.7.2(react@18.2.0)
@@ -741,8 +727,8 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/node@20.11.25:
-    resolution: {integrity: sha512-TBHyJxk2b7HceLVGFcpAUjsa5zIdsPWlR6XHfyGzd0SFu+/NFgQgMAl96MSDZgQDvJAvV6BKsFOrt6zIL09JDw==}
+  /@types/node@20.11.27:
+    resolution: {integrity: sha512-qyUZfMnCg1KEz57r7pzFtSGt49f6RPkPBis3Vo4PbS7roQEDn22hiHzl/Lo1q4i4hDEgBJmBF/NTNg2XR0HbFg==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -754,26 +740,26 @@ packages:
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
 
-  /@types/react-dom@18.2.21:
-    resolution: {integrity: sha512-gnvBA/21SA4xxqNXEwNiVcP0xSGHh/gi1VhWv9Bl46a0ItbTT5nFY+G9VSQpaG/8N/qdJpJ+vftQ4zflTtnjLw==}
+  /@types/react-dom@18.2.22:
+    resolution: {integrity: sha512-fHkBXPeNtfvri6gdsMYyW+dW7RXFo6Ad09nLFK0VQWR7yGLai/Cyvyj696gbwYvBnhGtevUG9cET0pmUbMtoPQ==}
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
     dev: true
 
   /@types/react-reconciler@0.26.7:
     resolution: {integrity: sha512-mBDYl8x+oyPX/VBb3E638N0B7xG+SPk/EAMcVPeexqus/5aTpTphQi0curhhshOqRrc9t6OPoJfEUkbymse/lQ==}
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
     dev: false
 
   /@types/react-reconciler@0.28.8:
     resolution: {integrity: sha512-SN9c4kxXZonFhbX4hJrZy37yw9e7EIxcpHCxQv5JUS18wDE5ovkQKlqQEkufdJCCMfuI9BnjUJvhYeJ9x5Ra7g==}
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
     dev: false
 
-  /@types/react@18.2.64:
-    resolution: {integrity: sha512-MlmPvHgjj2p3vZaxbQgFUQFvD8QiZwACfGqEdDSWou5yISWxDQ4/74nCAwsUiX7UFLKZz3BbVSPj+YxeoGGCfg==}
+  /@types/react@18.2.66:
+    resolution: {integrity: sha512-OYTmMI4UigXeFMF/j4uv0lBBEbongSgptPrHBxqME44h9+yNov+oL6Z3ocJKo0WyXR84sQUNeyIp9MRfckvZpg==}
     dependencies:
       '@types/prop-types': 15.7.11
       '@types/scheduler': 0.16.8
@@ -888,7 +874,7 @@ packages:
       react:
         optional: true
     dependencies:
-      next: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.71.1)
+      next: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.72.0)
       react: 18.2.0
       server-only: 0.0.1
     dev: false
@@ -917,7 +903,7 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      next: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.71.1)
+      next: 14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.72.0)
       react: 18.2.0
     dev: false
 
@@ -1350,7 +1336,7 @@ packages:
     peerDependencies:
       valtio: '*'
     dependencies:
-      valtio: 1.13.2(@types/react@18.2.64)(react@18.2.0)
+      valtio: 1.13.2(@types/react@18.2.66)(react@18.2.0)
     dev: false
 
   /detect-gpu@5.0.38:
@@ -1910,12 +1896,15 @@ packages:
       signal-exit: 4.1.0
     dev: true
 
-  /framer-motion@11.0.8(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-1KSGNuqe1qZkS/SWQlDnqK2VCVzRVEoval379j0FiUBJAZoqgwyvqFkfvJbgW2IPFo4wX16K+M0k5jO23lCIjA==}
+  /framer-motion@11.0.13(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-zDjUj7dBiB6WklCvklKH06mwbYO0hzWrq5Rdz/DgeBFsCVQRmb9Zv7I9dPM7lX5c8eMxxba5D6sEVIv1kj/Ttg==}
     peerDependencies:
+      '@emotion/is-prop-valid': '*'
       react: ^18.0.0
       react-dom: ^18.0.0
     peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
       react:
         optional: true
       react-dom:
@@ -1924,8 +1913,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tslib: 2.6.2
-    optionalDependencies:
-      '@emotion/is-prop-valid': 0.8.8
     dev: false
 
   /fs.realpath@1.0.0:
@@ -2113,7 +2100,7 @@ packages:
       htmlparser2: 9.1.0
     dev: false
 
-  /html-react-parser@5.1.8(@types/react@18.2.64)(react@18.2.0):
+  /html-react-parser@5.1.8(@types/react@18.2.66)(react@18.2.0):
     resolution: {integrity: sha512-oAXgUB4JYHFg4le3RQZtoge1TGMkwXSZPiWiexwdx3AuldgG+QEvbwMrscSViu90JNje3V4Zq5gCUSoTxa0W0A==}
     peerDependencies:
       '@types/react': 17 || 18
@@ -2122,7 +2109,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
       domhandler: 5.0.3
       html-dom-parser: 5.0.8
       react: 18.2.0
@@ -2594,7 +2581,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next@14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.71.1):
+  /next@14.1.0(react-dom@18.2.0)(react@18.2.0)(sass@1.72.0):
     resolution: {integrity: sha512-wlzrsbfeSU48YQBjZhDzOwhWhGsy+uQycR8bHAOt1LY1bn3zZEcDyHQOEoN3aWzQ8LHCAJ1nqrWCc9XF2+O45Q==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -2617,7 +2604,7 @@ packages:
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      sass: 1.71.1
+      sass: 1.72.0
       styled-jsx: 5.1.1(react@18.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.1.0
@@ -3018,8 +3005,8 @@ packages:
       is-regex: 1.1.4
     dev: true
 
-  /sass@1.71.1:
-    resolution: {integrity: sha512-wovtnV2PxzteLlfNzbgm1tFXPLoZILYAMJtvoXXkD7/+1uP41eKkIt1ypWq5/q2uT94qHjXehEYfmjKOvjL9sg==}
+  /sass@1.72.0:
+    resolution: {integrity: sha512-Gpczt3WA56Ly0Mn8Sl21Vj94s1axi9hDIzDFn9Ph9x3C3p4nNyvsqJoQyVXKou6cBlfFWEgRW4rT8Tb4i3XnVA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -3149,8 +3136,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /stats-gl@2.2.2:
-    resolution: {integrity: sha512-1RQSqf5fV/p0SDmfHVcIT8sgCxPv70KfviIdFIUYDGHWEsRtYxavP7JcMRSS50NKRgn4L81zxoOm6ejWwV/KiQ==}
+  /stats-gl@2.2.6:
+    resolution: {integrity: sha512-pRYLSqGwrZ29kISEIAPjio3wglnQBqhwtGzm4/+G/hEBDkV1jUAtIyJijFy8DhtfIp4R9GiGOtXxGmdQjWui7w==}
     dev: false
 
   /stats.js@0.17.0:
@@ -3406,10 +3393,10 @@ packages:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: false
 
-  /tunnel-rat@0.1.2(@types/react@18.2.64)(react@18.2.0):
+  /tunnel-rat@0.1.2(@types/react@18.2.66)(react@18.2.0):
     resolution: {integrity: sha512-lR5VHmkPhzdhrM092lI2nACsLO4QubF0/yoOhzX7c+wIpbN1GjHNzCc91QlpxBi+cnx8vVJ+Ur6vL5cEoQPFpQ==}
     dependencies:
-      zustand: 4.5.2(@types/react@18.2.64)(react@18.2.0)
+      zustand: 4.5.2(@types/react@18.2.66)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -3524,7 +3511,7 @@ packages:
     hasBin: true
     dev: false
 
-  /valtio@1.13.2(@types/react@18.2.64)(react@18.2.0):
+  /valtio@1.13.2(@types/react@18.2.66)(react@18.2.0):
     resolution: {integrity: sha512-Qik0o+DSy741TmkqmRfjq+0xpZBXi/Y6+fXZLn0xNF1z/waFMbE3rkivv5Zcf9RrMUp6zswf2J7sbh2KBlba5A==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
@@ -3536,7 +3523,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
       derive-valtio: 0.1.0(valtio@1.13.2)
       proxy-compare: 2.6.0
       react: 18.2.0
@@ -3653,7 +3640,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /zustand@4.5.2(@types/react@18.2.64)(react@18.2.0):
+  /zustand@4.5.2(@types/react@18.2.66)(react@18.2.0):
     resolution: {integrity: sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -3668,7 +3655,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.2.64
+      '@types/react': 18.2.66
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
