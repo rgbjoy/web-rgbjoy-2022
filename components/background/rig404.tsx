@@ -43,8 +43,6 @@ const Rig404 = () => {
       });
     }
 
-    console.log(instances)
-
     return instances;
   }, []);
 
