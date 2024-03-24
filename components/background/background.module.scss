@@ -8,9 +8,7 @@
   animation: fadeInAnimation forwards cubic-bezier(0.25, 0.46, 0.45, 0.94) 3s 1;
 
   div {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
+    // -webkit-touch-callout: none;
   }
 }
 

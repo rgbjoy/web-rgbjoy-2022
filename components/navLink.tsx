@@ -21,6 +21,6 @@ export default function NavLink({ label, path, targetSegment, color, closeMenu }
     onClick={handleClick}>
     {label === "/" && activeSegment
       ? (paths === 2 ? <>.<span>/</span></> : <>..<span>/</span></>)
-      : `${label}`}
+      : <span>{label}</span>}
   </Link>)
 }

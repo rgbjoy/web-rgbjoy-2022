@@ -36,6 +36,18 @@
     :first-child span {
       padding-left: 3px;
     }
+
+    :hover span {
+      animation-name: blink; /* Refers to the keyframes named "blink" */
+      animation-duration: 0.05s; /* Duration of one blink */
+      animation-iteration-count: 3; /* Number of blinks */
+      animation-fill-mode: forwards; /* Keeps the text solid after animation ends */
+
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+    }
   }
 
   a.active {
@@ -87,10 +99,10 @@
 
 .menuOpen {
   .header_inner {
-    height: 205px !important;
     padding: 20px 0;
     backdrop-filter: blur(8px) !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    height: 230px !important;
 
     nav {
       display: flex;
@@ -100,7 +112,20 @@
       transform: none;
 
       a {
-        margin-bottom: 15px;
+        margin-bottom: 0;
+
+        span {
+          display: inline-block;
+          padding: 10px;
+
+          &:first-child {
+            padding-left: 3px;
+          }
+        }
+
+        &::before {
+          top: 25px;
+        }
 
         &:last-child {
           margin-bottom: 0;
@@ -117,11 +142,11 @@
   color: white;
   cursor: pointer;
   position: absolute;
-  top: 25px;
-  right: 20px;
+  top: 0;
+  right: 0;
   background-color: transparent;
   border: none;
-  padding: 0;
+  padding: 25px 20px;
 
   @include mobile-up {
     display: none;
