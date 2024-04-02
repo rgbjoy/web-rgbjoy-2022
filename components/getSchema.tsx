@@ -1,5 +1,4 @@
 import formatDate from '@/components/formatDate'
-import { PostData } from '@/models/types';
 
 const getArticle = ({ post }) => {
   return {
