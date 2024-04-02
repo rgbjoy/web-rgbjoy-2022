@@ -9,6 +9,7 @@ import Rig404 from './rig404';
 import style from "./background.module.scss"
 import gsap from 'gsap';
 import Stars from './stars';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 var FIRST_LOAD = true
 
@@ -58,20 +59,22 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
   );
 
   const materialArgs = {
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
     color: color,
-    ior: 1.37,
-    reflectivity: 1,
-    metalness: 1,
+    emissive: color,
+    opacity: 1,
+    depthTest: false,
+    transparent: true,
+    emissiveIntensity: 1,
+    toneMapped: false,
   };
 
   return (
     <>
-      <pointLight color={"white"} intensity={2} />
-      <pointLight color={"white"} position={[0, 0, 2]} intensity={2} />
       <Float>
-
         <mesh geometry={geometry} position={position} rotation={rotation}>
-          <meshPhysicalMaterial {...materialArgs} />
+          <meshStandardMaterial {...materialArgs} />
         </mesh>
       </Float>
     </>
@@ -497,6 +500,14 @@ const Background = ({ pathname, router, homeData }) => {
   const page = pathname !== "/" ? pathname.split("/")[1] : "home";
   const [dpr, setDpr] = useState(1);
 
+  const supportsMatchAll = () => {
+    try {
+      return "test".matchAll(/test/g) !== undefined;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <Suspense fallback={null}>
       <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
@@ -523,6 +534,12 @@ const Background = ({ pathname, router, homeData }) => {
             </div>
           </Scroll>
         </ScrollControls>
+
+        {supportsMatchAll() && (
+        <EffectComposer>
+          <Bloom mipmapBlur intensity={2.5} luminanceThreshold={0} />
+        </EffectComposer>
+      )}
       </Canvas>
     </Suspense>
   )

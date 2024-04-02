@@ -132,6 +132,21 @@ p, li {
   }
 }
 
+pre {
+  margin: 0;
+  padding: 20px;
+
+  @include mobile-only {
+    font-size: 10px !important;
+    line-height: 1.4;
+    padding: 10px;
+
+    .wp-block-kevinbatdorf-code-block-pro {
+      margin-right: $gutter-mobile;
+    }
+  }
+}
+
 .wrapper {
   position: relative;
   padding: 240px ($gutter * 2) 200px $gutter;
