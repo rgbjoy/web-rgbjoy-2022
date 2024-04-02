@@ -38,10 +38,14 @@
     }
 
     :hover span {
-      animation-name: blink; /* Refers to the keyframes named "blink" */
-      animation-duration: 0.05s; /* Duration of one blink */
-      animation-iteration-count: 3; /* Number of blinks */
-      animation-fill-mode: forwards; /* Keeps the text solid after animation ends */
+      animation-name: blink;
+      animation-duration: 0.05s;
+      animation-iteration-count: 3;
+      animation-fill-mode: forwards;
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
 
       @keyframes blink {
         0%, 100% { opacity: 1; }

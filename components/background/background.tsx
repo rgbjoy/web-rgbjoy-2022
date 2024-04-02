@@ -317,7 +317,7 @@ const ModelArt = () => {
   )
 }
 
-const RigPages = ({ page }) => {
+const RigPages = ({ page, reducedMotion }) => {
   const anchorHome = useRef<THREE.Mesh>(null);
 
   const sectionInfo = useRef<THREE.Group>(null);
@@ -332,6 +332,13 @@ const RigPages = ({ page }) => {
   const { height } = useThree((state) => state.viewport)
 
   useEffect(() => {
+    if (reducedMotion) {
+      const pageHome = document.querySelector(".page-home");
+      if (pageHome) {
+        pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+      return
+    }
     setTimeout(() => {
       if (page === "home" && !FIRST_LOAD) {
         const pageHome = document.querySelector(".page-home");
@@ -412,6 +419,22 @@ const RenderPageBackground = ({ page }) => {
   const scroll = useScroll()
   const [scrolledDown, setScrolledDown] = useState(false)
   const [reset, setReset] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+
+    const handleChange = (event) => {
+      setReducedMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
 
   useFrame(({ clock }) => {
     if (scroll.offset > 0.02) {
@@ -432,10 +455,10 @@ const RenderPageBackground = ({ page }) => {
 
   return (
     <group visible={page !== "posts"}>
-      <Stars
-        canReset={page === "home" && !scrolledDown ? true : false}
-      />
-      <RigPages page={page} />
+      {!reducedMotion && (
+        <Stars canReset={page === "home" && !scrolledDown ? true : false} />
+      )}
+      <RigPages page={page} reducedMotion={reducedMotion} />
     </group>
   )
 };
@@ -536,10 +559,10 @@ const Background = ({ pathname, router, homeData }) => {
         </ScrollControls>
 
         {supportsMatchAll() && (
-        <EffectComposer>
-          <Bloom mipmapBlur intensity={2.5} luminanceThreshold={0} />
-        </EffectComposer>
-      )}
+          <EffectComposer>
+            <Bloom mipmapBlur intensity={2.5} luminanceThreshold={0} />
+          </EffectComposer>
+        )}
       </Canvas>
     </Suspense>
   )

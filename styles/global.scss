@@ -152,9 +152,41 @@ pre {
   padding: 240px ($gutter * 2) 200px $gutter;
   width: 75%;
   max-width: 960px;
-  // -webkit-backdrop-filter: blur(10px);
-  // backdrop-filter: blur(10px);
   background-color: rgba(0, 0, 0, 0.5);
+
+  // if reduce motion
+  @media (prefers-reduced-motion: reduce) {
+    width: 100%;
+    max-width: 100%;
+    background-color: black;
+    padding: 0 !important;
+
+    .wrapper-inner {
+      padding: 240px ($gutter * 2) 200px $gutter;
+      width: 75%;
+      max-width: 960px;
+
+      @include mobile-only {
+        padding: 120px 20px 100px 20px;
+        width: 100%;
+      }
+    }
+
+    &.art {
+
+      .wrapper-inner {
+        padding-right: $gutter;
+        max-width: 1080px;
+        width: 90%;
+
+        @include mobile-only {
+          width: 100%;
+          max-width: 100%;
+          padding-right: $gutter-mobile
+        }
+      }
+    }
+  }
 
   @include tablet-landscape-only {
     padding-top: 160px;
