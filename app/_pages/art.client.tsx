@@ -53,7 +53,7 @@ export default function Art(page:ArtData) {
   }
 
   return (
-    <PageWrapper className={style.art}>
+    <PageWrapper className={style.art} page='art'>
       <h1 className={style.header}>
         <SplitText>
           Art & Design

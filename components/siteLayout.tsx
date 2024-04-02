@@ -140,13 +140,13 @@ const SiteLayout = ({ children, settings, homeData }) => {
         )}
       </motion.footer>
 
-      {settings?.badge && <motion.div
+      {settings?.badge && pathname !== "/art" ? <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
         className={"badge"}>
         {settings.badge}
-      </motion.div>}
+      </motion.div> : null}
     </>
   )
 }

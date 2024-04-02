@@ -2,8 +2,18 @@
 
 .art {
   padding-right: $gutter;
-  width: 90%;
+  width: 100%;
   max-width: 1080px;
+  background: blue;
+
+  .wrapper-inner {
+    width: 90%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    width: 100%;
+    max-width: 100%;
+  }
 
   @include mobile-only {
     width: 100%;
@@ -12,10 +22,6 @@
 
   ::selection {
     background: transparent;
-    color: $blue;
-  }
-
-  .header {
     color: $blue;
   }
 
