@@ -1,7 +1,7 @@
 import formatDate from '@/components/formatDate'
 import { PostData } from '@/models/types';
 
-const getArticle = ({ post }: { post:PostData }) => {
+const getArticle = ({ post }) => {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -27,7 +27,7 @@ const getArticle = ({ post }: { post:PostData }) => {
   };
 };
 
-const GetSchema = ({ post }: { post:PostData }) => {
+const GetSchema = ({ post }) => {
   const jsonLd = getArticle({ post });
   return (
     <script
