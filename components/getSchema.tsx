@@ -1,43 +1,7 @@
 import formatDate from '@/components/formatDate'
 import { PostData } from '@/models/types';
 
-interface Author {
-  "@type": string;
-  name: string;
-  url: string;
-}
-
-interface Publisher {
-  "@type": string;
-  name: string;
-  url: string;
-  sameAs: string[];
-}
-
-interface Post {
-  title: string;
-  date: string;
-  featuredImage?: {
-    node?: {
-      sourceUrl: string;
-    };
-  };
-  excerpt: string;
-}
-
-interface ArticleSchema {
-  "@context": string;
-  "@type": string;
-  name: string;
-  headline: string;
-  datePublished: string;
-  image?: string;
-  description: string;
-  author: Author;
-  publisher: Publisher;
-}
-
-const getArticle = ({ post }: { post:PostData }): ArticleSchema => {
+const getArticle = ({ post }: { post:PostData }) => {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -63,8 +27,8 @@ const getArticle = ({ post }: { post:PostData }): ArticleSchema => {
   };
 };
 
-const GetSchema: React.FC<{ post: PostData }> = ({ post }) => {
-  const jsonLd: ArticleSchema = getArticle({ post });
+const GetSchema = ({ post }: { post:PostData }) => {
+  const jsonLd = getArticle({ post });
   return (
     <script
       type="application/ld+json"
