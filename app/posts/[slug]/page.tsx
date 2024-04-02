@@ -8,6 +8,7 @@ import style from "./post.module.scss"
 import { PostData } from "@/models/types";
 import parse from 'html-react-parser';
 import ImageWithShimmer from "@/components/imageWithShimmer";
+import GetSchema from "@/components/getSchema";
 
 export async function generateMetadata({ params }) {
   const { slug } = params
@@ -51,6 +52,7 @@ export default async function Page({ params }) {
       post(id: $slug, idType: SLUG) {
         title
         date
+        excerpt
         content
         featuredImage {
           node {
@@ -70,13 +72,6 @@ export default async function Page({ params }) {
   if (!post) {
     notFound()
   }
-
-  const authorStructuredData = {
-    "@context": "http://schema.org",
-    "@type": "Person",
-    "name": "Tom Fletcher",
-    "url": "https://instagram.com/rgbjoy",
-  };
 
   const featuredImage = post.featuredImage?.node;
   const imageUrl = featuredImage?.sourceUrl;
@@ -110,10 +105,7 @@ export default async function Page({ params }) {
 
   return (
     <PageWrapper className={style.post}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(authorStructuredData) }}
-      />
+      <GetSchema post={post} />
       {imageUrl && (
         <ImageWithShimmer imageUrl={imageUrl} post={post} imageWidth={imageWidth || 500} imageHeight={imageHeight || 300} />
       )}
