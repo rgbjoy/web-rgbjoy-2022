@@ -24,7 +24,7 @@
     color: $blue;
   }
 
-  .my-masonry-grid :global {
+  .my-masonry-grid {
     user-select: none;
     margin-top: 80px;
     display: flex;
@@ -37,6 +37,7 @@
 
       .thumbnail {
         background: #232323;
+
         img,
         video {
           width: 100%;
@@ -46,7 +47,7 @@
     }
   }
 
-  .media :global {
+  .media {
     position: relative;
     margin-bottom: $grid;
     font-size: 0;

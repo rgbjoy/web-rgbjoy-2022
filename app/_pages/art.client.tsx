@@ -43,10 +43,10 @@ export default function Art(page:ArtData) {
     return (
       <div {...props} ref={hoverRef} className={style.media}>
         <LightBox media={media}>
-          <div className={`thumbnail ${isHovered ? "hovered" : ""}`}>
+          <div className={`${style.thumbnail} ${isHovered ? "hovered" : ""}`}>
             <Media media={media} thumbnail />
           </div>
-          <div className="caption">{media.title}</div>
+          <div className={style.caption}>{media.title}</div>
         </LightBox>
       </div>
     )
@@ -64,7 +64,7 @@ export default function Art(page:ArtData) {
       <Masonry
         breakpointCols={2}
         className={style['my-masonry-grid']}
-        columnClassName="my-masonry-grid_column">
+        columnClassName={style['my-masonry-grid_column']}>
         {
           artwork?.gallery.map((item, i) => {
             return (
