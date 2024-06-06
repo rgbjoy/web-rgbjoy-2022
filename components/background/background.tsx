@@ -368,7 +368,7 @@ const RigPages = ({ page, reducedMotion }) => {
       }
       FIRST_LOAD = false
     }, 100)
-  }, [page])
+  }, [page, reducedMotion])
 
   useFrame(({ clock }) => {
     if (anchorInfo.current && sectionInfo.current) {
