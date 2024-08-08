@@ -16,11 +16,13 @@
     font-size: 0.8rem;
     color: $yellow;
     padding-top: 10px;
-    border-top: 1px solid $yellow;
+    border-top: 1px dotted $yellow;
   }
 
   .content {
     margin-bottom: $gutter;
+    padding-bottom: $gutter;
+    border-bottom: 1px dotted white;
   }
 
   iframe {

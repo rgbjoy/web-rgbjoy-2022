@@ -15,10 +15,11 @@ function ImageWithShimmer({ imageUrl, post, imageWidth, imageHeight }) {
           className={isLoading ? style.imageLoading : style.featuredImage}
           src={imageUrl}
           alt={`Featured image for ${post.title}`}
-          width={imageWidth || 500}
-          height={imageHeight || 300}
+          width={imageWidth || 1000}
+          height={imageHeight || 600}
           priority
           onLoad={() => setIsLoading(false)}
+          quality={80}
         />
       </div>
     </Suspense>

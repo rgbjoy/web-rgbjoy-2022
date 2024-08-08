@@ -106,6 +106,7 @@ export default async function Page({ params }) {
   return (
     <PageWrapper className={style.post}>
       <GetSchema post={post} />
+      <Link href="/posts">← Back to posts</Link>
       {imageUrl && (
         <ImageWithShimmer imageUrl={imageUrl} post={post} imageWidth={imageWidth || 500} imageHeight={imageHeight || 300} />
       )}

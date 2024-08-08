@@ -101,7 +101,7 @@ const getUniqueVertices = (geometry) => {
 const Shards = () => {
   const shardColors = ["red", "green", "blue"];
   const groupRef = useRef<THREE.Group>(null);
-  const [targetScale, setTargetScale] = useState(1.5);
+  const [targetScale, setTargetScale] = useState(0.1);
 
   useFrame(() => {
     setTargetScale(
@@ -317,7 +317,7 @@ const ModelArt = () => {
   )
 }
 
-const RigPages = ({ page, reducedMotion }) => {
+const RigPages = ({ page }) => {
   const anchorHome = useRef<THREE.Mesh>(null);
 
   const sectionInfo = useRef<THREE.Group>(null);
@@ -332,13 +332,6 @@ const RigPages = ({ page, reducedMotion }) => {
   const { height } = useThree((state) => state.viewport)
 
   useEffect(() => {
-    if (reducedMotion) {
-      const pageHome = document.querySelector(".page-home");
-      if (pageHome) {
-        pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
-      }
-      return
-    }
     setTimeout(() => {
       if (page === "home" && !FIRST_LOAD) {
         const pageHome = document.querySelector(".page-home");
@@ -368,7 +361,7 @@ const RigPages = ({ page, reducedMotion }) => {
       }
       FIRST_LOAD = false
     }, 100)
-  }, [page, reducedMotion])
+  }, [page])
 
   useFrame(({ clock }) => {
     if (anchorInfo.current && sectionInfo.current) {
@@ -419,22 +412,6 @@ const RenderPageBackground = ({ page }) => {
   const scroll = useScroll()
   const [scrolledDown, setScrolledDown] = useState(false)
   const [reset, setReset] = useState(false)
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
-
-    const handleChange = (event) => {
-      setReducedMotion(event.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-    };
-  }, []);
 
   useFrame(({ clock }) => {
     if (scroll.offset > 0.02) {
@@ -455,10 +432,8 @@ const RenderPageBackground = ({ page }) => {
 
   return (
     <group visible={page !== "posts"}>
-      {!reducedMotion && (
-        <Stars canReset={page === "home" && !scrolledDown ? true : false} />
-      )}
-      <RigPages page={page} reducedMotion={reducedMotion} />
+       <Stars canReset={page === "home" && !scrolledDown ? true : false} />
+      <RigPages page={page} />
     </group>
   )
 };
