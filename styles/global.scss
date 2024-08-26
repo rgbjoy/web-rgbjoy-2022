@@ -162,6 +162,10 @@ pre {
     padding-top: 120px;
   }
 
+  @include desktop-up {
+    margin: 0 auto;
+  }
+
   @include mobile-only {
     padding: 120px 20px 100px 20px;
     width: 100%;
