@@ -43,7 +43,7 @@ export default function Art(page:ArtData) {
     return (
       <div {...props} ref={hoverRef} className={style.media}>
         <LightBox media={media}>
-          <div className={`${style.thumbnail} ${isHovered ? "hovered" : ""}`}>
+          <div className={`${style.thumbnail} ${isHovered ? style.hovered : ""}`}>
             <Media media={media} thumbnail />
           </div>
           <div className={style.caption}>{media.title}</div>

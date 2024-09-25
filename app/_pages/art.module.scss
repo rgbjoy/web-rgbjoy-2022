@@ -31,7 +31,7 @@
       background-clip: padding-box;
 
       .thumbnail {
-        background: #232323;
+        background: $blue;
 
         img,
         video {
@@ -65,13 +65,12 @@
       transition-duration: 0.2s;
       transition-timing-function: ease-in-out;
       cursor: pointer;
-      border: 20px solid white;
     }
 
     @media (hover: hover) {
       .hovered + .caption {
         opacity: 1;
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba($blue, 0.8);
       }
     }
   }
