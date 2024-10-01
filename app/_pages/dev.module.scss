@@ -62,8 +62,9 @@
         height: 24px;
         right: 30px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-50%) rotate(45deg); // Initial rotation
         opacity: 0;
+        transition: transform 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955), opacity 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955);
       }
 
       &:hover {
@@ -75,6 +76,7 @@
 
         &:before {
           opacity: 1;
+          transform: translateY(-50%) rotate(0deg); // Rotate back to 0 degrees
         }
       }
     }
