@@ -39,20 +39,21 @@ const Media = ({ media, thumbnail = false }) => {
   } else {
     return (
       <motion.div
-        className={style.image_wrapper}
         initial={"hidden"}
         animate={animationControls}
         variants={animationVariants}
         transition={{ ease: "easeOut", duration: 0.25 }}
       >
-        <Image
-          src={thumbnail ? media.mediaDetails.sizes[0].sourceUrl : media.mediaItemUrl}
-          width={thumbnail ? media.mediaDetails.sizes[0].width : media.mediaDetails.width}
-          height={thumbnail ? media.mediaDetails.sizes[0].height : media.mediaDetails.height}
-          alt={media.title}
-          quality={thumbnail ? 75 : 100}
-          onLoad={() => setLoaded(true)}
-        />
+        <div className={style.image_wrapper}>
+          <Image
+            src={thumbnail ? media.mediaDetails.sizes[0].sourceUrl : media.mediaItemUrl}
+            width={thumbnail ? media.mediaDetails.sizes[0].width : media.mediaDetails.width}
+            height={thumbnail ? media.mediaDetails.sizes[0].height : media.mediaDetails.height}
+            alt={media.title}
+            quality={thumbnail ? 75 : 100}
+            onLoad={() => setLoaded(true)}
+          />
+        </div>
       </motion.div>
     )
   }

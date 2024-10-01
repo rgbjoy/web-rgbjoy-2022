@@ -47,7 +47,7 @@ function Stars({ count = 50, startRadius = 2, canReset = true }) {
   const minOpacity = 0;
   const maxOpacity = 1;
 
-  const mesh = useRef<THREE.Points>();
+  const mesh = useRef<THREE.Points>(null);
   const { positions, colors, sizes, opacity } = useMemo(() => {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);

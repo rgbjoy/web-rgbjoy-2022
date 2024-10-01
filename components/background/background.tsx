@@ -1,52 +1,54 @@
-import * as THREE from 'three';
-import { Suspense, useState, useRef, useEffect, useMemo } from 'react';
+"use client"
+
+import * as THREE from 'three'
+import { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import { ResizeObserver } from "@juggle/resize-observer"
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, StatsGl } from '@react-three/drei'
-import state from './state';
-import Rig404 from './rig404';
+import state from './state'
+import Rig404 from './rig404'
 
 import style from "./background.module.scss"
-import gsap from 'gsap';
-import Stars from './stars';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import gsap from 'gsap'
+import Stars from './stars'
+import { Bloom, EffectComposer } from '@react-three/postprocessing'
 
 var FIRST_LOAD = true
 
 const GenerateShard = (points, thickness) => {
-  const shape = new THREE.Shape();
+  const shape = new THREE.Shape()
   points.forEach((point, i) => {
-    if (i === 0) shape.moveTo(point.x, point.y);
-    else shape.lineTo(point.x, point.y);
-  });
-  shape.lineTo(points[0].x, points[0].y);
+    if (i === 0) shape.moveTo(point.x, point.y)
+    else shape.lineTo(point.x, point.y)
+  })
+  shape.lineTo(points[0].x, points[0].y)
 
   const extrudeSettings = {
     steps: 1,
     depth: thickness,
     bevelEnabled: false,
-  };
+  }
 
-  return new THREE.ExtrudeGeometry(shape, extrudeSettings);
-};
+  return new THREE.ExtrudeGeometry(shape, extrudeSettings)
+}
 
 const RandomShard = ({ position, color = "#FF0000" }) => {
-  const thickness = useMemo(() => Math.random() * 0.02 + 0.01, []);
-  const numPoints = useMemo(() => (Math.random() < 0.5 ? 3 : 4), []);
+  const thickness = 0.01
+  const numPoints = 3
   const geometry = useMemo(() => {
-    let points: THREE.Vector2[] = [];
+    let points: THREE.Vector2[] = []
     for (let i = 0; i < numPoints; i++) {
-      const angle = 2 * Math.PI * (i / numPoints);
-      const radius = 0.3 + Math.random() * 0.2;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      points.push(new THREE.Vector2(x, y));
+      const angle = 2 * Math.PI * (i / numPoints)
+      const radius = 0.3 + Math.random() * 0.2
+      const x = Math.cos(angle) * radius
+      const y = Math.sin(angle) * radius
+      points.push(new THREE.Vector2(x, y))
     }
 
-    points.sort((a, b) => a.angle() - b.angle());
+    points.sort((a, b) => a.angle() - b.angle())
 
-    return GenerateShard(points, thickness);
-  }, [numPoints, thickness]);
+    return GenerateShard(points, thickness)
+  }, [numPoints, thickness])
 
   const rotation = useMemo(
     () =>
@@ -56,19 +58,18 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
         Math.random() * Math.PI
       ),
     []
-  );
+  )
 
   const materialArgs = {
     side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
     color: color,
     emissive: color,
-    opacity: 1,
     depthTest: false,
     transparent: true,
     emissiveIntensity: 1,
     toneMapped: false,
-  };
+  }
 
   return (
     <>
@@ -78,30 +79,30 @@ const RandomShard = ({ position, color = "#FF0000" }) => {
         </mesh>
       </Float>
     </>
-  );
-};
+  )
+}
 
 const getUniqueVertices = (geometry) => {
-  const positions = geometry.attributes.position.array;
-  const uniqueVerticesSet = new Set();
-  const uniqueVertices: THREE.Vector3[] = [];
+  const positions = geometry.attributes.position.array
+  const uniqueVerticesSet = new Set()
+  const uniqueVertices: THREE.Vector3[] = []
 
   for (let i = 0; i < positions.length; i += 3) {
-    const key = `${positions[i]},${positions[i + 1]},${positions[i + 2]}`;
+    const key = `${positions[i]},${positions[i + 1]},${positions[i + 2]}`
     if (!uniqueVerticesSet.has(key)) {
-      uniqueVerticesSet.add(key);
+      uniqueVerticesSet.add(key)
       uniqueVertices.push(
         new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2])
-      );
+      )
     }
   }
-  return uniqueVertices;
-};
+  return uniqueVertices
+}
 
 const Shards = () => {
-  const shardColors = ["red", "green", "blue"];
-  const groupRef = useRef<THREE.Group>(null);
-  const [targetScale, setTargetScale] = useState(0.1);
+  const shardColors = ["red", "green", "blue"]
+  const groupRef = useRef<THREE.Group>(null)
+  const [targetScale, setTargetScale] = useState(0.1)
 
   useFrame(() => {
     setTargetScale(
@@ -110,58 +111,58 @@ const Shards = () => {
         state.scale,
         targetScale <= state.scale ? 0.02 : 0.01
       )
-    );
-  });
+    )
+  })
 
-  const geometry = new THREE.IcosahedronGeometry(targetScale, 0);
-  const uniqueVertices = getUniqueVertices(geometry);
+  const geometry = new THREE.IcosahedronGeometry(targetScale, 0)
+  const uniqueVertices = getUniqueVertices(geometry)
   const shards = uniqueVertices.map((vertex, i) => (
     <RandomShard
       key={i}
       position={vertex}
       color={shardColors[i % shardColors.length]}
     />
-  ));
+  ))
 
-  return <group ref={groupRef}>{shards}</group>;
-};
+  return <group ref={groupRef}>{shards}</group>
+}
 
 const Hero = () => {
-  const [isPointerOver, setIsPointerOver] = useState(false);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const [isPointerOver, setIsPointerOver] = useState(false)
+  const meshRef = useRef<THREE.Mesh>(null)
 
   useFrame(() => {
-    if (!meshRef.current) return;
+    if (!meshRef.current) return
 
-    const speed = 0.003;
-    meshRef.current.rotation.y += speed;
-    meshRef.current.rotation.z += speed;
-  });
+    const speed = 0.003
+    meshRef.current.rotation.y += speed
+    meshRef.current.rotation.z += speed
+  })
 
   const handlePointerOver = () => {
-    setIsPointerOver(true);
+    setIsPointerOver(true)
     state.scale = state.maxScale
-  };
+  }
 
   const handlePointerOut = () => {
-    setIsPointerOver(false);
+    setIsPointerOver(false)
     state.scale = state.minScale
-  };
+  }
 
   const handlePointerDown = () => {
     state.scale = state.maxScale
-  };
+  }
 
   const handlePointerUp = () => {
     if (!isPointerOver) {
       state.scale = state.minScale
     }
-  };
+  }
 
   const materialArgs = {
     opacity: 0,
     transparent: true,
-  };
+  }
 
   return (
     <mesh
@@ -175,22 +176,22 @@ const Hero = () => {
       <meshBasicMaterial {...materialArgs} />
       <Edges color={"white"} />
     </mesh>
-  );
-};
+  )
+}
 
 const ScrollDots = () => {
-  const scroll = useScroll();
-  const ref = useRef<HTMLDivElement>(null);
+  const scroll = useScroll()
+  const ref = useRef<HTMLDivElement>(null)
 
   useFrame(() => {
     if (!ref.current) return
 
     if (scroll.offset > 0.01) {
-      ref.current.style.opacity = "0";
+      ref.current.style.opacity = "0"
     } else {
-      ref.current.style.opacity = "1";
+      ref.current.style.opacity = "1"
     }
-  });
+  })
 
   return (
     <div className={style.dots} ref={ref}>
@@ -202,11 +203,11 @@ const ScrollDots = () => {
 }
 
 const ModelInfo = () => {
-  const modelRef = useRef<THREE.Group>(null);
-  const { nodes, animations } = useGLTF("/glb/Info.glb");
-  const { actions } = useAnimations(animations, modelRef);
+  const modelRef = useRef<THREE.Group>(null)
+  const { nodes, animations } = useGLTF("/glb/Info.glb")
+  const { actions } = useAnimations(animations, modelRef)
   const planet = useRef<THREE.Mesh>(null)
-  const scroll = useScroll();
+  const scroll = useScroll()
 
   useEffect(() => {
     if (actions.animation_0 && !actions.animation_0.paused) {
@@ -216,18 +217,18 @@ const ModelInfo = () => {
 
   useFrame(({ clock }) => {
     if (planet.current) {
-      const radius = 1.5; // Radius of the circle
-      const elapsedTime = clock.getElapsedTime();
-      planet.current.position.x = Math.sin(elapsedTime) * radius;
-      planet.current.position.z = Math.cos(elapsedTime) * radius;
+      const radius = 1.5 // Radius of the circle
+      const elapsedTime = clock.getElapsedTime()
+      planet.current.position.x = Math.sin(elapsedTime) * radius
+      planet.current.position.z = Math.cos(elapsedTime) * radius
     }
 
     if (actions.animation_0) {
-      const scrollThreshold = 0.1;
+      const scrollThreshold = 0.1
 
       if (scroll.offset > scrollThreshold) {
-        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold);
-        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset;
+        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold)
+        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset
       }
     }
   })
@@ -260,8 +261,8 @@ const ModelInfo = () => {
 }
 
 const ModelDev = () => {
-  const helixRef = useRef<THREE.Group>(null);
-  const { nodes } = useGLTF("/glb/Dev.glb");
+  const helixRef = useRef<THREE.Group>(null)
+  const { nodes } = useGLTF("/glb/Dev.glb")
 
   useFrame(() => {
     if (helixRef.current) {
@@ -285,13 +286,13 @@ const ModelDev = () => {
         <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.5} color={"green"} />
       </mesh>
     </group>
-  );
+  )
 }
 
 const ModelArt = () => {
-  const artRef = useRef<THREE.Mesh>(null);
-  const artMatRef = useRef<THREE.MeshBasicMaterial>(null);
-  const [hover, setHover] = useState(false);
+  const artRef = useRef<THREE.Mesh>(null)
+  const artMatRef = useRef<THREE.MeshBasicMaterial>(null)
+  const [hover, setHover] = useState(false)
 
   useFrame(() => {
     if (artRef.current) {
@@ -318,45 +319,45 @@ const ModelArt = () => {
 }
 
 const RigPages = ({ page }) => {
-  const anchorHome = useRef<THREE.Mesh>(null);
+  const anchorHome = useRef<THREE.Mesh>(null)
 
-  const sectionInfo = useRef<THREE.Group>(null);
-  const anchorInfo = useRef<THREE.Mesh>(null);
+  const sectionInfo = useRef<THREE.Group>(null)
+  const anchorInfo = useRef<THREE.Mesh>(null)
 
-  const sectionDev = useRef<THREE.Group>(null);
-  const anchorDev = useRef<THREE.Mesh>(null);
+  const sectionDev = useRef<THREE.Group>(null)
+  const anchorDev = useRef<THREE.Mesh>(null)
 
-  const sectionArt = useRef<THREE.Group>(null);
-  const anchorArt = useRef<THREE.Mesh>(null);
+  const sectionArt = useRef<THREE.Group>(null)
+  const anchorArt = useRef<THREE.Mesh>(null)
 
   const { height } = useThree((state) => state.viewport)
 
   useEffect(() => {
     setTimeout(() => {
       if (page === "home" && !FIRST_LOAD) {
-        const pageHome = document.querySelector(".page-home");
+        const pageHome = document.querySelector(".page-home")
         if (pageHome) {
-          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" })
         }
       } else if (page === "info") {
-        const pageInfo = document.querySelector(".page-info");
+        const pageInfo = document.querySelector(".page-info")
         if (pageInfo) {
-          pageInfo.scrollIntoView({ behavior: "smooth" });
+          pageInfo.scrollIntoView({ behavior: "smooth" })
         }
       } else if (page === "dev") {
-        const pageDev = document.querySelector(".page-dev");
+        const pageDev = document.querySelector(".page-dev")
         if (pageDev) {
-          pageDev.scrollIntoView({ behavior: "smooth" });
+          pageDev.scrollIntoView({ behavior: "smooth" })
         }
       } else if (page === "art") {
-        const pageArt = document.querySelector(".page-art");
+        const pageArt = document.querySelector(".page-art")
         if (pageArt) {
-          pageArt.scrollIntoView({ behavior: "smooth" });
+          pageArt.scrollIntoView({ behavior: "smooth" })
         }
       } else if (page === "posts") {
-        const pageHome = document.querySelector(".page-home");
+        const pageHome = document.querySelector(".page-home")
         if (pageHome) {
-          pageHome.scrollIntoView({ behavior: "smooth", block: "end" });
+          pageHome.scrollIntoView({ behavior: "smooth", block: "end" })
         }
       }
       FIRST_LOAD = false
@@ -415,7 +416,7 @@ const RenderPageBackground = ({ page }) => {
 
   useFrame(({ clock }) => {
     if (scroll.offset > 0.02) {
-      state.scale = state.maxScale;
+      state.scale = state.maxScale
       setReset(false)
     } else {
       setReset(true)
@@ -432,23 +433,23 @@ const RenderPageBackground = ({ page }) => {
 
   return (
     <group visible={page !== "posts"}>
-       <Stars canReset={page === "home" && !scrolledDown ? true : false} />
+      <Stars canReset={page === "home" && !scrolledDown ? true : false} />
       <RigPages page={page} />
     </group>
   )
-};
+}
 
 const HomeHTML = ({ homeData, router }) => {
-  const [clientHeight, setClientHeight] = useState(window.innerHeight);
+  const [clientHeight, setClientHeight] = useState(window.innerHeight)
 
   useEffect(() => {
-    const handleResize = () => setClientHeight(window.innerHeight);
-    window.addEventListener('resize', handleResize);
-  }, []);
+    const handleResize = () => setClientHeight(window.innerHeight)
+    window.addEventListener('resize', handleResize)
+  }, [])
 
   const handleNavigation = (path) => {
-    router.push(path);
-  };
+    router.push(path)
+  }
 
   return (
     <>
@@ -484,27 +485,27 @@ const HomeHTML = ({ homeData, router }) => {
   )
 }
 
-const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), []);
+const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), [])
 
 const Background = ({ pathname, router, homeData }) => {
 
-  const searchParams = useQueryParams();
-  const [showStats, setShowStats] = useState(false);
+  const searchParams = useQueryParams()
+  const [showStats, setShowStats] = useState(false)
 
   useEffect(() => {
-    setShowStats(searchParams.has('stats'));
-  }, [searchParams]);
+    setShowStats(searchParams.has('stats'))
+  }, [searchParams])
 
-  const page = pathname !== "/" ? pathname.split("/")[1] : "home";
-  const [dpr, setDpr] = useState(1);
+  const page = pathname !== "/" ? pathname.split("/")[1] : "home"
+  const [dpr, setDpr] = useState(1)
 
   const supportsMatchAll = () => {
     try {
-      return "test".matchAll(/test/g) !== undefined;
+      return "test".matchAll(/test/g) !== undefined
     } catch (e) {
-      return false;
+      return false
     }
-  };
+  }
 
   return (
     <Suspense fallback={null}>
@@ -533,11 +534,11 @@ const Background = ({ pathname, router, homeData }) => {
           </Scroll>
         </ScrollControls>
 
-        {supportsMatchAll() && (
+        {/* {supportsMatchAll() && (
           <EffectComposer>
             <Bloom mipmapBlur intensity={2.5} luminanceThreshold={0} />
           </EffectComposer>
-        )}
+        )} */}
       </Canvas>
     </Suspense>
   )
