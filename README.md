@@ -4,9 +4,9 @@ Site devlopment for [rgbjoy.com](https://rgbjoy.com)
 
 ## Technology used
 
-- Next.js 14 using app router
+- Next.js 15 using app router
 - Headless Wordpress GraphQL + ACF
-- React 18
+- React 19
 - TypeScript (some)
 - [R3F](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) for intro 3D
 - [Framer Motion](https://www.framer.com/motion/) and [Greensock](https://greensock.com/) for animations
