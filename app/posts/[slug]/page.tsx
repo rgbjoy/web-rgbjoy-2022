@@ -106,14 +106,14 @@ export default async function Page({ params }) {
   return (
     <PageWrapper className={style.post}>
       <GetSchema post={post} />
-      <Link href="/posts">← Back to posts</Link>
+      <span>← </span><Link className="underline" href="/posts">Back to posts</Link>
       {imageUrl && (
         <ImageWithShimmer imageUrl={imageUrl} post={post} imageWidth={imageWidth || 500} imageHeight={imageHeight || 300} />
       )}
       <h2 itemProp="headline" className={style.title}>{post.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>{formatDate(post.date)}</h3>
       <div className={style.content}>{contentWithNextImage}</div>
-      <Link href="/posts">← Back to posts</Link>
+      <span>← </span><Link className="underline" href="/posts">Back to posts</Link>
     </PageWrapper>
   );
 }

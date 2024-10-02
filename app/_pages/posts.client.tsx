@@ -20,8 +20,8 @@ export default function Posts({ posts }: { posts: PostsData }) {
         return (
           <div key={node.slug}>
             <p className={style.date}>{formatDate(node.date)}</p>
-            <Link href={`/posts/${node.slug}`}>
-              <div className={style.postLink} dangerouslySetInnerHTML={{ __html: node.title }} />
+            <Link className={`underline ${style.postLink}`} href={`/posts/${node.slug}`}>
+              {node.title}
             </Link>
           </div>
         )
