@@ -114,7 +114,7 @@ function Stars({ count = 50, startRadius = 2, canReset = true }) {
     mesh.current.geometry.attributes.opacity.needsUpdate = true;
   });
 
-  return <points position={[0, 0, 0]} ref={mesh as React.RefObject<THREE.Points>} args={[geometry, material]} />;
+  return <points position={[0, 0, 0]} ref={mesh as React.RefObject<THREE.Points | null>} args={[geometry, material]} />;
 }
 
 export default Stars;

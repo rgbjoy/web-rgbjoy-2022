@@ -501,7 +501,7 @@ const Background = ({ pathname, router, homeData }) => {
 
   const supportsMatchAll = () => {
     try {
-      return "test".matchAll(/test/g) !== undefined
+      return "test".matchAll(/test/g) !== undefined;
     } catch (e) {
       return false
     }
