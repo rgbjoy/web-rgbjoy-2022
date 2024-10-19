@@ -111,7 +111,7 @@ const SiteLayout = ({ children, settings, homeData }) => {
       color: 'blue',
     },
     {
-      label: 'Thoughts',
+      label: 'Posts',
       path: '/posts',
       targetSegment: 'posts',
       color: 'yellow',

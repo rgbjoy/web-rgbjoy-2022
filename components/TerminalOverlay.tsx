@@ -36,13 +36,15 @@ exit\t\t\tclose the terminal.
 `,
       ])
     } else if (input.trim() === 'ls') {
-      if (currentDirectory === 'Thoughts') {
+      if (currentDirectory.startsWith('Posts/')) {
+        setOutput([...newOutput, '']) // No output for subdirectories of Posts
+      } else if (currentDirectory === 'Posts') {
         setOutput([
           ...newOutput,
           `${posts.map((post) => post.slug).join('\t')}`,
         ])
       } else {
-        setOutput([...newOutput, `Info\tDev\tArt\tThoughts`])
+        setOutput([...newOutput, `Info\tDev\tArt\tPosts`])
       }
     } else if (input.trim() === 'cd') {
       setOutput([...newOutput, `Returning to home directory`])
@@ -60,18 +62,18 @@ exit\t\t\tclose the terminal.
       setOutput([...newOutput, `Changing directory to Art`])
       setCurrentDirectory('Art')
       router.push('/art')
-    } else if (input.trim() === 'cd Thoughts') {
-      setOutput([...newOutput, `Changing directory to Thoughts`])
-      setCurrentDirectory('Thoughts')
+    } else if (input.trim() === 'cd Posts') {
+      setOutput([...newOutput, `Changing directory to Posts`])
+      setCurrentDirectory('Posts')
       router.push('/posts')
     } else if (
-      currentDirectory === 'Thoughts' &&
+      currentDirectory === 'Posts' &&
       input.trim().startsWith('cd ')
     ) {
       const postSlug = input.trim().split(' ')[1]
       if (posts.some((post) => post.slug === postSlug)) {
-        setOutput([...newOutput, `Changing directory to Thoughts/${postSlug}`])
-        setCurrentDirectory(`Thoughts/${postSlug}`)
+        setOutput([...newOutput, `Changing directory to Posts/${postSlug}`])
+        setCurrentDirectory(`Posts/${postSlug}`)
         router.push(`/posts/${postSlug}`)
       } else {
         setOutput([...newOutput, `Unknown post: ${postSlug}.`])
@@ -92,7 +94,7 @@ exit\t\t\tclose the terminal.
     'Info',
     'Dev',
     'Art',
-    'Thoughts',
+    'Posts',
     ...posts.map((post) => post.slug),
   ]
 
