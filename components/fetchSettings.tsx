@@ -1,5 +1,5 @@
-import { getData } from "@/utilities/getData";
-import { SiteSettings } from '@/models/types';
+import { getData } from '@/utilities/getData'
+import { SiteSettings, PostsData } from '@/models/types'
 
 export async function fetchSettings() {
   const query = `
@@ -15,9 +15,15 @@ export async function fetchSettings() {
           badge
         }
       }
+      posts {
+        nodes {
+        slug
+        }
+      }
     }
-  `;
-  const response = await getData(query);
-  const options:SiteSettings = response.data.siteSettings.options;
-  return options;
+  `
+  const response = await getData(query)
+  const options: SiteSettings = response.data.siteSettings.options
+  const posts: PostsData = response.data.posts.nodes
+  return { options, posts }
 }

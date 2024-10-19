@@ -1,6 +1,6 @@
-import Info from "@/pages/info.client";
-import { getData } from "@/utilities/getData";
-import { Metadata } from "next";
+import Info from '@/pages/info.client'
+import { getData } from '@/utilities/getData'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Info',
@@ -36,10 +36,10 @@ export default async function Page() {
         }
       }
     }
-  `;
-  const { data: { page } } = await getData(query)
+  `
+  const {
+    data: { page },
+  } = await getData(query)
 
-  return (
-    <Info {...page} />
-  );
+  return <Info {...page} />
 }

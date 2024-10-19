@@ -11,12 +11,13 @@
     "start": "next start",
     "update": "pnpm update",
     "lint": "next lint",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.4.0",
     "@react-three/drei": "^9.114.4",
-    "@react-three/fiber": "9.0.0-alpha.8",
+    "@react-three/fiber": "9.0.0-beta.1",
     "@react-three/postprocessing": "^2.16.3",
     "@react-three/rapier": "^1.5.0",
     "@react-three/rapier-addons": "^3.0.3",
@@ -45,6 +46,7 @@
     "@types/three": "^0.160.0",
     "eslint": "8.56.0",
     "eslint-config-next": "14.1.0",
+    "prettier": "^3.3.3",
     "typescript": "5.3.3"
   },
   "pnpm": {

@@ -1,154 +1,200 @@
-"use client"
+'use client'
 
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic'
 import style from './siteLayout.module.scss'
-import NavLink from "./navLink";
+import NavLink from './navLink'
+import TerminalOverlay from './TerminalOverlay'
 
-const DynamicBackground = dynamic(
-  () => import('./background/background'),
-  { loading: () => <div className="loading">...</div>, ssr: false }
-)
+const DynamicBackground = dynamic(() => import('./background/background'), {
+  loading: () => <div className="loading">...</div>,
+  ssr: false,
+})
 
 const Footer = ({ footerLinks }) => {
   return (
     <div className={style.footerWrapper}>
       <div className={style.footerLinks}>
-        {footerLinks.map(item => (
-          <a key={item.link.title} target="_blank" rel="noreferrer" href={item.link.url}>
+        {footerLinks.map((item) => (
+          <a
+            key={item.link.title}
+            target="_blank"
+            rel="noreferrer"
+            href={item.link.url}
+          >
             {item.link.title}
           </a>
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 const SiteLayout = ({ children, settings, homeData }) => {
   const pathname = usePathname()
 
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false)
+
+  const toggleTerminal = () => {
+    setIsTerminalOpen(!isTerminalOpen)
+  }
+
+  const [isScrolled, setIsScrolled] = useState(false)
   const innerVariants = {
     scrolled: {
-      height: "60px",
-      borderBottom: "1px dotted",
-      borderColor: "rgba(0, 0, 0, 0.5)",
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      height: '60px',
+      borderBottom: '1px dotted',
+      borderColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(0, 0, 0, 0.9)',
     },
     notScrolled: {
-      height: "100%",
-      borderBottom: "1px dotted",
-      borderColor: "rgba(0, 0, 0, 0)",
-      backgroundColor: "rgba(0, 0, 0, 0)",
-    }
-  };
+      height: '100%',
+      borderBottom: '1px dotted',
+      borderColor: 'rgba(0, 0, 0, 0)',
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+    },
+  }
 
   // hamburger
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement | null>(null)
 
   // Function to toggle the menu state
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+    setIsMenuOpen(false)
+  }
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsMenuOpen(false);
+      setIsMenuOpen(false)
     }
-  };
+  }
 
   useEffect(() => {
     const handleScroll = () => {
-      const header = document.getElementById('header');
+      const header = document.getElementById('header')
       if (header) {
-        const headerHeight = header.offsetHeight;
-        const scrollY = window.scrollY;
+        const headerHeight = header.offsetHeight
+        const scrollY = window.scrollY
 
         if (scrollY > headerHeight) {
-          setIsScrolled(true);
+          setIsScrolled(true)
         } else {
-          setIsScrolled(false);
+          setIsScrolled(false)
         }
       }
-    };
+    }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll)
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const links = [
-    { label: "/", path: '/', targetSegment: null, color: null },
-    { label: 'Info', path: '/info', targetSegment: 'info', color: "red" },
-    { label: 'Dev', path: '/dev', targetSegment: 'dev', color: "green" },
-    { label: 'Art & Design', path: '/art', targetSegment: 'art', color: "blue" },
-    { label: 'Thoughts', path: '/posts', targetSegment: 'posts', color: "yellow" },
+    { label: '/', path: '/', targetSegment: null, color: null },
+    { label: 'Info', path: '/info', targetSegment: 'info', color: 'red' },
+    { label: 'Dev', path: '/dev', targetSegment: 'dev', color: 'green' },
+    {
+      label: 'Art & Design',
+      path: '/art',
+      targetSegment: 'art',
+      color: 'blue',
+    },
+    {
+      label: 'Thoughts',
+      path: '/posts',
+      targetSegment: 'posts',
+      color: 'yellow',
+    },
   ]
 
-  const isNotFound = !links.some(link => link.path === '/' + pathname.split('/')[1]);
+  const isNotFound = !links.some(
+    (link) => link.path === '/' + pathname.split('/')[1]
+  )
   const router = useRouter()
 
   return (
     <>
-      <DynamicBackground router={router} pathname={isNotFound ? "404" : pathname} homeData={homeData} />
+      <DynamicBackground
+        router={router}
+        pathname={isNotFound ? '404' : pathname}
+        homeData={homeData}
+      />
 
       {children}
 
-      <div id="header" className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}>
+      <div
+        id="header"
+        className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
+      >
         <motion.div
           variants={innerVariants}
           initial="notScrolled"
-          animate={isScrolled ? "scrolled" : "notScrolled"}
+          animate={isScrolled ? 'scrolled' : 'notScrolled'}
           transition={{
             duration: 0.25,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
           className={style.header_inner}
           ref={menuRef}
         >
-          <button onClick={toggleMenu} type="button" className={style.hamburgerMenu}>
+          <button
+            onClick={toggleMenu}
+            type="button"
+            className={style.hamburgerMenu}
+          >
             {isMenuOpen ? `- Close` : `+ Menu`}
           </button>
           <nav>
             {links.map((l, i) =>
-              pathname === "/" && l.path === "/" ? null : <NavLink key={i} {...l} closeMenu={closeMenu} />
+              pathname === '/' && l.path === '/' ? null : (
+                <NavLink key={i} {...l} closeMenu={closeMenu} />
+              )
             )}
           </nav>
         </motion.div>
       </div>
 
       <motion.footer id="footer" className={style.footer}>
-        {settings?.footerLinks && (
+        {settings?.options?.footerLinks && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.75, duration: 0.75, ease: "easeOut" }}
+            transition={{
+              delay: 0.75,
+              duration: 0.75,
+              ease: 'easeOut',
+            }}
           >
-            <Footer footerLinks={settings.footerLinks} />
+            <Footer footerLinks={settings?.options?.footerLinks} />
           </motion.div>
         )}
       </motion.footer>
 
-      {settings?.badge && pathname !== "/art" ? <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.75, ease: "easeOut" }}
-        className={"badge"}>
-        {settings.badge}
-      </motion.div> : null}
+      {settings?.options?.badge && pathname !== '/art' ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.75, ease: 'easeOut' }}
+          className={'badge'}
+        >
+          {settings?.options?.badge}
+        </motion.div>
+      ) : null}
+
+      <TerminalOverlay data={settings} />
     </>
   )
 }
 
-export default SiteLayout;
+export default SiteLayout

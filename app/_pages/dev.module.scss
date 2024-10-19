@@ -1,7 +1,6 @@
 @import '../../styles/variables';
 
 .dev {
-
   ::selection {
     background: transparent;
     color: $green;
@@ -55,7 +54,7 @@
       }
 
       &:before {
-        content: "";
+        content: '';
         position: absolute;
         background-image: url('../../public/svg/arrow.svg');
         width: 24px;
@@ -64,13 +63,16 @@
         top: 50%;
         transform: translateY(-50%) rotate(45deg); // Initial rotation
         opacity: 0;
-        transition: transform 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955), opacity 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transition:
+          transform 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955),
+          opacity 0.1s 0.1s cubic-bezier(0.455, 0.03, 0.515, 0.955);
       }
 
       &:hover {
         background: $green;
 
-        .name, .description {
+        .name,
+        .description {
           color: black;
         }
 

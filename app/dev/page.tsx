@@ -1,6 +1,6 @@
-import Dev from "@/pages/dev.client";
-import { getData } from "@/utilities/getData";
-import { Metadata } from "next";
+import Dev from '@/pages/dev.client'
+import { getData } from '@/utilities/getData'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Development',
@@ -23,11 +23,9 @@ export default async function Page() {
         }
       }
     }
-  `;
+  `
 
   const { data } = await getData(query)
 
-  return (
-    <Dev {...data} />
-  );
+  return <Dev {...data} />
 }

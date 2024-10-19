@@ -1,6 +1,6 @@
-import Art from "@/pages/art.client";
-import { getData } from "@/utilities/getData";
-import { Metadata } from "next";
+import Art from '@/pages/art.client'
+import { getData } from '@/utilities/getData'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Art & Design',
@@ -30,10 +30,10 @@ export default async function Page() {
         }
       }
     }
-  `;
-  const { data: { page } } = await getData(query)
+  `
+  const {
+    data: { page },
+  } = await getData(query)
 
-  return (
-    <Art {...page} />
-  );
+  return <Art {...page} />
 }

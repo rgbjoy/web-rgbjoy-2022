@@ -1,6 +1,6 @@
-import { getData } from "@/utilities/getData";
-import { Metadata } from "next";
-import Posts from "@/pages/posts.client";
+import { getData } from '@/utilities/getData'
+import { Metadata } from 'next'
+import Posts from '@/pages/posts.client'
 
 export const metadata: Metadata = {
   title: 'Thoughts',
@@ -20,11 +20,11 @@ export default async function Page() {
         }
       }
     }
-  `;
+  `
 
-  const { data: { posts } } = await getData(query)
+  const {
+    data: { posts },
+  } = await getData(query)
 
-  return (
-    <Posts posts={posts}  />
-  );
+  return <Posts posts={posts} />
 }

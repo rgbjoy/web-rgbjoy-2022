@@ -1,6 +1,6 @@
-import Link from "next/link"
-import Layout from "@/components/pageWrapper"
-import style from "./not-found.module.scss"
+import Link from 'next/link'
+import Layout from '@/components/pageWrapper'
+import style from './not-found.module.scss'
 
 export const metadata = {
   title: '404',

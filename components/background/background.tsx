@@ -1,14 +1,25 @@
-"use client"
+'use client'
 
 import * as THREE from 'three'
 import { Suspense, useState, useRef, useEffect, useMemo } from 'react'
-import { ResizeObserver } from "@juggle/resize-observer"
+import { ResizeObserver } from '@juggle/resize-observer'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, ScrollControls, Scroll, useScroll, useGLTF, useAnimations, Edges, PerformanceMonitor, Html, StatsGl } from '@react-three/drei'
+import {
+  Float,
+  ScrollControls,
+  Scroll,
+  useScroll,
+  useGLTF,
+  useAnimations,
+  Edges,
+  PerformanceMonitor,
+  Html,
+  StatsGl,
+} from '@react-three/drei'
 import state from './state'
 import Rig404 from './rig404'
 
-import style from "./background.module.scss"
+import style from './background.module.scss'
 import gsap from 'gsap'
 import Stars from './stars'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
@@ -32,7 +43,7 @@ const GenerateShard = (points, thickness) => {
   return new THREE.ExtrudeGeometry(shape, extrudeSettings)
 }
 
-const RandomShard = ({ position, color = "#FF0000" }) => {
+const RandomShard = ({ position, color = '#FF0000' }) => {
   const thickness = 0.01
   const numPoints = 3
   const geometry = useMemo(() => {
@@ -100,7 +111,7 @@ const getUniqueVertices = (geometry) => {
 }
 
 const Shards = () => {
-  const shardColors = ["red", "green", "blue"]
+  const shardColors = ['red', 'green', 'blue']
   const groupRef = useRef<THREE.Group>(null)
   const [targetScale, setTargetScale] = useState(0.1)
 
@@ -174,7 +185,7 @@ const Hero = () => {
     >
       <icosahedronGeometry args={[0.25, 0]} />
       <meshBasicMaterial {...materialArgs} />
-      <Edges color={"white"} />
+      <Edges color={'white'} />
     </mesh>
   )
 }
@@ -187,9 +198,9 @@ const ScrollDots = () => {
     if (!ref.current) return
 
     if (scroll.offset > 0.01) {
-      ref.current.style.opacity = "0"
+      ref.current.style.opacity = '0'
     } else {
-      ref.current.style.opacity = "1"
+      ref.current.style.opacity = '1'
     }
   })
 
@@ -204,7 +215,7 @@ const ScrollDots = () => {
 
 const ModelInfo = () => {
   const modelRef = useRef<THREE.Group>(null)
-  const { nodes, animations } = useGLTF("/glb/Info.glb")
+  const { nodes, animations } = useGLTF('/glb/Info.glb')
   const { actions } = useAnimations(animations, modelRef)
   const planet = useRef<THREE.Mesh>(null)
   const scroll = useScroll()
@@ -227,32 +238,42 @@ const ModelInfo = () => {
       const scrollThreshold = 0.1
 
       if (scroll.offset > scrollThreshold) {
-        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold)
-        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset
+        const adjustedScrollOffset =
+          (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold)
+        actions.animation_0.time =
+          actions.animation_0.getClip().duration * adjustedScrollOffset
       }
     }
   })
 
   return (
     <group ref={modelRef}>
-      <mesh
-        name="Cube"
-        geometry={(nodes.Cube as THREE.Mesh).geometry}
-      >
-        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} ior={0} roughness={0.2} color={"red"} />
+      <mesh name="Cube" geometry={(nodes.Cube as THREE.Mesh).geometry}>
+        <meshPhysicalMaterial
+          emissive={'red'}
+          emissiveIntensity={0.2}
+          ior={0}
+          roughness={0.2}
+          color={'red'}
+        />
       </mesh>
       <mesh
         name="Torus"
         geometry={(nodes.Torus as THREE.Mesh).geometry}
-        position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
+        position={[
+          nodes.Torus.position.x,
+          nodes.Torus.position.y,
+          nodes.Torus.position.z,
+        ]}
       >
-        <meshPhysicalMaterial emissive={"red"} emissiveIntensity={0.2} roughness={0.2} color={"red"} />
+        <meshPhysicalMaterial
+          emissive={'red'}
+          emissiveIntensity={0.2}
+          roughness={0.2}
+          color={'red'}
+        />
         <mesh ref={planet}>
-          <pointLight
-            name="PointLight"
-            color={"white"}
-            intensity={0.1}
-          />
+          <pointLight name="PointLight" color={'white'} intensity={0.1} />
           <sphereGeometry args={[0.1, 32, 32]} />
         </mesh>
       </mesh>
@@ -262,7 +283,7 @@ const ModelInfo = () => {
 
 const ModelDev = () => {
   const helixRef = useRef<THREE.Group>(null)
-  const { nodes } = useGLTF("/glb/Dev.glb")
+  const { nodes } = useGLTF('/glb/Dev.glb')
 
   useFrame(() => {
     if (helixRef.current) {
@@ -272,18 +293,15 @@ const ModelDev = () => {
 
   return (
     <group ref={helixRef}>
-      <ambientLight color={"white"} intensity={1} />
-      <mesh
-        geometry={(nodes.Helix as THREE.Mesh).geometry}
-        scale={8.355}
-      >
-        <pointLight
-          name="PointLight"
-          color={"white"}
-
-          intensity={0.4}
+      <ambientLight color={'white'} intensity={1} />
+      <mesh geometry={(nodes.Helix as THREE.Mesh).geometry} scale={8.355}>
+        <pointLight name="PointLight" color={'white'} intensity={0.4} />
+        <meshPhysicalMaterial
+          emissive={'green'}
+          emissiveIntensity={0.2}
+          roughness={0.5}
+          color={'green'}
         />
-        <meshPhysicalMaterial emissive={"green"} emissiveIntensity={0.2} roughness={0.5} color={"green"} />
       </mesh>
     </group>
   )
@@ -310,10 +328,16 @@ const ModelArt = () => {
   }
 
   return (
-    <mesh onPointerOver={() => handleHover(true)} onPointerDown={() => handleHover(true)} onPointerOut={() => handleHover(false)} onPointerUp={() => handleHover(false)} ref={artRef}>
+    <mesh
+      onPointerOver={() => handleHover(true)}
+      onPointerDown={() => handleHover(true)}
+      onPointerOut={() => handleHover(false)}
+      onPointerUp={() => handleHover(false)}
+      ref={artRef}
+    >
       <sphereGeometry args={[1, 32, 16]} />
-      <meshBasicMaterial ref={artMatRef} transparent={true} color={"blue"} />
-      <Edges color={"blue"} threshold={1} />
+      <meshBasicMaterial ref={artMatRef} transparent={true} color={'blue'} />
+      <Edges color={'blue'} threshold={1} />
     </mesh>
   )
 }
@@ -334,30 +358,36 @@ const RigPages = ({ page }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (page === "home" && !FIRST_LOAD) {
-        const pageHome = document.querySelector(".page-home")
+      if (page === 'home' && !FIRST_LOAD) {
+        const pageHome = document.querySelector('.page-home')
         if (pageHome) {
-          pageHome.scrollIntoView({ behavior: "smooth", block: "end" })
+          pageHome.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+          })
         }
-      } else if (page === "info") {
-        const pageInfo = document.querySelector(".page-info")
+      } else if (page === 'info') {
+        const pageInfo = document.querySelector('.page-info')
         if (pageInfo) {
-          pageInfo.scrollIntoView({ behavior: "smooth" })
+          pageInfo.scrollIntoView({ behavior: 'smooth' })
         }
-      } else if (page === "dev") {
-        const pageDev = document.querySelector(".page-dev")
+      } else if (page === 'dev') {
+        const pageDev = document.querySelector('.page-dev')
         if (pageDev) {
-          pageDev.scrollIntoView({ behavior: "smooth" })
+          pageDev.scrollIntoView({ behavior: 'smooth' })
         }
-      } else if (page === "art") {
-        const pageArt = document.querySelector(".page-art")
+      } else if (page === 'art') {
+        const pageArt = document.querySelector('.page-art')
         if (pageArt) {
-          pageArt.scrollIntoView({ behavior: "smooth" })
+          pageArt.scrollIntoView({ behavior: 'smooth' })
         }
-      } else if (page === "posts") {
-        const pageHome = document.querySelector(".page-home")
+      } else if (page === 'posts') {
+        const pageHome = document.querySelector('.page-home')
         if (pageHome) {
-          pageHome.scrollIntoView({ behavior: "smooth", block: "end" })
+          pageHome.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+          })
         }
       }
       FIRST_LOAD = false
@@ -370,7 +400,8 @@ const RigPages = ({ page }) => {
     }
 
     if (anchorDev.current && sectionDev.current) {
-      anchorDev.current.position.y = sectionDev.current.position.y + 2 - height / 2
+      anchorDev.current.position.y =
+        sectionDev.current.position.y + 2 - height / 2
     }
 
     if (anchorArt.current && sectionArt.current) {
@@ -432,8 +463,8 @@ const RenderPageBackground = ({ page }) => {
   }
 
   return (
-    <group visible={page !== "posts"}>
-      <Stars canReset={page === "home" && !scrolledDown ? true : false} />
+    <group visible={page !== 'posts'}>
+      <Stars canReset={page === 'home' && !scrolledDown ? true : false} />
       <RigPages page={page} />
     </group>
   )
@@ -457,38 +488,49 @@ const HomeHTML = ({ homeData, router }) => {
         <div className={style.intro}>
           <h1>{homeData.header}</h1>
           <h2>{homeData.subhead}</h2>
-          <p><span>{homeData.intro}</span></p>
+          <p>
+            <span>{homeData.intro}</span>
+          </p>
         </div>
       </div>
 
       <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.info}>
-          <h2>&ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up there.&rdquo;</h2>
-          <a className="btn" onClick={() => handleNavigation('/info')} >About me</a>
+          <h2>
+            &ldquo;The only Zen you can find on the tops of mountains is the Zen
+            you bring up there.&rdquo;
+          </h2>
+          <a className="btn" onClick={() => handleNavigation('/info')}>
+            About me
+          </a>
         </div>
       </div>
 
       <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.dev}>
           <h2>Joy seeing code come to life</h2>
-          <a className="btn" onClick={() => handleNavigation('/dev')}>See some work</a>
+          <a className="btn" onClick={() => handleNavigation('/dev')}>
+            See some work
+          </a>
         </div>
       </div>
 
       <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.art}>
           <h2>Simplicty is everything.</h2>
-          <a className="btn" onClick={() => handleNavigation('/art')}>View my art</a>
+          <a className="btn" onClick={() => handleNavigation('/art')}>
+            View my art
+          </a>
         </div>
       </div>
     </>
   )
 }
 
-const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), [])
+const useQueryParams = () =>
+  useMemo(() => new URLSearchParams(window.location.search), [])
 
 const Background = ({ pathname, router, homeData }) => {
-
   const searchParams = useQueryParams()
   const [showStats, setShowStats] = useState(false)
 
@@ -496,12 +538,12 @@ const Background = ({ pathname, router, homeData }) => {
     setShowStats(searchParams.has('stats'))
   }, [searchParams])
 
-  const page = pathname !== "/" ? pathname.split("/")[1] : "home"
+  const page = pathname !== '/' ? pathname.split('/')[1] : 'home'
   const [dpr, setDpr] = useState(1)
 
   const supportsMatchAll = () => {
     try {
-      return "test".matchAll(/test/g) !== undefined;
+      return 'test'.matchAll(/test/g) !== undefined
     } catch (e) {
       return false
     }
@@ -509,12 +551,16 @@ const Background = ({ pathname, router, homeData }) => {
 
   return (
     <Suspense fallback={null}>
-      <Canvas className={`${style.background} ${page !== "home" && style.disableScroll}`} camera={{ position: [0, 0, 5], fov: 50 }} dpr={dpr} resize={{ polyfill: ResizeObserver }}
+      <Canvas
+        className={`${style.background} ${page !== 'home' && style.disableScroll}`}
+        camera={{ position: [0, 0, 5], fov: 50 }}
+        dpr={dpr}
+        resize={{ polyfill: ResizeObserver }}
         gl={{
           antialias: false,
           toneMapping: THREE.ACESFilmicToneMapping,
-        }}>
-
+        }}
+      >
         {showStats && <StatsGl />}
 
         <PerformanceMonitor
@@ -522,12 +568,16 @@ const Background = ({ pathname, router, homeData }) => {
           onIncline={() => setDpr(1)}
         />
 
-        <color attach="background" args={["#000000"]} />
+        <color attach="background" args={['#000000']} />
 
         <ScrollControls pages={4}>
           <RenderPageBackground page={page} />
           <Scroll html style={{ width: '100vw', height: '100vh' }}>
-            <div style={{ display: page !== "home" ? "none" : "block" }}>
+            <div
+              style={{
+                display: page !== 'home' ? 'none' : 'block',
+              }}
+            >
               <HomeHTML homeData={homeData} router={router} />
               <ScrollDots />
             </div>

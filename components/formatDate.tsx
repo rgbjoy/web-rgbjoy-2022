@@ -3,8 +3,8 @@ const formatDate = (dateString: string) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  };
-  return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
-};
+  }
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString))
+}
 
 export default formatDate

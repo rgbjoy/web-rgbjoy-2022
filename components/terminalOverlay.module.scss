@@ -1,0 +1,50 @@
+@import "../styles/variables.scss";
+
+.terminalButton {
+  position: fixed;
+  display: inline-block;
+  bottom: 100px;
+  right: 100px;
+  cursor: pointer;
+  color: white;
+}
+
+.terminalOverlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 10px;
+  z-index: 1000;
+  font-family: monospace;
+  height: 100vh;
+}
+
+.terminalBody {
+  height: 100%;
+}
+
+.terminalForm {
+  display: flex;
+  align-items: center;
+}
+
+.prompt {
+  margin-right: 5px;
+}
+
+.terminalInput {
+  background: transparent;
+  word-wrap: break-word;
+  word-break: break-word;
+  border: none;
+  color: white;
+  outline: none;
+  flex-grow: 1;
+}
+
+.terminalOutput {
+  white-space: pre-wrap; /* Preserves whitespace and wraps text */
+}
