@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { Suspense, useState } from 'react';
-import Image from 'next/image';
-import style from "@/components/imageShimmer.module.scss";
+import { Suspense, useState } from 'react'
+import Image from 'next/image'
+import style from '@/components/imageShimmer.module.scss'
 
 function ImageWithShimmer({ imageUrl, post, imageWidth, imageHeight }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true)
 
   return (
-    <Suspense fallback={<div style={{background: "grey"}}></div>}>
+    <Suspense fallback={<div style={{ background: 'grey' }}></div>}>
       <div className={style.featuredImageContainer}>
         <Image
           itemProp="image"
@@ -23,7 +23,7 @@ function ImageWithShimmer({ imageUrl, post, imageWidth, imageHeight }) {
         />
       </div>
     </Suspense>
-  );
+  )
 }
 
 export default ImageWithShimmer

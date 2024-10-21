@@ -1,17 +1,17 @@
-import 'normalize.css/normalize.css';
-import '../styles/global.scss';
+import 'normalize.css/normalize.css'
+import '../styles/global.scss'
 
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/react'
 import { Viewport } from 'next'
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 
-import SiteLayout from "@/components/siteLayout"
-import { fetchSettings } from '@/components/fetchSettings';
-import { use } from 'react';
-import { getData } from '@/utilities/getData';
+import SiteLayout from '@/components/siteLayout'
+import { fetchSettings } from '@/components/fetchSettings'
+import { use } from 'react'
+import { getData } from '@/utilities/getData'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
@@ -46,13 +46,13 @@ export const metadata = {
         width: 1200,
         height: 630,
       },
-    ]
+    ],
   },
 }
 
 export const viewport: Viewport = {
   themeColor: 'black',
-  colorScheme: "dark",
+  colorScheme: 'dark',
 }
 
 export default function RootLayout({
@@ -61,10 +61,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const getLinks = async () => {
-    const data = await fetchSettings();
-    return data;
+    const data = await fetchSettings()
+    return data
   }
-  const settingsData = use(getLinks());
+  const settingsData = use(getLinks())
 
   const getHome = async () => {
     const query = `
@@ -78,11 +78,15 @@ export default function RootLayout({
         }
       }
     }
-  `;
-    const { data: { page: { home } } } = await getData(query);
-    return home;
+  `
+    const {
+      data: {
+        page: { home },
+      },
+    } = await getData(query)
+    return home
   }
-  const homeData = use(getHome());
+  const homeData = use(getHome())
 
   return (
     <html lang="en">
