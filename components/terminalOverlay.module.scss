@@ -8,6 +8,10 @@
   cursor: pointer;
   color: white;
 
+  &:hover {
+    color: #00ff00;
+  }
+
   @include mobile-only {
     display: none;
   }
@@ -54,27 +58,8 @@
   outline: none;
   flex-grow: 1;
   position: relative;
-
-  &::after {
-    content: '';
-    display: inline-block;
-    width: 10px;
-    height: 1em;
-    background-color: #00ff00;
-    animation: blink 1s step-end infinite;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-  }
-}
-
-@keyframes blink {
-  from, to {
-    background-color: transparent;
-  }
-  50% {
-    background-color: #00ff00;
-  }
+  caret-color: inherit;
+  caret-shape: block;
 }
 
 .terminalOutput {
