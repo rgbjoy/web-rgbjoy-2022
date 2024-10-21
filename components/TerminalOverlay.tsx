@@ -7,20 +7,100 @@ const TerminalOverlay = ({ data }) => {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState(false)
-  const [currentDirectory, setCurrentDirectory] = useState('') // New state to track current directory
+  const [currentDirectory, setCurrentDirectory] = useState('')
+  const [playerHand, setPlayerHand] = useState<(string | number)[]>([])
+  const [dealerHand, setDealerHand] = useState<(string | number)[]>([])
+  const [gameActive, setGameActive] = useState(false)
+  const [wins, setWins] = useState(() => {
+    const savedWins = localStorage.getItem('blackjackWins')
+    return savedWins ? parseInt(savedWins, 10) : 0
+  })
+  const [losses, setLosses] = useState(() => {
+    const savedLosses = localStorage.getItem('blackjackLosses')
+    return savedLosses ? parseInt(savedLosses, 10) : 0
+  })
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const router = useRouter()
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value)
   }
 
   const posts = data.posts
 
-  const handleInputSubmit = (e) => {
+  const updateWins = (newWins) => {
+    setWins(newWins)
+    localStorage.setItem('blackjackWins', newWins.toString())
+  }
+
+  const updateLosses = (newLosses) => {
+    setLosses(newLosses)
+    localStorage.setItem('blackjackLosses', newLosses.toString())
+  }
+
+  const handleInputSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const newOutput = [...output, `${prompt} ${input}`]
+
+    // Blackjack game state
+    const startBlackjack = () => {
+      const drawCard = () => {
+        const cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+        const randomCard = cards[Math.floor(Math.random() * cards.length)]
+        return randomCard
+      }
+
+      const initialPlayerHand = [drawCard(), drawCard()]
+      const initialDealerHand = [drawCard(), drawCard()]
+      setPlayerHand(initialPlayerHand)
+      setDealerHand(initialDealerHand)
+      setGameActive(true)
+
+      const playerValue = calculateHandValue(initialPlayerHand)
+      const dealerValue = calculateHandValue(initialDealerHand)
+
+      if (playerValue === 21) {
+        if (dealerValue === 21) {
+          setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}`, `Dealer's hand: ${initialDealerHand.join(', ')}. It's a tie!`])
+        } else {
+          setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}. Blackjack! You win!`])
+          updateWins(wins + 1)
+        }
+        setGameActive(false)
+      } else {
+        setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}`])
+      }
+    }
+
+    const drawCard = () => {
+      const cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+      const randomCard = cards[Math.floor(Math.random() * cards.length)]
+      return randomCard
+    }
+
+    const calculateHandValue = (hand: (number | string)[]) => {
+      let value = 0
+      let aces = 0
+
+      hand.forEach(card => {
+        if (typeof card === 'number') {
+          value += card
+        } else if (card === 'A') {
+          aces += 1
+          value += 11
+        } else {
+          value += 10
+        }
+      })
+
+      while (value > 21 && aces > 0) {
+        value -= 10
+        aces -= 1
+      }
+
+      return value
+    }
 
     if (input.trim() === '?') {
       setOutput([
@@ -32,20 +112,53 @@ ls\t\t\tlist directories.
 cd <directory>\tchange directory.
 clear\t\t\tclear the terminal.
 exit\t\t\tclose the terminal.
+blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to clear stats.
 ------------------------------
 `,
       ])
     } else if (input.trim() === 'ls') {
       if (currentDirectory.startsWith('Posts/')) {
-        setOutput([...newOutput, '']) // No output for subdirectories of Posts
+        setOutput([...newOutput, ''])
       } else if (currentDirectory === 'Posts') {
         setOutput([
           ...newOutput,
           `${posts.map((post) => post.slug).join('\t')}`,
         ])
-      } else {
+      }else {
         setOutput([...newOutput, `Info\tDev\tArt\tPosts`])
       }
+    } else if (input.trim() === 'blackjack') {
+      startBlackjack()
+    } else if (gameActive && input.trim() === 'hit') {
+      const newCard = drawCard()
+      const newPlayerHand = [...playerHand, newCard]
+      setPlayerHand(newPlayerHand)
+      const playerValue = calculateHandValue(newPlayerHand)
+      if (playerValue > 21) {
+        setOutput([...newOutput, `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}. Bust!`])
+        setGameActive(false)
+      } else {
+        setOutput([...newOutput, `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}.`,
+          `Type 'stand' to end your turn or 'hit' to draw another card.`])
+      }
+    } else if (gameActive && input.trim() === 'stand') {
+      const playerValue = calculateHandValue(playerHand)
+      let dealerValue = calculateHandValue(dealerHand)
+      while (dealerValue < 17) {
+        const newCard = drawCard()
+        dealerHand.push(newCard)
+        dealerValue = calculateHandValue(dealerHand)
+      }
+      if (dealerValue > 21 || playerValue > dealerValue) {
+        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. You win!`])
+        updateWins(wins + 1)
+      } else if (playerValue < dealerValue) {
+        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. You lose!`])
+        updateLosses(losses + 1)
+      } else {
+        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. It's a tie!`])
+      }
+      setGameActive(false)
     } else if (input.trim() === 'cd') {
       setOutput([...newOutput, `Returning to home directory`])
       setCurrentDirectory('')
@@ -77,8 +190,14 @@ exit\t\t\tclose the terminal.
       }
     } else if (input.trim() === 'clear') {
       setOutput([])
-    } else if (input.trim() === 'exit') {
+    } else if (input.trim() === 'q') {
       setIsOpen(false)
+    } else if (input.trim() === 'blackjack stats') {
+      setOutput([...newOutput, `Blackjack Stats: Wins - ${wins}, Losses - ${losses}`])
+    } else if (input.trim() === 'blackjack clear') {
+      updateWins(0)
+      updateLosses(0)
+      setOutput([...newOutput, `Blackjack stats cleared.`])
     } else {
       setOutput([...newOutput, `Unknown command: ${input}. Type ? for help.`])
     }
@@ -92,10 +211,11 @@ exit\t\t\tclose the terminal.
     'Dev',
     'Art',
     'Posts',
+    'blackjack',
     ...posts.map((post) => post.slug),
   ]
 
-  const handleInputKeyDown = (e) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Tab') {
       e.preventDefault()
       const currentInput = input.trim()

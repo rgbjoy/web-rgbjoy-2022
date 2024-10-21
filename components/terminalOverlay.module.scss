@@ -1,11 +1,12 @@
 @import '../styles/variables.scss';
 
 .terminalButton {
+  font-family: 'Courier New', monospace;
   position: fixed;
   display: inline-block;
   bottom: calc($gutter - 8px);
   right: $gutter;
-  cursor: pointer;
+  cursor: $cursorPointer;
   color: white;
 
   &:hover {
@@ -22,7 +23,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
   color: white;
   padding: 10px;
   z-index: 1000;
