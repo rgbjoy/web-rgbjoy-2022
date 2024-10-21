@@ -24,6 +24,9 @@ const nextConfig = {
       },
     ],
   },
+  sassOptions: {
+    quietDeps: true,
+  },
 }
 
 module.exports = nextConfig

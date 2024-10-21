@@ -161,7 +161,7 @@
   position: fixed;
   left: 0;
   bottom: 0;
-  right: 0;
+  right: 30px;
 
   &:after {
     content: '';
@@ -185,6 +185,7 @@
         rgba($colorBackground, 0),
         rgba($colorBackground, 0.9) 100%
       );
+      right: 0;
       height: 5em;
     }
   }

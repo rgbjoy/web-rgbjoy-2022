@@ -66,10 +66,7 @@ exit\t\t\tclose the terminal.
       setOutput([...newOutput, `Changing directory to Posts`])
       setCurrentDirectory('Posts')
       router.push('/posts')
-    } else if (
-      currentDirectory === 'Posts' &&
-      input.trim().startsWith('cd ')
-    ) {
+    } else if (currentDirectory === 'Posts' && input.trim().startsWith('cd ')) {
       const postSlug = input.trim().split(' ')[1]
       if (posts.some((post) => post.slug === postSlug)) {
         setOutput([...newOutput, `Changing directory to Posts/${postSlug}`])

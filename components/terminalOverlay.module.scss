@@ -3,10 +3,14 @@
 .terminalButton {
   position: fixed;
   display: inline-block;
-  bottom: 100px;
-  right: 100px;
+  bottom: calc($gutter - 8px);
+  right: $gutter;
   cursor: pointer;
   color: white;
+
+  @include mobile-only {
+    display: none;
+  }
 }
 
 .terminalOverlay {
@@ -24,6 +28,13 @@
 
 .terminalBody {
   height: 100%;
+
+  * {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #00ff00;
+  }
 }
 
 .terminalForm {
@@ -40,11 +51,32 @@
   word-wrap: break-word;
   word-break: break-word;
   border: none;
-  color: white;
   outline: none;
   flex-grow: 1;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 1em;
+    background-color: #00ff00;
+    animation: blink 1s step-end infinite;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+@keyframes blink {
+  from, to {
+    background-color: transparent;
+  }
+  50% {
+    background-color: #00ff00;
+  }
 }
 
 .terminalOutput {
-  white-space: pre-wrap; /* Preserves whitespace and wraps text */
+  white-space: pre-wrap;
 }
