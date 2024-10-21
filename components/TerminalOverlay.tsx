@@ -1,7 +1,8 @@
-// components/TerminalOverlay.tsx
+'use client'
 import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import style from './terminalOverlay.module.scss'
+import useLocalStorage from '../hooks/useLocalStorage'
 
 const TerminalOverlay = ({ data }) => {
   const [input, setInput] = useState('')
@@ -11,14 +12,8 @@ const TerminalOverlay = ({ data }) => {
   const [playerHand, setPlayerHand] = useState<(string | number)[]>([])
   const [dealerHand, setDealerHand] = useState<(string | number)[]>([])
   const [gameActive, setGameActive] = useState(false)
-  const [wins, setWins] = useState(() => {
-    const savedWins = localStorage.getItem('blackjackWins')
-    return savedWins ? parseInt(savedWins, 10) : 0
-  })
-  const [losses, setLosses] = useState(() => {
-    const savedLosses = localStorage.getItem('blackjackLosses')
-    return savedLosses ? parseInt(savedLosses, 10) : 0
-  })
+  const [wins, setWins] = useLocalStorage('blackjackWins', 0)
+  const [losses, setLosses] = useLocalStorage('blackjackLosses', 0)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const router = useRouter()
@@ -31,12 +26,10 @@ const TerminalOverlay = ({ data }) => {
 
   const updateWins = (newWins) => {
     setWins(newWins)
-    localStorage.setItem('blackjackWins', newWins.toString())
   }
 
   const updateLosses = (newLosses) => {
     setLosses(newLosses)
-    localStorage.setItem('blackjackLosses', newLosses.toString())
   }
 
   const handleInputSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,14 +55,27 @@ const TerminalOverlay = ({ data }) => {
 
       if (playerValue === 21) {
         if (dealerValue === 21) {
-          setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}`, `Dealer's hand: ${initialDealerHand.join(', ')}. It's a tie!`])
+          setOutput([
+            ...newOutput,
+            `Starting Blackjack...`,
+            `Your hand: ${initialPlayerHand.join(', ')}`,
+            `Dealer's hand: ${initialDealerHand.join(', ')}. It's a tie!`,
+          ])
         } else {
-          setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}. Blackjack! You win!`])
+          setOutput([
+            ...newOutput,
+            `Starting Blackjack...`,
+            `Your hand: ${initialPlayerHand.join(', ')}. Blackjack! You win!`,
+          ])
           updateWins(wins + 1)
         }
         setGameActive(false)
       } else {
-        setOutput([...newOutput, `Starting Blackjack...`, `Your hand: ${initialPlayerHand.join(', ')}`])
+        setOutput([
+          ...newOutput,
+          `Starting Blackjack...`,
+          `Your hand: ${initialPlayerHand.join(', ')}`,
+        ])
       }
     }
 
@@ -83,7 +89,7 @@ const TerminalOverlay = ({ data }) => {
       let value = 0
       let aces = 0
 
-      hand.forEach(card => {
+      hand.forEach((card) => {
         if (typeof card === 'number') {
           value += card
         } else if (card === 'A') {
@@ -124,7 +130,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
           ...newOutput,
           `${posts.map((post) => post.slug).join('\t')}`,
         ])
-      }else {
+      } else {
         setOutput([...newOutput, `Info\tDev\tArt\tPosts`])
       }
     } else if (input.trim() === 'blackjack') {
@@ -135,11 +141,17 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
       setPlayerHand(newPlayerHand)
       const playerValue = calculateHandValue(newPlayerHand)
       if (playerValue > 21) {
-        setOutput([...newOutput, `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}. Bust!`])
+        setOutput([
+          ...newOutput,
+          `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}. Bust!`,
+        ])
         setGameActive(false)
       } else {
-        setOutput([...newOutput, `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}.`,
-          `Type 'stand' to end your turn or 'hit' to draw another card.`])
+        setOutput([
+          ...newOutput,
+          `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}.`,
+          `Type 'stand' to end your turn or 'hit' to draw another card.`,
+        ])
       }
     } else if (gameActive && input.trim() === 'stand') {
       const playerValue = calculateHandValue(playerHand)
@@ -150,13 +162,22 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
         dealerValue = calculateHandValue(dealerHand)
       }
       if (dealerValue > 21 || playerValue > dealerValue) {
-        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. You win!`])
+        setOutput([
+          ...newOutput,
+          `Dealer's hand: ${dealerHand.join(', ')}. You win!`,
+        ])
         updateWins(wins + 1)
       } else if (playerValue < dealerValue) {
-        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. You lose!`])
+        setOutput([
+          ...newOutput,
+          `Dealer's hand: ${dealerHand.join(', ')}. You lose!`,
+        ])
         updateLosses(losses + 1)
       } else {
-        setOutput([...newOutput, `Dealer's hand: ${dealerHand.join(', ')}. It's a tie!`])
+        setOutput([
+          ...newOutput,
+          `Dealer's hand: ${dealerHand.join(', ')}. It's a tie!`,
+        ])
       }
       setGameActive(false)
     } else if (input.trim() === 'cd') {
@@ -193,7 +214,10 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
     } else if (input.trim() === 'q') {
       setIsOpen(false)
     } else if (input.trim() === 'blackjack stats') {
-      setOutput([...newOutput, `Blackjack Stats: Wins - ${wins}, Losses - ${losses}`])
+      setOutput([
+        ...newOutput,
+        `Blackjack Stats: Wins - ${wins}, Losses - ${losses}`,
+      ])
     } else if (input.trim() === 'blackjack clear') {
       updateWins(0)
       updateLosses(0)

@@ -199,7 +199,6 @@ const SiteLayout = ({ children, settings, homeData }) => {
       >
         <TerminalOverlay data={settings} />
       </motion.div>
-
     </>
   )
 }
