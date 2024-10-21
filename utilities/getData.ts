@@ -8,7 +8,7 @@ export const getData = async (query, variables = {}) => {
     }
 
     const response = await fetch(wordpressApiUrl, {
-      next: { revalidate: 3600 },
+      cache: 'force-cache',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),

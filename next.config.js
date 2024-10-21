@@ -2,6 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  expireTime: 3600,
   experimental: {
     turbo: {
       rules: {
