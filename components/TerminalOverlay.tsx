@@ -15,6 +15,7 @@ const TerminalOverlay = ({ data }) => {
   const [wins, setWins] = useLocalStorage('blackjackWins', 0)
   const [losses, setLosses] = useLocalStorage('blackjackLosses', 0)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const router = useRouter()
 
@@ -66,6 +67,7 @@ const TerminalOverlay = ({ data }) => {
             ...newOutput,
             `Starting Blackjack...`,
             `Your hand: ${initialPlayerHand.join(', ')}. Blackjack! You win!`,
+            `Well done! Type 'blackjack' to play again.`,
           ])
           updateWins(wins + 1)
         }
@@ -144,6 +146,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
         setOutput([
           ...newOutput,
           `You drew a ${newCard}. Your hand: ${newPlayerHand.join(', ')}. Bust!`,
+          `Type 'blackjack' to play again.`,
         ])
         setGameActive(false)
       } else {
@@ -165,18 +168,21 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
         setOutput([
           ...newOutput,
           `Dealer's hand: ${dealerHand.join(', ')}. You win!`,
+          `Type 'blackjack' to play again.`,
         ])
         updateWins(wins + 1)
       } else if (playerValue < dealerValue) {
         setOutput([
           ...newOutput,
           `Dealer's hand: ${dealerHand.join(', ')}. You lose!`,
+          `Type 'blackjack' to play again.`,
         ])
         updateLosses(losses + 1)
       } else {
         setOutput([
           ...newOutput,
           `Dealer's hand: ${dealerHand.join(', ')}. It's a tie!`,
+          `Type 'blackjack' to play again.`,
         ])
       }
       setGameActive(false)
@@ -222,13 +228,15 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
       updateWins(0)
       updateLosses(0)
       setOutput([...newOutput, `Blackjack stats cleared.`])
+    } else if (input.trim() === 'doom') {
+      toggleDoomAudio(newOutput)
     } else {
       setOutput([...newOutput, `Unknown command: ${input}. Type ? for help.`])
     }
     setInput('')
   }
 
-  const prompt = `user@rgbjoy:${currentDirectory ? `~/${currentDirectory}` : '~'}$`
+  const prompt = `user@rgbjoy:${currentDirectory ? `~/${currentDirectory}` : '~'}${gameActive ? ' (blackjack)' : ''}$`
 
   const directories = [
     'Info',
@@ -259,6 +267,19 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
     }
   }
 
+  const toggleDoomAudio = (newOutput: string[]) => {
+    if (audioRef.current) {
+      if (!audioRef.current.paused) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+        setOutput([...newOutput, `Stopping At Doom's Gate.`])
+      } else {
+        audioRef.current.play()
+        setOutput([...newOutput, `Playing At Doom's Gate...`])
+      }
+    }
+  }
+
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       if (
@@ -279,9 +300,11 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
 
   if (!isOpen)
     return (
-      <div className={style.terminalButton} onClick={() => setIsOpen(true)}>
-        π
-      </div>
+      <>
+        <div className={style.terminalButton} onClick={() => setIsOpen(true)}>
+          π
+        </div>
+      </>
     )
 
   return (
@@ -306,6 +329,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
             autoFocus
           />
         </form>
+        <audio ref={audioRef} src="/doom.ogg" />
       </div>
     </div>
   )
