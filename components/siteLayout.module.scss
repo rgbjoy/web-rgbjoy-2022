@@ -163,6 +163,10 @@
   bottom: 0;
   right: 30px;
 
+  @include mobile-only {
+    right: 0;
+  }
+
   &:after {
     content: '';
     position: absolute;
