@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import style from './home.module.scss'
 import PageWrapper from '@/components/pageWrapper'
-import { HomeData } from 'models/types'
+import { HomeData } from '@/models/types'
 
 export default function Home(home: HomeData) {
   return (

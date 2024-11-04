@@ -7,7 +7,7 @@ import style from './info.module.scss'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
-import { InfoData } from 'models/types'
+import { InfoData } from '@/models/types'
 
 export default function Info(page: InfoData) {
   const animationVariants = {
