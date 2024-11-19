@@ -16,10 +16,10 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/pages/*": ["app/_pages/*"],
-      "@/components/*": ["components/*"],
-      "@/models/*": ["models/*"],
-      "@/utilities/*": ["utilities/*"]
+      "@/pages/*": ["src/app/_pages/*"],
+      "@/components/*": ["src/components/*"],
+      "@/models/*": ["src/models/*"],
+      "@/utilities/*": ["src/utilities/*"]
     },
     "plugins": [
       {

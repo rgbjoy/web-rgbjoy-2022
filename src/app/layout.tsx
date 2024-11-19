@@ -15,7 +15,7 @@ import { getData } from '@/utilities/getData'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
-  src: '../public/fonts/Rhode-Regular.woff2',
+  src: '../../public/fonts/Rhode-Regular.woff2',
   variable: '--rhode-font',
 })
 
