@@ -1,5 +1,5 @@
 import 'normalize.css/normalize.css'
-import '../styles/global.scss'
+import '../../styles/global.scss'
 
 import { Analytics } from '@vercel/analytics/react'
 import { Viewport } from 'next'
@@ -12,10 +12,12 @@ import SiteLayout from '@/components/siteLayout'
 import { fetchSettings } from '@/components/fetchSettings'
 import { use } from 'react'
 import { getData } from '@/utilities/getData'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
-  src: '../../public/fonts/Rhode-Regular.woff2',
+  src: '../../../public/fonts/Rhode-Regular.woff2',
   variable: '--rhode-font',
 })
 
@@ -66,6 +68,18 @@ export default function RootLayout({
   }
   const settingsData = use(getLinks())
 
+  const getFooter = async () => {
+    const payload = await getPayload({
+      config: configPromise,
+    })
+
+    const data = await payload.findGlobal({
+      slug: 'footer',
+    })
+    return data
+  }
+  const footerData = use(getFooter())
+
   const getHome = async () => {
     const query = `
     query getHome {
@@ -91,7 +105,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout settings={settingsData} homeData={homeData}>
+        <SiteLayout settings={settingsData} homeData={homeData} footerData={footerData}>
           {children}
         </SiteLayout>
         <SpeedInsights />

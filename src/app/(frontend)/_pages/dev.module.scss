@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../../../styles/variables.scss';
 
 .dev {
   ::selection {
@@ -56,7 +56,7 @@
       &:before {
         content: '';
         position: absolute;
-        background-image: url('../../../public/svg/arrow.svg');
+        background-image: url('../../../../public/svg/arrow.svg');
         width: 24px;
         height: 24px;
         right: 30px;

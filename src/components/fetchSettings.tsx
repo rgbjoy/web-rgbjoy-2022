@@ -17,7 +17,7 @@ export async function fetchSettings() {
       }
       posts {
         nodes {
-        slug
+          slug
         }
       }
     }
