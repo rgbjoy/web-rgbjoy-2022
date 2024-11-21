@@ -1,9 +1,11 @@
+import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
   reactStrictMode: true,
   expireTime: 3600,
   experimental: {
+    reactCompiler: false,
     turbo: {
       rules: {
         '*.module.scss': {
@@ -27,7 +29,8 @@ const nextConfig = {
   },
   sassOptions: {
     quietDeps: true,
+    silenceDeprecations: ["legacy-js-api", "import"],
   },
 }
 
-module.exports = nextConfig
+export default withPayload(nextConfig)

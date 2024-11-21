@@ -19,12 +19,12 @@ const Footer = ({ footerLinks }) => {
       <div className={style.footerLinks}>
         {footerLinks.map((item) => (
           <a
-            key={item.link.title}
+            key={item.label}
             target="_blank"
             rel="noreferrer"
-            href={item.link.url}
+            href={item.link}
           >
-            {item.link.title}
+            {item.label}
           </a>
         ))}
       </div>
@@ -32,14 +32,8 @@ const Footer = ({ footerLinks }) => {
   )
 }
 
-const SiteLayout = ({ children, settings, homeData }) => {
+const SiteLayout = ({ children, settings, homeData, footerData }) => {
   const pathname = usePathname()
-
-  const [isTerminalOpen, setIsTerminalOpen] = useState(false)
-
-  const toggleTerminal = () => {
-    setIsTerminalOpen(!isTerminalOpen)
-  }
 
   const [isScrolled, setIsScrolled] = useState(false)
   const innerVariants = {
@@ -166,7 +160,7 @@ const SiteLayout = ({ children, settings, homeData }) => {
       </div>
 
       <motion.footer id="footer" className={style.footer}>
-        {settings?.options?.footerLinks && (
+        {footerData.links && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -176,7 +170,7 @@ const SiteLayout = ({ children, settings, homeData }) => {
               ease: 'easeOut',
             }}
           >
-            <Footer footerLinks={settings?.options?.footerLinks} />
+            <Footer footerLinks={footerData.links} />
           </motion.div>
         )}
       </motion.footer>
