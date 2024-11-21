@@ -23,6 +23,7 @@
     "@juggle/resize-observer": "^3.4.0",
     "@payloadcms/db-postgres": "^3.0.2",
     "@payloadcms/db-vercel-postgres": "^3.0.2",
+    "@payloadcms/email-resend": "^3.0.2",
     "@payloadcms/next": "^3.0.2",
     "@payloadcms/payload-cloud": "^3.0.2",
     "@payloadcms/richtext-lexical": "^3.0.2",
