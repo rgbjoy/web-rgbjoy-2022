@@ -11,6 +11,8 @@
     "start": "next start",
     "update": "pnpm update",
     "payload": "PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
+    "migrate:create": "payload migrate:create",
+    "migrate": "payload migrate",
     "ci": "payload migrate && pnpm build",
     "lint": "next lint",
     "type-check": "tsc",
