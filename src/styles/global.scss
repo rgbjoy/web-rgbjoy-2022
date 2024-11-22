@@ -179,6 +179,11 @@ pre {
   }
 }
 
+.embed {
+  width: 400px;
+  overflow: hidden;
+}
+
 .badge {
   pointer-events: none;
   font-family: var(--rhode-font), sans-serif;

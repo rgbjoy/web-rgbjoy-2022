@@ -29,17 +29,16 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 7px;
     overflow: hidden;
-    margin: 20px 0;
+    border-radius: 0;
+    border: none;
+    margin-top: -42px;
+    scrollbar-width: none;
   }
 
-  figure {
-    margin: 0;
-
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 7px;
-      border: 1px solid black;
-    }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 7px;
+    margin-bottom: 20px;
   }
 }

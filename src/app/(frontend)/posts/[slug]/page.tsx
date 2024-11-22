@@ -1,145 +1,80 @@
-import { getData } from '@/utilities/getData'
+import React from 'react';
 import PageWrapper from '@/components/pageWrapper'
+import { notFound } from 'next/navigation';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+import style from './post.module.scss'
 import formatDate from '@/components/formatDate'
-import { notFound } from 'next/navigation'
+import parse from 'html-react-parser'
 import Image from 'next/image'
 import Link from 'next/link'
-import style from './post.module.scss'
-import { PostData } from '@/models/types'
-import parse from 'html-react-parser'
-import ImageWithShimmer from '@/components/imageWithShimmer'
-import GetSchema from '@/components/getSchema'
 
-export async function generateMetadata(props) {
-  const params = await props.params
-  const { slug } = params
-  const query = `
-    query GetPost($slug: ID!) {
-      post(id: $slug, idType: SLUG) {
-        title
-        excerpt
-        featuredImage {
-          node {
-            sourceUrl(size: MEDIUM)
-          }
-        }
-      }
-    }
-  `
+interface PostPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
 
-  const {
-    data: { post },
-  } = await getData(query, { slug })
-
-  if (!post) {
-    return {}
+const replaceTags = (node) => {
+  if (node.type === 'tag' && node.name === 'img') {
+    let { src, alt, width, height } = node.attribs
+    return <Image src={src} alt={alt} width={width} height={height} />
   }
 
-  return {
-    title: post?.title,
-    description: post?.excerpt,
-    openGraph: {
-      images: [
-        {
-          url: post?.featuredImage?.node?.sourceUrl,
-        },
-      ],
-    },
+  if (node.type === 'tag' && node.name === 'iframe') {
+    if (node.attribs.srcdoc) {
+      return <iframe srcDoc={node.attribs.srcdoc} width="100%" height="300px" />
+    }
+
+    // Handle p5js editor iframes
+    if (node.attribs.src?.includes('editor.p5js.org')) {
+      const parentDiv = node.parent;
+      const width = parentDiv?.attribs?.style?.match(/width:(\d+)px/)?.[1] || '400';
+      const baseHeight = parentDiv?.attribs?.style?.match(/height:(\d+)px/)?.[1] || '400';
+      const height = (parseInt(baseHeight) + 42).toString();
+
+      return <iframe
+        src={node.attribs.src}
+        width={`${width}px`}
+        height={`${height}px`}
+        style={{ border: 'none' }}
+      />
+    }
   }
 }
 
-export default async function Page(props) {
-  const params = await props.params
-  const { slug } = params
-  const query = `
-    query GetPost($slug: ID!) {
-      post(id: $slug, idType: SLUG) {
-        title
-        date
-        excerpt
-        content
-        featuredImage {
-          node {
-            sourceUrl
-            mediaDetails {
-              width
-              height
-            }
-          }
-        }
-      }
-    }
-  `
+export default async function PostPage(props: PostPageProps) {
+  const { slug } = await props.params;
+  const payload = await getPayload({ config: configPromise });
+  const { docs } = await payload.find({
+    collection: 'posts',
+    where: {
+      slug: { equals: slug },
+    },
+  });
 
-  const {
-    data: { post },
-  } = (await getData(query, { slug })) as { data: { post: PostData } }
+  const data = docs?.[0];
 
-  if (!post) {
-    notFound()
+  if (!data) {
+    return notFound();
   }
 
-  const featuredImage = post.featuredImage?.node
-  const imageUrl = featuredImage?.sourceUrl
-  const imageWidth = featuredImage?.mediaDetails?.width
-  const imageHeight = featuredImage?.mediaDetails?.height
-
-  const replaceImageTag = (node) => {
-    if (node.type === 'tag' && node.name === 'img') {
-      let { src, alt, width, height } = node.attribs
-      return <Image src={src} alt={alt} width={width} height={height} />
-    }
-
-    if (node.type === 'tag' && node.name === 'iframe') {
-      let { srcdoc } = node.attribs
-      const heightMatch = srcdoc.match(/createCanvas\(windowWidth,\s*(\d+)\)/)
-      let height = '300px' // default height
-
-      if (heightMatch && heightMatch[1]) {
-        height = `${heightMatch[1]}px`
-      }
-
-      return (
-        <iframe
-          scrolling={'no'}
-          srcDoc={srcdoc}
-          width="100%"
-          height={height}
-        ></iframe>
-      )
-    }
-  }
-
-  const contentWithNextImage = parse(post.content, {
-    replace: replaceImageTag,
+  const contentParsed = parse(data.contentRichText_html || '', {
+    replace: replaceTags,
   })
 
   return (
     <PageWrapper className={style.post}>
-      <GetSchema post={post} />
-      <span>← </span>
-      <Link className="underline" href="/posts">
-        Back to posts
-      </Link>
-      {imageUrl && (
-        <ImageWithShimmer
-          imageUrl={imageUrl}
-          post={post}
-          imageWidth={imageWidth || 500}
-          imageHeight={imageHeight || 300}
-        />
-      )}
-      <h2 itemProp="headline" className={style.title}>
-        {post.title}
-      </h2>
+      <h1>{data.title}</h1>
       <h3 itemProp="datePublished" className={style.date}>
-        {formatDate(post.date)}
+        {formatDate(data.createdAt)}
       </h3>
-      <div className={style.content}>{contentWithNextImage}</div>
+      <div className={style.content}>{contentParsed}</div>
       <span>← </span>
       <Link className="underline" href="/posts">
         Back to posts
       </Link>
+
     </PageWrapper>
-  )
+  );
 }
