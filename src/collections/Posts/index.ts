@@ -1,5 +1,11 @@
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor, BlocksFeature, lexicalHTML, HTMLConverterFeature, HTMLConverter, SerializedBlockNode } from '@payloadcms/richtext-lexical'
+import { revalidatePost } from './hooks/revalidatePost'
+import { slugField } from '@/fields/slug'
+import { authenticated } from '../../access/authenticated'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { getServerSideURL } from '@/utilities/getURL'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
 const BlockHtmlConverter: HTMLConverter<SerializedBlockNode> = {
   converter({ node }) {
@@ -22,18 +28,21 @@ const BlockHtmlConverter: HTMLConverter<SerializedBlockNode> = {
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
-  admin: {
-    useAsTitle: 'title',
-    preview: (doc, { locale }) => {
-      if (doc?.slug) {
-        return `/posts/${doc.slug}?locale=${locale}`
-      }
-
-      return null
-    },
-  },
   access: {
-    read: () => true,
+    create: authenticated,
+    delete: authenticated,
+    read: authenticatedOrPublished,
+    update: authenticated,
+  },
+  admin: {
+    defaultColumns: ['title', 'slug', 'updatedAt'],
+    useAsTitle: 'title',
+    preview: () => null,
+    components: {
+      edit: {
+        PreviewButton: '/collections/Posts/components/PreviewButton',
+      },
+    },
   },
   fields: [
     {
@@ -41,6 +50,26 @@ export const Posts: CollectionConfig = {
       label: 'Title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      admin: {
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeChange: [
+          ({ siblingData, value }) => {
+            if (siblingData._status === 'published' && !value) {
+              return new Date()
+            }
+            return value
+          },
+        ],
+      },
     },
     {
       name: 'contentRichText',
@@ -83,15 +112,19 @@ export const Posts: CollectionConfig = {
       }),
     },
     lexicalHTML('contentRichText', { name: 'contentRichText_html' }),
-    {
-      name: 'slug',
-      label: 'Slug',
-      type: 'text',
-      admin: {
-        position: 'sidebar',
+    ...slugField(),
+  ],
+  hooks: {
+    afterChange: [revalidatePost],
+  },
+  versions: {
+    drafts: {
+      autosave: {
+        interval: 100, // We set this interval for optimal live preview
       },
     },
-  ],
+    maxPerDoc: 50,
+  },
 }
 
 export default Posts

@@ -26,6 +26,9 @@
       "@/components/*": [
         "src/components/*"
       ],
+      "@/fields/*": [
+        "src/fields/*"
+      ],
       "@/models/*": [
         "src/models/*"
       ],
@@ -34,6 +37,9 @@
       ],
       "@payload-config": [
         "./src/payload.config.ts"
+      ],
+      "@payload-types": [
+        "./src/payload-types.ts"
       ]
     },
     "plugins": [

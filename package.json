@@ -14,6 +14,7 @@
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
     "migrate_build": "payload migrate && pnpm build",
+    "generate:importmap": "payload generate:importmap",
     "lint": "next lint",
     "type-check": "tsc",
     "format": "prettier --write ."
@@ -28,6 +29,7 @@
     "@payloadcms/payload-cloud": "^3.0.2",
     "@payloadcms/richtext-lexical": "^3.0.2",
     "@payloadcms/storage-vercel-blob": "^3.0.2",
+    "@payloadcms/ui": "^3.0.2",
     "@react-three/drei": "^9.117.2",
     "@react-three/fiber": "9.0.0-rc.1",
     "@react-three/postprocessing": "^2.16.3",
