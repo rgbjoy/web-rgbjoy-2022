@@ -10,7 +10,7 @@ export const Footer: GlobalConfig = {
     name: 'Footer',
   },
   admin: {
-    group: "Content",
+    group: 'Content',
   },
   access: {
     read: () => true,
@@ -38,9 +38,9 @@ export const Footer: GlobalConfig = {
             beforeValidate: [
               ({ value }) => {
                 if (value && !value.startsWith('https://')) {
-                  return `https://${value}`;
+                  return `https://${value}`
                 }
-                return value;
+                return value
               },
             ],
           },
@@ -50,6 +50,5 @@ export const Footer: GlobalConfig = {
         },
       ],
     },
-
   ],
 }

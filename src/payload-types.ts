@@ -298,7 +298,7 @@ export interface Footer {
  */
 export interface Info {
   id: number;
-  profileImage: number | Media;
+  profileImage?: (number | null) | Media;
   links?:
     | {
         link: {

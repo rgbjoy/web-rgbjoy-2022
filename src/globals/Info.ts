@@ -1,5 +1,9 @@
 import { GlobalConfig } from 'payload'
-import { lexicalEditor, HTMLConverterFeature, lexicalHTML } from '@payloadcms/richtext-lexical'
+import {
+  lexicalEditor,
+  HTMLConverterFeature,
+  lexicalHTML,
+} from '@payloadcms/richtext-lexical'
 
 export const Info: GlobalConfig = {
   slug: 'info',
@@ -11,7 +15,7 @@ export const Info: GlobalConfig = {
     name: 'Info',
   },
   admin: {
-    group: "Content",
+    group: 'Content',
   },
   access: {
     read: () => true,
@@ -21,7 +25,9 @@ export const Info: GlobalConfig = {
       name: 'profileImage',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+      filterOptions: {
+        mimeType: { contains: 'image' },
+      },
     },
     {
       name: 'links',
@@ -48,12 +54,12 @@ export const Info: GlobalConfig = {
               hooks: {
                 beforeValidate: [
                   ({ value }) => {
-                    if (!value) return value;
-                    if (value.startsWith('mailto:')) return value;
+                    if (!value) return value
+                    if (value.startsWith('mailto:')) return value
                     if (!value.startsWith('https://')) {
-                      return `https://${value}`;
+                      return `https://${value}`
                     }
-                    return value;
+                    return value
                   },
                 ],
               },

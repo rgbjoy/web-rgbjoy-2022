@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 import PageWrapper from '@/components/pageWrapper'
-import { notFound } from 'next/navigation';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import style from './post.module.scss'
 import formatDate from '@/components/formatDate'
 import parse from 'html-react-parser'
@@ -11,8 +11,8 @@ import Link from 'next/link'
 
 interface PostPageProps {
   params: Promise<{
-    slug: string;
-  }>;
+    slug: string
+  }>
 }
 
 const replaceTags = (node) => {
@@ -28,35 +28,39 @@ const replaceTags = (node) => {
 
     // Handle p5js editor iframes
     if (node.attribs.src?.includes('editor.p5js.org')) {
-      const parentDiv = node.parent;
-      const width = parentDiv?.attribs?.style?.match(/width:(\d+)px/)?.[1] || '400';
-      const baseHeight = parentDiv?.attribs?.style?.match(/height:(\d+)px/)?.[1] || '400';
-      const height = (parseInt(baseHeight) + 42).toString();
+      const parentDiv = node.parent
+      const width =
+        parentDiv?.attribs?.style?.match(/width:(\d+)px/)?.[1] || '400'
+      const baseHeight =
+        parentDiv?.attribs?.style?.match(/height:(\d+)px/)?.[1] || '400'
+      const height = (parseInt(baseHeight) + 42).toString()
 
-      return <iframe
-        src={node.attribs.src}
-        width={`${width}px`}
-        height={`${height}px`}
-        style={{ border: 'none' }}
-      />
+      return (
+        <iframe
+          src={node.attribs.src}
+          width={`${width}px`}
+          height={`${height}px`}
+          style={{ border: 'none' }}
+        />
+      )
     }
   }
 }
 
 export default async function PostPage(props: PostPageProps) {
-  const { slug } = await props.params;
-  const payload = await getPayload({ config: configPromise });
+  const { slug } = await props.params
+  const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({
     collection: 'posts',
     where: {
       slug: { equals: slug },
     },
-  });
+  })
 
-  const data = docs?.[0];
+  const data = docs?.[0]
 
   if (!data) {
-    return notFound();
+    return notFound()
   }
 
   const contentParsed = parse(data.contentRichText_html || '', {
@@ -74,7 +78,6 @@ export default async function PostPage(props: PostPageProps) {
       <Link className="underline" href="/posts">
         Back to posts
       </Link>
-
     </PageWrapper>
-  );
+  )
 }

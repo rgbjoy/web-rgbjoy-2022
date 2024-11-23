@@ -29,7 +29,7 @@ const nextConfig = {
   },
   sassOptions: {
     quietDeps: true,
-    silenceDeprecations: ["legacy-js-api", "import"],
+    silenceDeprecations: ['legacy-js-api', 'import'],
   },
 }
 

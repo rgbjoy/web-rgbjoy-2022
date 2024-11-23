@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -20,27 +16,13 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/pages/*": [
-        "src/app/(frontend)/_pages/*"
-      ],
-      "@/components/*": [
-        "src/components/*"
-      ],
-      "@/fields/*": [
-        "src/fields/*"
-      ],
-      "@/models/*": [
-        "src/models/*"
-      ],
-      "@/utilities/*": [
-        "src/utilities/*"
-      ],
-      "@payload-config": [
-        "./src/payload.config.ts"
-      ],
-      "@payload-types": [
-        "./src/payload-types.ts"
-      ]
+      "@/pages/*": ["src/app/(frontend)/_pages/*"],
+      "@/components/*": ["src/components/*"],
+      "@/fields/*": ["src/fields/*"],
+      "@/models/*": ["src/models/*"],
+      "@/utilities/*": ["src/utilities/*"],
+      "@payload-config": ["./src/payload.config.ts"],
+      "@payload-types": ["./src/payload-types.ts"]
     },
     "plugins": [
       {
@@ -49,13 +31,6 @@
     ],
     "strictNullChecks": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

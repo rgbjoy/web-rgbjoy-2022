@@ -105,7 +105,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout settings={settingsData} homeData={homeData} footerData={footerData}>
+        <SiteLayout
+          settings={settingsData}
+          homeData={homeData}
+          footerData={footerData}
+        >
           {children}
         </SiteLayout>
         <SpeedInsights />

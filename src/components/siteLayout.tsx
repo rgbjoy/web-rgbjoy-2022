@@ -18,12 +18,7 @@ const Footer = ({ footerLinks }) => {
     <div className={style.footerWrapper}>
       <div className={style.footerLinks}>
         {footerLinks.map((item) => (
-          <a
-            key={item.label}
-            target="_blank"
-            rel="noreferrer"
-            href={item.link}
-          >
+          <a key={item.label} target="_blank" rel="noreferrer" href={item.link}>
             {item.label}
           </a>
         ))}

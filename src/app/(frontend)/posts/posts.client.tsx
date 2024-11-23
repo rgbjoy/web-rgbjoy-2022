@@ -13,7 +13,7 @@ export default function Posts({ posts }: { posts: Post[] }) {
       <h1 className={style.header}>
         <SplitText>Posts</SplitText>
       </h1>
-        {posts.map((node) => {
+      {posts.map((node) => {
         return (
           <div key={node.slug}>
             <p className={style.date}>{formatDate(node.createdAt)}</p>

@@ -10,7 +10,7 @@ export const Dev: GlobalConfig = {
     name: 'Dev',
   },
   admin: {
-    group: "Content",
+    group: 'Content',
   },
   access: {
     read: () => true,
@@ -47,9 +47,9 @@ export const Dev: GlobalConfig = {
                 beforeValidate: [
                   ({ value }) => {
                     if (value && !value.startsWith('https://')) {
-                      return `https://${value}`;
+                      return `https://${value}`
                     }
-                    return value;
+                    return value
                   },
                 ],
               },

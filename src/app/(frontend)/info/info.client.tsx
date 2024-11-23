@@ -10,7 +10,6 @@ import { motion, useAnimation } from 'framer-motion'
 import { Info } from '@payload-types'
 
 export default function InfoClient(info: Info) {
-
   const animationVariants = {
     visible: { opacity: 1 },
     hidden: { opacity: 0 },
@@ -71,7 +70,7 @@ export default function InfoClient(info: Info) {
     )
   }
 
-  console.log("info.profileImage", info.profileImage)
+  console.log('info.profileImage', info.profileImage)
 
   return (
     <PageWrapper className={style.info}>
@@ -87,10 +86,26 @@ export default function InfoClient(info: Info) {
             transition={{ ease: 'easeOut', duration: 1, delay: 1 }}
           >
             <Image
-              src={typeof info.profileImage === 'object' ? info.profileImage?.url ?? '' : ''}
-              alt={typeof info.profileImage === 'object' ? info.profileImage?.alt ?? '' : ''}
-              width={typeof info.profileImage === 'object' ? info.profileImage?.width ?? 0 : 0}
-              height={typeof info.profileImage === 'object' ? info.profileImage?.height ?? 0 : 0}
+              src={
+                typeof info.profileImage === 'object'
+                  ? (info.profileImage?.url ?? '')
+                  : ''
+              }
+              alt={
+                typeof info.profileImage === 'object'
+                  ? (info.profileImage?.alt ?? '')
+                  : ''
+              }
+              width={
+                typeof info.profileImage === 'object'
+                  ? (info.profileImage?.width ?? 0)
+                  : 0
+              }
+              height={
+                typeof info.profileImage === 'object'
+                  ? (info.profileImage?.height ?? 0)
+                  : 0
+              }
               onLoad={handleImageLoad}
               priority
             />
