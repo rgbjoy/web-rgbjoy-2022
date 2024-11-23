@@ -8,9 +8,7 @@ import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 const PreviewButton: React.FC = () => {
   const { savedDocumentData } = useDocumentInfo()
 
-  if (!savedDocumentData?.slug) return null
-
-  if (savedDocumentData._status !== 'published') return null
+  if (!savedDocumentData?.slug && savedDocumentData?._status !== 'published') return null
 
   const path = generatePreviewPath({
     slug: typeof savedDocumentData?.slug === 'string' ? savedDocumentData?.slug : '',
@@ -18,7 +16,7 @@ const PreviewButton: React.FC = () => {
   })
 
   return (
-    <a target="_blank" href={`${getServerSideURL()}/${path}`}>
+    <a target="_blank" href={`${getServerSideURL()}${path}`}>
       <Button>
       View Post
     </Button></a>

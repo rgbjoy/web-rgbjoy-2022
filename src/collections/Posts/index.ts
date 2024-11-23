@@ -4,6 +4,7 @@ import { revalidatePost } from './hooks/revalidatePost'
 import { slugField } from '@/fields/slug'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
@@ -115,12 +116,13 @@ export const Posts: CollectionConfig = {
     ...slugField(),
   ],
   hooks: {
+    beforeChange: [populatePublishedAt],
     afterChange: [revalidatePost],
   },
   versions: {
     drafts: {
       autosave: {
-        interval: 100, // We set this interval for optimal live preview
+        interval: 100,
       },
     },
     maxPerDoc: 50,
