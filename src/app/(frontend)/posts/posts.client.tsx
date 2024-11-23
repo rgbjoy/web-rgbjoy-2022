@@ -5,18 +5,18 @@ import { SplitText } from '@/components/splitText'
 import formatDate from '@/components/formatDate'
 import style from './posts.module.scss'
 import Link from 'next/link'
-import { PostsData } from '@/models/types'
+import { Post } from '@payload-types'
 
-export default function Posts({ posts }: { posts: PostsData }) {
+export default function Posts({ posts }: { posts: Post[] }) {
   return (
     <PageWrapper className={style.posts}>
       <h1 className={style.header}>
         <SplitText>Posts</SplitText>
       </h1>
-      {posts.nodes.map((node) => {
+        {posts.map((node) => {
         return (
           <div key={node.slug}>
-            <p className={style.date}>{formatDate(node.date)}</p>
+            <p className={style.date}>{formatDate(node.createdAt)}</p>
             <Link
               className={`underline ${style.postLink}`}
               href={`/posts/${node.slug}`}

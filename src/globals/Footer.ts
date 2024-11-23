@@ -10,7 +10,7 @@ export const Footer: GlobalConfig = {
     name: 'Footer',
   },
   admin: {
-    group: "Footer",
+    group: "Content",
   },
   access: {
     read: () => true,

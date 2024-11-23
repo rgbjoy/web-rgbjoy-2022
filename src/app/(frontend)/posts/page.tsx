@@ -1,6 +1,7 @@
-import { getData } from '@/utilities/getData'
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 import { Metadata } from 'next'
-import Posts from '@/pages/posts.client'
+import Posts from './posts.client'
 
 export const metadata: Metadata = {
   title: 'Posts',
@@ -10,21 +11,13 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 export default async function Page() {
-  const query = `
-    query getPosts {
-      posts {
-        nodes {
-          slug
-          title
-          date
-        }
-      }
-    }
-  `
+  const payload = await getPayload({ config: configPromise });
+  const { docs } = await payload.find({
+    collection: 'posts',
+    where: {
+      _status: { equals: 'published' },
+    },
+  });
 
-  const {
-    data: { posts },
-  } = await getData(query)
-
-  return <Posts posts={posts} />
+  return <Posts posts={docs} />
 }

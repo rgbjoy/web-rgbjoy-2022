@@ -12,6 +12,8 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+import { Info } from './globals/Info'
+import { Dev } from './globals/Dev'
 
 // Globals
 import { Footer } from './globals/Footer'
@@ -27,7 +29,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Posts],
-  globals: [Footer],
+  globals: [Footer, Info, Dev],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

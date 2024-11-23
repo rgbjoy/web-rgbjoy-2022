@@ -1,6 +1,7 @@
-import Info from '@/pages/info.client'
-import { getData } from '@/utilities/getData'
+import InfoClient from './info.client'
 import { Metadata } from 'next'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 export const metadata: Metadata = {
   title: 'Info',
@@ -8,38 +9,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const query = `
-    query getInfo {
-      page(id: "cG9zdDoxMw==") {
-        content(format: RENDERED)
-        info {
-          profileImage {
-            mediaDetails {
-              sizes {
-                sourceUrl
-                width
-                height
-                name
-              }
-            }
-          }
-          links {
-            link {
-              title
-              url
-            }
-          }
-          strengths {
-            title
-            strengths
-          }
-        }
-      }
-    }
-  `
-  const {
-    data: { page },
-  } = await getData(query)
+  const payload = await getPayload({
+    config: configPromise,
+  })
 
-  return <Info {...page} />
+  const infoData = await payload.findGlobal({
+    slug: 'info',
+  })
+
+  return <InfoClient {...infoData} />
 }

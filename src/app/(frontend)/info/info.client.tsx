@@ -7,9 +7,10 @@ import style from './info.module.scss'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
-import { InfoData } from '@/models/types'
+import { Info } from '@payload-types'
 
-export default function Info(page: InfoData) {
+export default function InfoClient(info: Info) {
+
   const animationVariants = {
     visible: { opacity: 1 },
     hidden: { opacity: 0 },
@@ -30,12 +31,12 @@ export default function Info(page: InfoData) {
   const GetLinks = () => {
     return (
       <div className={style.links}>
-        {page.info.links.map((value, i) => {
-          const title = value['link']['title']
-          const url = value['link']['url']
+        {info.links?.map((value, i) => {
+          const title = value.link.title
+          const url = value.link.url
 
           return (
-            <span key={'lins' + i}>
+            <span key={'links' + i}>
               <a
                 className="underline"
                 href={url}
@@ -44,7 +45,7 @@ export default function Info(page: InfoData) {
               >
                 {title}
               </a>
-              <span>{i < page.info['links'].length - 1 ? ' • ' : ''}</span>
+              <span>{i < (info.links?.length || 0) - 1 ? ' • ' : ''}</span>
             </span>
           )
         })}
@@ -55,12 +56,12 @@ export default function Info(page: InfoData) {
   const GetStrengths = () => {
     return (
       <div>
-        {page.info.strengths.map((value, i) => {
-          const title = value['title']
-          const detail = value['strengths']
+        {info.strengths?.map((value, i) => {
+          const title = value.title
+          const detail = value.strengthsList
 
           return (
-            <div className={style.strengths} key={'strenths' + i}>
+            <div className={style.strengths} key={'strengths' + i}>
               <div>{title}</div>
               <div className={style.detail}>{detail}</div>
             </div>
@@ -70,19 +71,7 @@ export default function Info(page: InfoData) {
     )
   }
 
-  const getImageData = () => {
-    let smallImage = {}
-    let bigImage = {}
-    page.info.profileImage.mediaDetails.sizes.map((mediaDetails) => {
-      if (mediaDetails.name === 'medium_large') {
-        smallImage = mediaDetails
-      }
-      if (mediaDetails.name === '1536x1536' || '2048x2048') {
-        bigImage = mediaDetails
-      }
-    })
-    return { smallImage, bigImage }
-  }
+  console.log("info.profileImage", info.profileImage)
 
   return (
     <PageWrapper className={style.info}>
@@ -98,14 +87,12 @@ export default function Info(page: InfoData) {
             transition={{ ease: 'easeOut', duration: 1, delay: 1 }}
           >
             <Image
-              alt="Selfie"
-              src={getImageData().bigImage['sourceUrl']}
-              placeholder="blur"
-              blurDataURL={getImageData().smallImage['sourceUrl']}
-              width={getImageData().bigImage['width']}
-              height={getImageData().bigImage['height']}
-              priority
+              src={typeof info.profileImage === 'object' ? info.profileImage?.url ?? '' : ''}
+              alt={typeof info.profileImage === 'object' ? info.profileImage?.alt ?? '' : ''}
+              width={typeof info.profileImage === 'object' ? info.profileImage?.width ?? 0 : 0}
+              height={typeof info.profileImage === 'object' ? info.profileImage?.height ?? 0 : 0}
               onLoad={handleImageLoad}
+              priority
             />
           </motion.div>
         </div>
@@ -113,7 +100,7 @@ export default function Info(page: InfoData) {
 
       <GetLinks />
 
-      <div dangerouslySetInnerHTML={{ __html: page.content }} />
+      <div dangerouslySetInnerHTML={{ __html: info.content_html || '' }} />
 
       <Link className={`btn ${style.btn}`} href="/dev">
         See some work

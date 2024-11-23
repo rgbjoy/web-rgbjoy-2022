@@ -32,9 +32,13 @@ export interface Config {
   };
   globals: {
     footer: Footer;
+    info: Info;
+    dev: Dev;
   };
   globalsSelect: {
     footer: FooterSelect<false> | FooterSelect<true>;
+    info: InfoSelect<false> | InfoSelect<true>;
+    dev: DevSelect<false> | DevSelect<true>;
   };
   locale: null;
   user: User & {
@@ -290,6 +294,82 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "info".
+ */
+export interface Info {
+  id: number;
+  profileImage: number | Media;
+  links?:
+    | {
+        link: {
+          title: string;
+          url: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  content_html?: string | null;
+  strengths?:
+    | {
+        title: string;
+        strengthsList: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dev".
+ */
+export interface Dev {
+  id: number;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  pastProjects?:
+    | {
+        title: string;
+        link: {
+          url: string;
+        };
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
@@ -298,6 +378,58 @@ export interface FooterSelect<T extends boolean = true> {
     | {
         label?: T;
         link?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "info_select".
+ */
+export interface InfoSelect<T extends boolean = true> {
+  profileImage?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  content?: T;
+  content_html?: T;
+  strengths?:
+    | T
+    | {
+        title?: T;
+        strengthsList?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dev_select".
+ */
+export interface DevSelect<T extends boolean = true> {
+  content?: T;
+  pastProjects?:
+    | T
+    | {
+        title?: T;
+        link?:
+          | T
+          | {
+              url?: T;
+            };
+        description?: T;
         id?: T;
       };
   updatedAt?: T;

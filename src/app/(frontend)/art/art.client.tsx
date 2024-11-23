@@ -3,8 +3,8 @@
 import PageWrapper from '@/components/pageWrapper'
 import Masonry from 'react-masonry-css'
 import style from './art.module.scss'
-import Media from '@/components/media'
-import LightBox from '@/components/lightbox'
+import Media from 'src/app/(frontend)/art/components/media'
+import LightBox from 'src/app/(frontend)/art/components/lightbox'
 import { SplitText } from '@/components/splitText'
 
 import { useState, useEffect, useRef } from 'react'
