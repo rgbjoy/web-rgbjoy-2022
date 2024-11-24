@@ -12,11 +12,15 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
-import { Info } from './globals/Info'
-import { Dev } from './globals/Dev'
 
 // Globals
+//-- Site Settings
 import { Footer } from './globals/Footer'
+//-- Content
+import { Home } from './globals/Home'
+import { Info } from './globals/Info'
+import { Dev } from './globals/Dev'
+import { Art } from './globals/Art'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -29,7 +33,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Posts],
-  globals: [Footer, Info, Dev],
+  globals: [Footer, Home, Info, Dev, Art],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -47,10 +51,11 @@ export default buildConfig({
       collections: {
         media: true,
         [Media.slug]: {
-          prefix: 'my-prefix',
+          prefix: process.env.VERCEL_ENV === 'production'
+            ? undefined
+            : (process.env.VERCEL_ENV || 'development'),
         },
       },
-      // Token provided by Vercel once Blob storage is added to your Vercel project
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
   ],

@@ -3,8 +3,9 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import style from './terminalOverlay.module.scss'
 import useLocalStorage from '../hooks/useLocalStorage'
+import { Post } from '@payload-types'
 
-const TerminalOverlay = ({ data }) => {
+const TerminalOverlay = ({ postsData }: { postsData: Post[] }) => {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -19,11 +20,11 @@ const TerminalOverlay = ({ data }) => {
 
   const router = useRouter()
 
+  const posts = postsData
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value)
   }
-
-  const posts = data.posts
 
   const updateWins = (newWins) => {
     setWins(newWins)
@@ -219,6 +220,8 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
       setOutput([])
     } else if (input.trim() === 'q') {
       setIsOpen(false)
+    } else if (input.trim() === 'exit') {
+      setIsOpen(false)
     } else if (input.trim() === 'blackjack stats') {
       setOutput([
         ...newOutput,
@@ -244,7 +247,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
     'Art',
     'Posts',
     'blackjack',
-    ...posts.map((post) => post.slug),
+    ...(Array.isArray(posts) ? posts.map((post) => post.slug) : []),
   ]
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -257,7 +260,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
         const prefix = match[1] || ''
         const dirInput = match[2]
         const matchingDirs = directories.filter((dir) =>
-          dir.startsWith(dirInput)
+          dir?.startsWith(dirInput)
         )
 
         if (matchingDirs.length === 1) {
@@ -296,6 +299,17 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
     return () => {
       document.removeEventListener('click', handleDocumentClick)
     }
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   if (!isOpen)

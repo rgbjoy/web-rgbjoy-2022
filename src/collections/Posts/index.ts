@@ -54,6 +54,13 @@ export const Posts: CollectionConfig = {
   },
   fields: [
     {
+      name: 'featuredImage',
+      type: 'upload',
+      label: 'Featured Image',
+      relationTo: 'media',
+      required: false,
+    },
+    {
       name: 'title',
       label: 'Title',
       type: 'text',

@@ -70,8 +70,6 @@ export default function InfoClient(info: Info) {
     )
   }
 
-  console.log('info.profileImage', info.profileImage)
-
   return (
     <PageWrapper className={style.info}>
       <div className={style.selfie}>

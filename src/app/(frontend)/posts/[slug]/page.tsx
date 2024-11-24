@@ -8,6 +8,7 @@ import formatDate from '@/components/formatDate'
 import parse from 'html-react-parser'
 import Image from 'next/image'
 import Link from 'next/link'
+import ImageWithShimmer from '@/components/imageWithShimmer'
 
 interface PostPageProps {
   params: Promise<{
@@ -69,7 +70,31 @@ export default async function PostPage(props: PostPageProps) {
 
   return (
     <PageWrapper className={style.post}>
-      <h1>{data.title}</h1>
+      <span>← </span>
+      <Link className="underline" href="/posts">
+        Back to posts
+      </Link>
+      {data.featuredImage && (
+        <ImageWithShimmer
+        imageUrl={
+            typeof data.featuredImage === 'object'
+              ? (data.featuredImage?.url ?? '')
+              : ''
+          }
+          post={data.title}
+          imageWidth={
+            typeof data.featuredImage === 'object'
+              ? (data.featuredImage?.width ?? 0)
+              : 0
+          }
+          imageHeight={
+            typeof data.featuredImage === 'object'
+              ? (data.featuredImage?.height ?? 0)
+              : 0
+          }
+       />
+      )}
+      <h2 className={style.title}>{data.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>
         {formatDate(data.createdAt)}
       </h3>

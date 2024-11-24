@@ -1,6 +1,7 @@
-import Dev from './dev.client'
-import { getData } from '@/utilities/getData'
+import DevClient from './dev.client'
 import { Metadata } from 'next'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 export const metadata: Metadata = {
   title: 'Development',
@@ -8,24 +9,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const query = `
-    query GetDevPage {
-      page(id: "cG9zdDoxNQ==") {
-        content(format: RENDERED)
-        dev {
-          pastProjects {
-            title
-            link {
-              url
-            }
-            description
-          }
-        }
-      }
-    }
-  `
+  const payload = await getPayload({
+    config: configPromise,
+  })
 
-  const { data } = await getData(query)
+  const devData = await payload.findGlobal({
+    slug: 'dev',
+  })
 
-  return <Dev {...data} />
+  return <DevClient {...devData} />
 }

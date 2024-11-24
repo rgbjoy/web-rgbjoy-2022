@@ -3,20 +3,16 @@
 import PageWrapper from '@/components/pageWrapper'
 import style from './dev.module.scss'
 import { SplitText } from '@/components/splitText'
-import { DevData } from '@/models/types'
+import { Dev } from '@payload-types'
 
-export default function Dev(data: { page: DevData }) {
-  const {
-    page: { dev },
-  } = data
-
+export default function DevClient(dev: Dev) {
   const GetProjects = () => {
     return (
       <ul className={style.list}>
         {dev.pastProjects?.map((value, i) => {
-          const title = value['title']
-          const description = value['description']
-          const link = value['link']['url']
+          const title = value.title
+          const description = value.description
+          const link = value.link.url
 
           return (
             <li className={style.item} key={'projects' + i}>
@@ -37,7 +33,7 @@ export default function Dev(data: { page: DevData }) {
         <SplitText>Development</SplitText>
       </h1>
 
-      <div dangerouslySetInnerHTML={{ __html: data.page.content }} />
+      <div dangerouslySetInnerHTML={{ __html: dev.content_html || '' }} />
 
       <h2 className={style.sectionTitle}>Projects</h2>
       <GetProjects />

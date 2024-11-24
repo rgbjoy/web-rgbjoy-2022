@@ -4,14 +4,15 @@ import {
   HTMLConverterFeature,
   lexicalHTML,
 } from '@payloadcms/richtext-lexical'
-export const Dev: GlobalConfig = {
-  slug: 'dev',
-  label: 'Dev Page',
+
+export const Art: GlobalConfig = {
+  slug: 'art',
+  label: 'Art Page',
   typescript: {
-    interface: 'Dev',
+    interface: 'Art',
   },
   graphQL: {
-    name: 'Dev',
+    name: 'Art',
   },
   admin: {
     group: 'Content',
@@ -38,43 +39,31 @@ export const Dev: GlobalConfig = {
     },
     lexicalHTML('content', { name: 'content_html' }),
     {
-      name: 'pastProjects',
+      name: 'artworks',
       type: 'array',
-      label: 'Past Projects',
+      label: 'Artworks',
       labels: {
-        singular: 'Project',
-        plural: 'Projects',
+        singular: 'Artwork',
+        plural: 'Artworks',
       },
       fields: [
         {
           name: 'title',
           type: 'text',
           required: true,
+          label: 'Artwork Title',
         },
         {
-          name: 'link',
-          type: 'group',
-          fields: [
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
-              hooks: {
-                beforeValidate: [
-                  ({ value }) => {
-                    if (value && !value.startsWith('https://')) {
-                      return `https://${value}`
-                    }
-                    return value
-                  },
-                ],
-              },
-            },
-          ],
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'Artwork Image',
         },
         {
           name: 'description',
           type: 'textarea',
+          label: 'Artwork Description',
         },
       ],
     },

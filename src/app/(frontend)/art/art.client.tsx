@@ -8,10 +8,11 @@ import LightBox from 'src/app/(frontend)/art/components/lightbox'
 import { SplitText } from '@/components/splitText'
 
 import { useState, useEffect, useRef } from 'react'
-import { ArtData } from '@/models/types'
+import { Art } from '@payload-types'
+import { Media as MediaType } from '@payload-types'
 
-export default function Art(page: ArtData) {
-  const artwork = page.artwork
+export default function ArtClient(page: Art) {
+  const artwork = page.artworks
 
   function useHover<HTMLDivElement>() {
     const [value, setValue] = useState<boolean>(false)
@@ -36,7 +37,11 @@ export default function Art(page: ArtData) {
     return [ref, value]
   }
 
-  const DoodleImage = ({ media, ...props }) => {
+  const DoodleImage = ({
+    media,
+    thumbnail = false,
+    ...props
+  }) => {
     const [hoverRef, isHovered] = useHover<HTMLDivElement>()
 
     return (
@@ -45,9 +50,9 @@ export default function Art(page: ArtData) {
           <div
             className={`${style.thumbnail} ${isHovered ? style.hovered : ''}`}
           >
-            <Media media={media} thumbnail />
+            {media?.image && <Media media={media.image} thumbnail={thumbnail} />}
           </div>
-          <div className={style.caption}>{media.title}</div>
+          <div className={style.caption}>{media?.title}</div>
         </LightBox>
       </div>
     )
@@ -59,14 +64,16 @@ export default function Art(page: ArtData) {
         <SplitText>Art & Design</SplitText>
       </h1>
 
-      <div dangerouslySetInnerHTML={{ __html: page.content }} />
+      <div dangerouslySetInnerHTML={{ __html: page.content_html ?? '' }} />
       <Masonry
         breakpointCols={2}
         className={style['my-masonry-grid']}
         columnClassName={style['my-masonry-grid_column']}
       >
-        {artwork?.gallery.map((item, i) => {
-          return <DoodleImage key={'media' + i} media={item} />
+        {artwork?.map((item, i) => {
+          return item.image && (
+            <DoodleImage key={'media' + i} media={item} />
+          )
         })}
       </Masonry>
     </PageWrapper>

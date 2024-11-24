@@ -23,6 +23,7 @@ import style from './background.module.scss'
 import gsap from 'gsap'
 import Stars from './stars'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
+import { Home } from '@payload-types'
 
 var FIRST_LOAD = true
 
@@ -470,7 +471,7 @@ const RenderPageBackground = ({ page }) => {
   )
 }
 
-const HomeHTML = ({ homeData, router }) => {
+const HomeHTML = ({ homeData, router }: { homeData: Home; router: any }) => {
   const [clientHeight, setClientHeight] = useState(window.innerHeight)
 
   useEffect(() => {

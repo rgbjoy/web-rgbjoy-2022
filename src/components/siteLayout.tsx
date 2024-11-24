@@ -27,7 +27,7 @@ const Footer = ({ footerLinks }) => {
   )
 }
 
-const SiteLayout = ({ children, settings, homeData, footerData }) => {
+const SiteLayout = ({ children, homeData, footerData, postsData }) => {
   const pathname = usePathname()
 
   const [isScrolled, setIsScrolled] = useState(false)
@@ -170,14 +170,14 @@ const SiteLayout = ({ children, settings, homeData, footerData }) => {
         )}
       </motion.footer>
 
-      {settings?.options?.badge && pathname !== '/art' ? (
+      {pathname !== '/art' ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.75, ease: 'easeOut' }}
           className={'badge'}
         >
-          {settings?.options?.badge}
+          2024 Portfolio
         </motion.div>
       ) : null}
 
@@ -186,7 +186,7 @@ const SiteLayout = ({ children, settings, homeData, footerData }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.75, ease: 'easeOut' }}
       >
-        <TerminalOverlay data={settings} />
+        <TerminalOverlay postsData={postsData.docs} />
       </motion.div>
     </>
   )

@@ -9,9 +9,7 @@ import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 
 import SiteLayout from '@/components/siteLayout'
-import { fetchSettings } from '@/components/fetchSettings'
 import { use } from 'react'
-import { getData } from '@/utilities/getData'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
@@ -62,11 +60,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const getLinks = async () => {
-    const data = await fetchSettings()
+  const getPosts = async () => {
+    const payload = await getPayload({
+      config: configPromise,
+    })
+
+    const data = await payload.find({
+      collection: 'posts',
+    })
     return data
   }
-  const settingsData = use(getLinks())
+  const postsData = use(getPosts())
 
   const getFooter = async () => {
     const payload = await getPayload({
@@ -81,24 +85,14 @@ export default function RootLayout({
   const footerData = use(getFooter())
 
   const getHome = async () => {
-    const query = `
-    query getHome {
-      page(id:"cG9zdDoxMQ==") {
-        home {
-          header
-          subhead
-          intro
-          button
-        }
-      }
-    }
-  `
-    const {
-      data: {
-        page: { home },
-      },
-    } = await getData(query)
-    return home
+    const payload = await getPayload({
+      config: configPromise,
+    })
+
+    const data = await payload.findGlobal({
+      slug: 'home',
+    })
+    return data
   }
   const homeData = use(getHome())
 
@@ -106,9 +100,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
         <SiteLayout
-          settings={settingsData}
           homeData={homeData}
           footerData={footerData}
+          postsData={postsData}
         >
           {children}
         </SiteLayout>

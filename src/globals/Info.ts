@@ -22,6 +22,11 @@ export const Info: GlobalConfig = {
   },
   fields: [
     {
+      name: 'header',
+      type: 'text',
+      label: 'Page Title',
+    },
+    {
       name: 'profileImage',
       type: 'upload',
       relationTo: 'media',
@@ -75,9 +80,7 @@ export const Info: GlobalConfig = {
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
-          HTMLConverterFeature({
-            converters: ({ defaultConverters }) => defaultConverters,
-          }),
+          HTMLConverterFeature({}),
         ],
       }),
     },

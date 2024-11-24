@@ -32,13 +32,17 @@ export interface Config {
   };
   globals: {
     footer: Footer;
+    home: Home;
     info: Info;
     dev: Dev;
+    art: Art;
   };
   globalsSelect: {
     footer: FooterSelect<false> | FooterSelect<true>;
+    home: HomeSelect<false> | HomeSelect<true>;
     info: InfoSelect<false> | InfoSelect<true>;
     dev: DevSelect<false> | DevSelect<true>;
+    art: ArtSelect<false> | ArtSelect<true>;
   };
   locale: null;
   user: User & {
@@ -103,6 +107,32 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    tablet?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -110,6 +140,7 @@ export interface Media {
  */
 export interface Post {
   id: number;
+  featuredImage?: (number | null) | Media;
   title: string;
   publishedAt?: string | null;
   contentRichText?: {
@@ -228,12 +259,47 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        tablet?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
+  featuredImage?: T;
   title?: T;
   publishedAt?: T;
   contentRichText?: T;
@@ -294,10 +360,24 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home".
+ */
+export interface Home {
+  id: number;
+  header?: string | null;
+  subhead?: string | null;
+  intro?: string | null;
+  button?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "info".
  */
 export interface Info {
   id: number;
+  header?: string | null;
   profileImage?: (number | null) | Media;
   links?:
     | {
@@ -340,6 +420,7 @@ export interface Info {
  */
 export interface Dev {
   id: number;
+  header?: string | null;
   content?: {
     root: {
       type: string;
@@ -355,12 +436,47 @@ export interface Dev {
     };
     [k: string]: unknown;
   } | null;
+  content_html?: string | null;
   pastProjects?:
     | {
         title: string;
         link: {
           url: string;
         };
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "art".
+ */
+export interface Art {
+  id: number;
+  header?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  content_html?: string | null;
+  artworks?:
+    | {
+        title: string;
+        image: number | Media;
         description?: string | null;
         id?: string | null;
       }[]
@@ -386,9 +502,23 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home_select".
+ */
+export interface HomeSelect<T extends boolean = true> {
+  header?: T;
+  subhead?: T;
+  intro?: T;
+  button?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "info_select".
  */
 export interface InfoSelect<T extends boolean = true> {
+  header?: T;
   profileImage?: T;
   links?:
     | T
@@ -419,7 +549,9 @@ export interface InfoSelect<T extends boolean = true> {
  * via the `definition` "dev_select".
  */
 export interface DevSelect<T extends boolean = true> {
+  header?: T;
   content?: T;
+  content_html?: T;
   pastProjects?:
     | T
     | {
@@ -429,6 +561,26 @@ export interface DevSelect<T extends boolean = true> {
           | {
               url?: T;
             };
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "art_select".
+ */
+export interface ArtSelect<T extends boolean = true> {
+  header?: T;
+  content?: T;
+  content_html?: T;
+  artworks?:
+    | T
+    | {
+        title?: T;
+        image?: T;
         description?: T;
         id?: T;
       };

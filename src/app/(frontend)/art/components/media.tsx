@@ -2,8 +2,15 @@ import { motion, useAnimation } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import style from '../art.module.scss'
+import { Media as MediaType } from '@payload-types'
 
-const Media = ({ media, thumbnail = false }) => {
+const Media = ({
+  media,
+  thumbnail = false,
+}: {
+  media: MediaType
+  thumbnail?: boolean
+}) => {
   const animationVariants = {
     visible: {
       opacity: 1,
@@ -23,17 +30,19 @@ const Media = ({ media, thumbnail = false }) => {
     }
   }, [loaded, animationControls])
 
-  if (media.mediaType !== 'image') {
+  console.log('media', media)
+
+  if (media.mimeType?.includes('video')) {
     return (
       <video
         playsInline
         muted
         autoPlay
         loop
-        width={thumbnail ? 300 : media.mediaDetails.width}
-        height={thumbnail ? 300 : media.mediaDetails.height}
+        width={thumbnail ? 300 : media.width || 300}
+        height={thumbnail ? 300 : media.height || 300}
       >
-        <source src={media.mediaItemUrl} type="video/mp4" />
+        <source src={media.url || ''} type="video/mp4" />
       </video>
     )
   } else {
@@ -48,20 +57,20 @@ const Media = ({ media, thumbnail = false }) => {
           <Image
             src={
               thumbnail
-                ? media.mediaDetails.sizes[0].sourceUrl
-                : media.mediaItemUrl
+                ? media.sizes?.thumbnail?.url || ''
+                : media.url || media.sizes?.card?.url || ''
             }
             width={
               thumbnail
-                ? media.mediaDetails.sizes[0].width
-                : media.mediaDetails.width
+                ? media.sizes?.thumbnail?.width || 300
+                : media.width || 300
             }
             height={
               thumbnail
-                ? media.mediaDetails.sizes[0].height
-                : media.mediaDetails.height
+                ? media.sizes?.thumbnail?.height || 300
+                : media.height || 300
             }
-            alt={media.title}
+            alt={media.alt}
             quality={thumbnail ? 75 : 100}
             onLoad={() => setLoaded(true)}
           />
