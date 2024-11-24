@@ -3,9 +3,9 @@ import { revalidateTag } from 'next/cache'
 
 export const revalidateGlobal: GlobalAfterChangeHook = ({
   doc,
-  req: { payload },
+  req: { payload, url },
 }) => {
-  const globalSlug = doc._collection || ''
+  const globalSlug = url?.split('/globals/')?.[1]?.split('?')?.[0] || doc.globalType || ''
   payload.logger.info(`Revalidating global: ${globalSlug}`)
 
   revalidateTag(globalSlug)
