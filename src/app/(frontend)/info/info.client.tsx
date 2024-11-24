@@ -100,7 +100,7 @@ export default function InfoClient(info: Info) {
     <PageWrapper className={style.info}>
       <div className={style.selfie}>
         <h1 className={style.header}>
-          <SplitText>Info</SplitText>
+          <SplitText>{info.header}</SplitText>
         </h1>
         <Selfie />
       </div>

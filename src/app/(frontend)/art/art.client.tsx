@@ -9,7 +9,6 @@ import { SplitText } from '@/components/splitText'
 
 import { useState, useEffect, useRef } from 'react'
 import { Art } from '@payload-types'
-import { Media as MediaType } from '@payload-types'
 
 export default function ArtClient(page: Art) {
   const artwork = page.artworks
@@ -61,7 +60,7 @@ export default function ArtClient(page: Art) {
   return (
     <PageWrapper className={style.art} page="art">
       <h1 className={style.header}>
-        <SplitText>Art & Design</SplitText>
+        <SplitText>{page.header}</SplitText>
       </h1>
 
       <div dangerouslySetInnerHTML={{ __html: page.content_html ?? '' }} />

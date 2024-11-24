@@ -30,7 +30,7 @@ export default function DevClient(dev: Dev) {
   return (
     <PageWrapper className={style.dev}>
       <h1 className={style.header}>
-        <SplitText>Development</SplitText>
+        <SplitText>{dev.header}</SplitText>
       </h1>
 
       <div dangerouslySetInnerHTML={{ __html: dev.content_html || '' }} />
