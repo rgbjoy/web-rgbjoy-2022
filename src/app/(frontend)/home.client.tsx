@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import style from './home.module.scss'
 import PageWrapper from '@/components/pageWrapper'
-import { HomeData } from '@/models/types'
+import { Home as HomeType } from '@payload-types'
 
-export default function Home(home: HomeData) {
+export default function Home(home: HomeType) {
   return (
     <PageWrapper className={style.intro}>
       <h1>{home.header}</h1>
