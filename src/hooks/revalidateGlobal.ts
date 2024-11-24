@@ -1,5 +1,5 @@
 import type { GlobalAfterChangeHook } from 'payload'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 
 export const revalidateGlobal: GlobalAfterChangeHook = ({
   doc,
@@ -8,13 +8,11 @@ export const revalidateGlobal: GlobalAfterChangeHook = ({
   const globalSlug = url?.split('/globals/')?.[1]?.split('?')?.[0] || ''
   payload.logger.info(`Revalidating global: ${globalSlug}`)
 
-  revalidateTag(globalSlug)
-
-  // if (globalSlug === 'home') {
-  //   revalidatePath('/')
-  // } else {
-  //   revalidatePath(`/${globalSlug}`)
-  // }
+  if (globalSlug === 'home') {
+    revalidatePath('/')
+  } else {
+    revalidatePath(`/${globalSlug}`)
+  }
 
   return doc
 }
