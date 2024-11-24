@@ -4,6 +4,7 @@ import {
   HTMLConverterFeature,
   lexicalHTML,
 } from '@payloadcms/richtext-lexical'
+import { revalidateGlobal } from '../hooks/revalidateGlobal'
 
 export const Info: GlobalConfig = {
   slug: 'info',
@@ -19,6 +20,9 @@ export const Info: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal],
   },
   fields: [
     {

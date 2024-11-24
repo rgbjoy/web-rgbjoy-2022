@@ -12,8 +12,6 @@ import { slugField } from '@/fields/slug'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
-import { getServerSideURL } from '@/utilities/getURL'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
 const BlockHtmlConverter: HTMLConverter<SerializedBlockNode> = {
   converter({ node }) {
