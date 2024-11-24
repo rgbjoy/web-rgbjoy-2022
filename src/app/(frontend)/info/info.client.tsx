@@ -7,25 +7,10 @@ import style from './info.module.scss'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
-import { Info } from '@payload-types'
+import { Info, Media } from '@payload-types'
 
 export default function InfoClient(info: Info) {
-  const animationVariants = {
-    visible: { opacity: 1 },
-    hidden: { opacity: 0 },
-  }
 
-  const [loaded, setLoaded] = useState(false)
-  const animationControls = useAnimation()
-  useEffect(() => {
-    if (loaded) {
-      animationControls.start('visible')
-    }
-  }, [loaded, animationControls])
-
-  const handleImageLoad = () => {
-    setLoaded(true)
-  }
 
   const GetLinks = () => {
     return (
@@ -70,45 +55,54 @@ export default function InfoClient(info: Info) {
     )
   }
 
+  const Selfie = () => {
+    const [loaded, setLoaded] = useState(false)
+    const animationControls = useAnimation()
+    const animationVariants = {
+      visible: { opacity: 1 },
+      hidden: { opacity: 0 },
+    }
+
+    useEffect(() => {
+      if (loaded) {
+        animationControls.start('visible')
+      }
+    }, [loaded, animationControls])
+
+    const image = info.profileImage as Media
+
+    if (!image) {
+      return null
+    }
+
+    return (
+      <div className={style.selfieWrapper}>
+        <motion.div
+          initial={'hidden'}
+          animate={animationControls}
+          variants={animationVariants}
+          transition={{ ease: 'easeOut', duration: 1, delay: 1 }}
+        >
+          <Image
+            src={image.url ?? ''}
+            alt={image.alt ?? ''}
+            width={image.width ?? 0}
+            height={image.height ?? 0}
+            onLoad={() => setLoaded(true)}
+            priority
+          />
+        </motion.div>
+      </div>
+    )
+  }
+
   return (
     <PageWrapper className={style.info}>
       <div className={style.selfie}>
         <h1 className={style.header}>
           <SplitText>Info</SplitText>
         </h1>
-        <div className={style.selfieWrapper}>
-          <motion.div
-            initial={'hidden'}
-            animate={animationControls}
-            variants={animationVariants}
-            transition={{ ease: 'easeOut', duration: 1, delay: 1 }}
-          >
-            <Image
-              src={
-                typeof info.profileImage === 'object'
-                  ? (info.profileImage?.url ?? '')
-                  : ''
-              }
-              alt={
-                typeof info.profileImage === 'object'
-                  ? (info.profileImage?.alt ?? '')
-                  : ''
-              }
-              width={
-                typeof info.profileImage === 'object'
-                  ? (info.profileImage?.width ?? 0)
-                  : 0
-              }
-              height={
-                typeof info.profileImage === 'object'
-                  ? (info.profileImage?.height ?? 0)
-                  : 0
-              }
-              onLoad={handleImageLoad}
-              priority
-            />
-          </motion.div>
-        </div>
+        <Selfie />
       </div>
 
       <GetLinks />

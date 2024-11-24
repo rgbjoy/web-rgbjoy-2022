@@ -19,14 +19,6 @@ const nextConfig = {
       },
     },
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: process.env.REMOTE_HOSTNAME,
-      },
-    ],
-  },
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api', 'import'],

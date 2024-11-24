@@ -30,8 +30,6 @@ const Media = ({
     }
   }, [loaded, animationControls])
 
-  console.log('media', media)
-
   if (media.mimeType?.includes('video')) {
     return (
       <video
