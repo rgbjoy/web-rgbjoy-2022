@@ -19,7 +19,6 @@
       "@/pages/*": ["src/app/(frontend)/_pages/*"],
       "@/components/*": ["src/components/*"],
       "@/fields/*": ["src/fields/*"],
-      "@/models/*": ["src/models/*"],
       "@/utilities/*": ["src/utilities/*"],
       "@payload-config": ["./src/payload.config.ts"],
       "@payload-types": ["./src/payload-types.ts"]
