@@ -38,7 +38,6 @@ export default function ArtClient(page: Art) {
 
   const DoodleImage = ({
     media,
-    thumbnail = false,
     ...props
   }) => {
     const [hoverRef, isHovered] = useHover<HTMLDivElement>()
@@ -49,7 +48,7 @@ export default function ArtClient(page: Art) {
           <div
             className={`${style.thumbnail} ${isHovered ? style.hovered : ''}`}
           >
-            {media?.image && <Media media={media.image} thumbnail={thumbnail} />}
+            {media?.image && <Media media={media.image} thumbnail />}
           </div>
           <div className={style.caption}>{media?.title}</div>
         </LightBox>

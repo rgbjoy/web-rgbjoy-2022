@@ -10,14 +10,14 @@ export const Media: CollectionConfig = {
     imageSizes: [
       {
         name: 'thumbnail',
-        width: 400,
+        width: 300,
         height: 300,
         position: 'centre',
       },
       {
         name: 'card',
-        width: 768,
-        height: 1024,
+        width: 600,
+        height: 600,
         position: 'centre',
       },
       {

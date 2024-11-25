@@ -6,6 +6,7 @@ import PageWrapper from '@/components/pageWrapper'
 import { Home as HomeType } from '@payload-types'
 
 export default function Home(home: HomeType) {
+
   return (
     <PageWrapper className={style.intro}>
       <h1>{home.header}</h1>

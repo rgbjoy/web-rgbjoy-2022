@@ -29,6 +29,9 @@ importers:
       '@payloadcms/richtext-lexical':
         specifier: ^3.1.0
         version: 3.1.0(czukilo6g3r5xob4ic3mrhqhtm)
+      '@payloadcms/storage-s3':
+        specifier: ^3.1.0
+        version: 3.1.0(@vercel/blob@0.22.3)(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))
       '@payloadcms/storage-vercel-blob':
         specifier: ^3.1.0
         version: 3.1.0(@aws-sdk/client-s3@3.699.0)(@aws-sdk/lib-storage@3.699.0(@aws-sdk/client-s3@3.699.0))(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))
@@ -1370,6 +1373,12 @@ packages:
       payload: 3.1.0
       react: ^19.0.0 || ^19.0.0-rc-65a56d0e-20241020
       react-dom: ^19.0.0 || ^19.0.0-rc-65a56d0e-20241020
+
+  '@payloadcms/storage-s3@3.1.0':
+    resolution: {integrity: sha512-uiyPMihox7xn/4mwRKeqrKZ71X0qgrFdIHtNCwbVsDW8sgmWPa0Rbn46jDEkAFfUVAQddoEl7wUCbZGmLipClA==}
+    engines: {node: ^18.20.2 || >=20.9.0}
+    peerDependencies:
+      payload: 3.1.0
 
   '@payloadcms/storage-vercel-blob@3.1.0':
     resolution: {integrity: sha512-JifBCFAJPL9xolElVDxxeX8bNtioX6U5fb2n+Rie3xn5lkX8mGQRStqU+pePn6cMBNwqkltHWX79crayW73UAg==}
@@ -4303,8 +4312,8 @@ packages:
   truncate-utf8-bytes@1.0.2:
     resolution: {integrity: sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==}
 
-  ts-api-utils@1.4.0:
-    resolution: {integrity: sha512-032cPxaEKwM+GT3vA5JXNzIaizx388rhsSW79vGRNGXfRRAdEAn2mvk36PvK5HnOchyWZ7afLEXqYCvPCrzuzQ==}
+  ts-api-utils@1.4.1:
+    resolution: {integrity: sha512-5RU2/lxTA3YUZxju61HO2U6EoZLvBLtmV2mbTvqyu4a/7s7RmJPT+1YekhMVsQhznRWk/czIwDUg+V8Q9ZuG4w==}
     engines: {node: '>=16'}
     peerDependencies:
       typescript: '>=4.2.0'
@@ -6270,6 +6279,19 @@ snapshots:
       - supports-color
       - typescript
 
+  '@payloadcms/storage-s3@3.1.0(@vercel/blob@0.22.3)(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))':
+    dependencies:
+      '@aws-sdk/client-s3': 3.699.0
+      '@aws-sdk/lib-storage': 3.699.0(@aws-sdk/client-s3@3.699.0)
+      '@payloadcms/plugin-cloud-storage': 3.1.0(@aws-sdk/client-s3@3.699.0)(@aws-sdk/lib-storage@3.699.0(@aws-sdk/client-s3@3.699.0))(@vercel/blob@0.22.3)(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))
+      payload: 3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5)
+    transitivePeerDependencies:
+      - '@azure/abort-controller'
+      - '@azure/storage-blob'
+      - '@google-cloud/storage'
+      - '@vercel/blob'
+      - aws-crt
+
   '@payloadcms/storage-vercel-blob@3.1.0(@aws-sdk/client-s3@3.699.0)(@aws-sdk/lib-storage@3.699.0(@aws-sdk/client-s3@3.699.0))(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))':
     dependencies:
       '@payloadcms/plugin-cloud-storage': 3.1.0(@aws-sdk/client-s3@3.699.0)(@aws-sdk/lib-storage@3.699.0(@aws-sdk/client-s3@3.699.0))(@vercel/blob@0.22.3)(payload@3.1.0(bufferutil@4.0.8)(graphql@16.9.0)(monaco-editor@0.52.0)(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(typescript@5.7.2)(utf-8-validate@6.0.5))
@@ -6902,7 +6924,7 @@ snapshots:
       graphemer: 1.4.0
       ignore: 5.3.2
       natural-compare: 1.4.0
-      ts-api-utils: 1.4.0(typescript@5.7.2)
+      ts-api-utils: 1.4.1(typescript@5.7.2)
     optionalDependencies:
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -6932,7 +6954,7 @@ snapshots:
       '@typescript-eslint/utils': 8.15.0(eslint@9.15.0)(typescript@5.7.2)
       debug: 4.3.7
       eslint: 9.15.0
-      ts-api-utils: 1.4.0(typescript@5.7.2)
+      ts-api-utils: 1.4.1(typescript@5.7.2)
     optionalDependencies:
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -6949,7 +6971,7 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.5
       semver: 7.6.3
-      ts-api-utils: 1.4.0(typescript@5.7.2)
+      ts-api-utils: 1.4.1(typescript@5.7.2)
     optionalDependencies:
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -9712,7 +9734,7 @@ snapshots:
     dependencies:
       utf8-byte-length: 1.0.5
 
-  ts-api-utils@1.4.0(typescript@5.7.2):
+  ts-api-utils@1.4.1(typescript@5.7.2):
     dependencies:
       typescript: 5.7.2
 
