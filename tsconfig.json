@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@/pages/*": ["src/app/(frontend)/_pages/*"],
-      "@/components/*": ["src/components/*"],
+      "@/components/*": ["src/app/(frontend)/components/*"],
       "@/fields/*": ["src/fields/*"],
       "@/utilities/*": ["src/utilities/*"],
       "@payload-config": ["./src/payload.config.ts"],

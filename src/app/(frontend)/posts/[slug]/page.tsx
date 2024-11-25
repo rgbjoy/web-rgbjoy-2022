@@ -53,6 +53,7 @@ export default async function PostPage(props: PostPageProps) {
   const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({
     collection: 'posts',
+    draft: true,
     where: {
       slug: { equals: slug },
     },

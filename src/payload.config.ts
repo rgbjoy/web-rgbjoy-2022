@@ -1,6 +1,5 @@
 // storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -15,26 +14,36 @@ import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 
 // Globals
-//-- Site Settings
-import { Footer } from './globals/Footer'
 //-- Content
 import { Home } from './globals/Home'
 import { Info } from './globals/Info'
 import { Dev } from './globals/Dev'
 import { Art } from './globals/Art'
+//-- Site Settings
+import { Footer } from './globals/Footer'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    avatar: "default",
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Icon: "./components/Icon",
+        Logo: "./components/Logo",
+      },
+      beforeNavLinks: [
+        "./components/Admin#ViewSite"
+      ],
+    }
   },
   collections: [Users, Media, Posts],
-  globals: [Footer, Home, Info, Dev, Art],
+  globals: [Home, Info, Dev, Art, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

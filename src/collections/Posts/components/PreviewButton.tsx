@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Button, useDocumentInfo } from '@payloadcms/ui'
-import { getServerSideURL } from '@/utilities/getURL'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
 const PreviewButton: React.FC = () => {
@@ -20,7 +19,7 @@ const PreviewButton: React.FC = () => {
   })
 
   return (
-    <a target="_blank" href={`${getServerSideURL()}${path}`}>
+    <a target="_blank" href={`${path}`}>
       <Button>View Post</Button>
     </a>
   )
