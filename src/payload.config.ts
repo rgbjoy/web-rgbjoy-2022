@@ -50,11 +50,6 @@ export default buildConfig({
     s3Storage({
       collections: {
         media: true,
-        [Media.slug]: {
-          prefix: process.env.VERCEL_ENV === 'production'
-            ? undefined
-            : (process.env.VERCEL_ENV || 'development'),
-        },
       },
       bucket: process.env.S3_BUCKET || '',
       config: {
