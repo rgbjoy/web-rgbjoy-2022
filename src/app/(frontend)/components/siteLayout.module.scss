@@ -21,6 +21,10 @@
     font-size: 80%;
     display: flex;
     justify-content: space-around;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
 
     position: absolute;
     top: 50%;
@@ -104,11 +108,6 @@
 
 .menuOpen {
   .header_inner {
-    padding: 20px 0;
-    backdrop-filter: blur(8px) !important;
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    height: 230px !important;
-
     nav {
       display: flex;
       flex-direction: column;

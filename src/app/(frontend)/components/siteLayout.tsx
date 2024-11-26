@@ -30,22 +30,6 @@ const Footer = ({ footerLinks }) => {
 const SiteLayout = ({ children, homeData, footerData, postsData }) => {
   const pathname = usePathname()
 
-  const [isScrolled, setIsScrolled] = useState(false)
-  const innerVariants = {
-    scrolled: {
-      height: '60px',
-      borderBottom: '1px dotted',
-      borderColor: 'rgba(0, 0, 0, 0.5)',
-      backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    },
-    notScrolled: {
-      height: '100%',
-      borderBottom: '1px dotted',
-      borderColor: 'rgba(0, 0, 0, 0)',
-      backgroundColor: 'rgba(0, 0, 0, 0)',
-    },
-  }
-
   // hamburger
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement | null>(null)
@@ -59,35 +43,21 @@ const SiteLayout = ({ children, homeData, footerData, postsData }) => {
     setIsMenuOpen(false)
   }
 
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsMenuOpen(false)
-    }
-  }
-
   useEffect(() => {
-    const handleScroll = () => {
-      const header = document.getElementById('header')
-      if (header) {
-        const headerHeight = header.offsetHeight
-        const scrollY = window.scrollY
-
-        if (scrollY > headerHeight) {
-          setIsScrolled(true)
-        } else {
-          setIsScrolled(false)
-        }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    window.addEventListener('scroll', handleScroll)
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
-      window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [isMenuOpen])
 
   const links = [
     { label: '/', path: '/', targetSegment: null, color: null },
@@ -123,21 +93,12 @@ const SiteLayout = ({ children, homeData, footerData, postsData }) => {
       {children}
 
       <div
+        ref={menuRef}
         id="header"
         className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
       >
-        <motion.div
-          variants={innerVariants}
-          initial="notScrolled"
-          animate={isScrolled ? 'scrolled' : 'notScrolled'}
-          transition={{
-            duration: 0.25,
-            ease: 'easeInOut',
-          }}
-          className={style.header_inner}
-          ref={menuRef}
-        >
-          <button
+        <div className={style.header_inner}>
+        <button
             onClick={toggleMenu}
             type="button"
             className={style.hamburgerMenu}
@@ -151,7 +112,7 @@ const SiteLayout = ({ children, homeData, footerData, postsData }) => {
               )
             )}
           </nav>
-        </motion.div>
+        </div>
       </div>
 
       <motion.footer id="footer" className={style.footer}>

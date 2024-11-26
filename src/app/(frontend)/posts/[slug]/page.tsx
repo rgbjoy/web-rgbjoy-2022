@@ -54,6 +54,8 @@ export default async function PostPage(props: PostPageProps) {
   const { docs } = await payload.find({
     collection: 'posts',
     draft: true,
+    limit: 1,
+    pagination: false,
     where: {
       slug: { equals: slug },
     },
