@@ -46,6 +46,11 @@ export const Info: GlobalConfig = {
         singular: 'Link',
         plural: 'Links',
       },
+      admin: {
+        components: {
+          RowLabel: "../components/RowLabel",
+        },
+      },
       fields: [
         {
           name: 'link',
@@ -96,6 +101,11 @@ export const Info: GlobalConfig = {
       labels: {
         singular: 'Strength Section',
         plural: 'Strength Sections',
+      },
+      admin: {
+        components: {
+          RowLabel: "../components/RowLabel",
+        },
       },
       fields: [
         {

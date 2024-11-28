@@ -54,7 +54,7 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.5.7",
     "@payloadcms/eslint-config": "^1.1.1",
-    "@types/node": "^20.17.8",
+    "@types/node": "^20.17.9",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "@types/three": "^0.160.0",

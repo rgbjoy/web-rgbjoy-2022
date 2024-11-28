@@ -50,6 +50,11 @@ export const Dev: GlobalConfig = {
         singular: 'Project',
         plural: 'Projects',
       },
+      admin: {
+        components: {
+          RowLabel: "../components/RowLabel",
+        },
+      },
       fields: [
         {
           name: 'title',
