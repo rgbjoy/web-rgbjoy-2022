@@ -47,6 +47,11 @@ export const Art: GlobalConfig = {
         singular: 'Artwork',
         plural: 'Artworks',
       },
+      admin: {
+        components: {
+          RowLabel: '../components/RowLabel',
+        },
+      },
       fields: [
         {
           name: 'title',

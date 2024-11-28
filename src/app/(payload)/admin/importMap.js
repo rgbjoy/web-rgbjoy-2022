@@ -23,6 +23,7 @@ import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { SlugComponent as SlugComponent_92cc057d0a2abb4f6cf0307edf59f986 } from '@/fields/slug/SlugComponent'
 import { default as default_0178af152175f0728228bd508cecc73b } from 'src/collections/Posts/components/PreviewButton'
+import { default as default_f6fa31600589c439dc5bdb3e586c17dd } from 'src/components/RowLabel'
 import { default as default_32d15b2b13e1e9f604c74e03d9ff8022 } from 'src/components/Icon'
 import { default as default_2396ffa5fcb8566707b31b0d1917b213 } from 'src/components/Logo'
 import { ViewSite as ViewSite_a7f73283a2b8e8816e4ad6699db030e3 } from 'src/components/Admin'
@@ -53,6 +54,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/fields/slug/SlugComponent#SlugComponent": SlugComponent_92cc057d0a2abb4f6cf0307edf59f986,
   "/collections/Posts/components/PreviewButton#default": default_0178af152175f0728228bd508cecc73b,
+  "../components/RowLabel#default": default_f6fa31600589c439dc5bdb3e586c17dd,
   "./components/Icon#default": default_32d15b2b13e1e9f604c74e03d9ff8022,
   "./components/Logo#default": default_2396ffa5fcb8566707b31b0d1917b213,
   "./components/Admin#ViewSite": ViewSite_a7f73283a2b8e8816e4ad6699db030e3
