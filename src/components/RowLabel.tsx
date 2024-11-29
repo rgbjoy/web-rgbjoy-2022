@@ -2,9 +2,15 @@
 
 import { useRowLabel } from '@payloadcms/ui'
 
+interface DataType {
+  title?: string
+  [key: string]: { title?: string } | string | undefined
+}
+
 export default function RowLabel() {
-  const { data, rowNumber} = useRowLabel<{ title?: string }>()
-  // if data title is a child of a group, return the title
-  const title = data.title || Object.values(data).find(val => val?.title)?.title || rowNumber
+  const { data, rowNumber } = useRowLabel<DataType>()
+  const title = data.title || Object.values(data).find((val): val is { title: string } =>
+    typeof val === 'object' && val !== null && 'title' in val
+  )?.title || rowNumber
   return <div>{title || rowNumber}</div>
 }
