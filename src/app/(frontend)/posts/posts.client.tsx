@@ -16,7 +16,7 @@ export default function Posts({ posts }: { posts: Post[] }) {
       {posts.map((node) => {
         return (
           <div key={node.slug}>
-            <p className={style.date}>{formatDate(node.createdAt)}</p>
+            <p className={style.date}>{node.publishedAt ? formatDate(node.publishedAt) : ''}</p>
             <Link
               className={`underline ${style.postLink}`}
               href={`/posts/${node.slug}`}

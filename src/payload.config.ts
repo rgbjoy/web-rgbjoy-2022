@@ -1,5 +1,4 @@
-// storage-adapter-import-placeholder
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -34,8 +33,8 @@ export default buildConfig({
     },
     components: {
       graphics: {
-        Icon: "./components/Icon",
-        Logo: "./components/Logo",
+        Icon: "./graphics/Icon",
+        Logo: "./graphics/Logo",
       },
       beforeNavLinks: [
         "./components/Admin#ViewSite"
@@ -49,10 +48,8 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.POSTGRES_URL || '',
-    },
+  db: mongooseAdapter({
+    url: process.env.MONGO_URI || '',
   }),
   sharp,
   plugins: [

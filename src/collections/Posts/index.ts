@@ -41,7 +41,7 @@ export const Posts: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    defaultColumns: ['title', 'slug', 'updatedAt', 'publishedAt'],
     useAsTitle: 'title',
     preview: () => null,
     components: {
