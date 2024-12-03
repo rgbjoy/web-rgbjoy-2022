@@ -28,7 +28,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   globals: {
     home: Home;
@@ -76,7 +76,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -93,7 +93,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -138,8 +138,8 @@ export interface Media {
  * via the `definition` "posts".
  */
 export interface Post {
-  id: string;
-  featuredImage?: (string | null) | Media;
+  id: number;
+  featuredImage?: (number | null) | Media;
   title: string;
   publishedAt?: string | null;
   contentRichText?: {
@@ -169,24 +169,24 @@ export interface Post {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'posts';
-        value: string | Post;
+        value: number | Post;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -196,10 +196,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -219,7 +219,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -345,7 +345,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "home".
  */
 export interface Home {
-  id: string;
+  id: number;
   header?: string | null;
   subhead?: string | null;
   intro?: string | null;
@@ -358,9 +358,9 @@ export interface Home {
  * via the `definition` "info".
  */
 export interface Info {
-  id: string;
+  id: number;
   header?: string | null;
-  profileImage?: (string | null) | Media;
+  profileImage?: (number | null) | Media;
   links?:
     | {
         link: {
@@ -401,7 +401,7 @@ export interface Info {
  * via the `definition` "dev".
  */
 export interface Dev {
-  id: string;
+  id: number;
   header?: string | null;
   content?: {
     root: {
@@ -437,7 +437,7 @@ export interface Dev {
  * via the `definition` "art".
  */
 export interface Art {
-  id: string;
+  id: number;
   header?: string | null;
   content?: {
     root: {
@@ -458,7 +458,7 @@ export interface Art {
   artworks?:
     | {
         title: string;
-        image: string | Media;
+        image: number | Media;
         description?: string | null;
         id?: string | null;
       }[]
@@ -471,7 +471,7 @@ export interface Art {
  * via the `definition` "footer".
  */
 export interface Footer {
-  id: string;
+  id: number;
   links?:
     | {
         label?: string | null;

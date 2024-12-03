@@ -99,7 +99,7 @@ export default async function PostPage(props: PostPageProps) {
       )}
       <h2 className={style.title}>{data.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>
-        {formatDate(data.publishedAt ?? '')}
+        {formatDate(data.createdAt)}
       </h3>
       <div className={style.content}>{contentParsed}</div>
       <span>← </span>

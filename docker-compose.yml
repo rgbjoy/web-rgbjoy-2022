@@ -1,8 +1,16 @@
+version: '3.8'
 services:
-  mongodb:
-    image: mongodb/mongodb-community-server:6.0.11-ubi9
+  db:
+    image: postgres:15
+    restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=rgbjoy
-      - MONGO_INITDB_ROOT_PASSWORD=password
+      - POSTGRES_USER=rgbjoy
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=web-rgbjoy-2022
     ports:
-      - "27017:27017"
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
