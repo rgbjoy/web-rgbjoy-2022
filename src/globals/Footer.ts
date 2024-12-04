@@ -25,14 +25,19 @@ export const Footer: GlobalConfig = {
       type: 'array',
       label: 'Links',
       minRows: 1,
-      maxRows: 10,
+      maxRows: 4,
       labels: {
         singular: 'Link',
         plural: 'Links',
       },
+      admin: {
+        components: {
+          RowLabel: '../components/RowLabel',
+        },
+      },
       fields: [
         {
-          name: 'label',
+          name: 'title',
           type: 'text',
         },
         {

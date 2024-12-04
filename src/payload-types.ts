@@ -474,7 +474,7 @@ export interface Footer {
   id: number;
   links?:
     | {
-        label?: string | null;
+        title?: string | null;
         link?: string | null;
         id?: string | null;
       }[]
@@ -578,7 +578,7 @@ export interface FooterSelect<T extends boolean = true> {
   links?:
     | T
     | {
-        label?: T;
+        title?: T;
         link?: T;
         id?: T;
       };
