@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import style from './siteLayout.module.scss'
+import style from '../siteLayout.module.scss'
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 
 export default function NavLink({

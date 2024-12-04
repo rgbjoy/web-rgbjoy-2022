@@ -8,7 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 
-import SiteLayout from '@/components/siteLayout'
+import SiteLayout from './siteLayout'
 import { use } from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'

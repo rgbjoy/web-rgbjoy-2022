@@ -5,10 +5,10 @@ import { motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import style from './siteLayout.module.scss'
-import NavLink from './navLink'
-import TerminalOverlay from './TerminalOverlay'
+import NavLink from '@/components/navLink'
+import TerminalOverlay from '@/components/TerminalOverlay'
 
-const DynamicBackground = dynamic(() => import('./background/background'), {
+const DynamicBackground = dynamic(() => import('@/components/background/background'), {
   loading: () => <div className="loading">...</div>,
   ssr: false,
 })
@@ -18,8 +18,8 @@ const Footer = ({ footerLinks }) => {
     <div className={style.footerWrapper}>
       <div className={style.footerLinks}>
         {footerLinks.map((item) => (
-          <a key={item.label} target="_blank" rel="noreferrer" href={item.link}>
-            {item.label}
+          <a key={item.title} target="_blank" rel="noreferrer" href={item.link}>
+            {item.title}
           </a>
         ))}
       </div>
