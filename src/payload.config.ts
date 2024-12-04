@@ -7,6 +7,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { resendAdapter } from '@payloadcms/email-resend'
 import sharp from 'sharp'
+import { getServerSideURL } from './utilities/getURL'
 
 // Collections
 import { Users } from './collections/Users'
@@ -24,6 +25,9 @@ import { Footer } from './globals/Footer'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// test db connection first
+
 
 export default buildConfig({
   admin: {
@@ -45,13 +49,14 @@ export default buildConfig({
   collections: [Users, Media, Posts],
   globals: [Home, Info, Dev, Art, Footer],
   editor: lexicalEditor(),
+  cors: [getServerSideURL()].filter(Boolean),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.SUPABASE_URL || process.env.DATABASE_URL,
+      connectionString: process.env.NODE_ENV === "development" ? process.env.DATABASE_DEVELOPMENT : process.env.DATABASE_PRODUCTION,
     },
   }),
   sharp,

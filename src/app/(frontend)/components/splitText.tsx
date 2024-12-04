@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 
 export function SplitText({ children }) {
+  if (!children) return null
   return children.split('').map((letter, i) => {
     return (
       <div
