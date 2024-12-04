@@ -60,41 +60,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const getPosts = async () => {
+  const getData = async () => {
     const payload = await getPayload({
       config: configPromise,
     })
 
-    const data = await payload.find({
-      collection: 'posts',
-    })
-    return data
+    const [posts, footer, home] = await Promise.all([
+      payload.find({
+        collection: 'posts',
+      }),
+      payload.findGlobal({
+        slug: 'footer',
+      }),
+      payload.findGlobal({
+        slug: 'home',
+      })
+    ])
+
+    return { posts, footer, home }
   }
-  const postsData = use(getPosts())
 
-  const getFooter = async () => {
-    const payload = await getPayload({
-      config: configPromise,
-    })
-
-    const data = await payload.findGlobal({
-      slug: 'footer',
-    })
-    return data
-  }
-  const footerData = use(getFooter())
-
-  const getHome = async () => {
-    const payload = await getPayload({
-      config: configPromise,
-    })
-
-    const data = await payload.findGlobal({
-      slug: 'home',
-    })
-    return data
-  }
-  const homeData = use(getHome())
+  const { posts: postsData, footer: footerData, home: homeData } = use(getData())
 
   return (
     <html lang="en">
