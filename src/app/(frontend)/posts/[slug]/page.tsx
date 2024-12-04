@@ -61,13 +61,13 @@ export default async function PostPage(props: PostPageProps) {
     },
   })
 
-  const data = docs?.[0]
+  const post = docs?.[0] || null
 
-  if (!data) {
+  if (!post) {
     return notFound()
   }
 
-  const contentParsed = parse(data.contentRichText_html || '', {
+  const contentParsed = parse(post.contentRichText_html || '', {
     replace: replaceTags,
   })
 
@@ -77,29 +77,29 @@ export default async function PostPage(props: PostPageProps) {
       <Link className="underline" href="/posts">
         Back to posts
       </Link>
-      {data.featuredImage && (
+      {post.featuredImage && (
         <ImageWithShimmer
         imageUrl={
-            typeof data.featuredImage === 'object'
-              ? (data.featuredImage?.url ?? '')
+            typeof post.featuredImage === 'object'
+              ? (post.featuredImage?.url ?? '')
               : ''
           }
-          post={data.title}
+          post={post.title}
           imageWidth={
-            typeof data.featuredImage === 'object'
-              ? (data.featuredImage?.width ?? 0)
+            typeof post.featuredImage === 'object'
+              ? (post.featuredImage?.width ?? 0)
               : 0
           }
           imageHeight={
-            typeof data.featuredImage === 'object'
-              ? (data.featuredImage?.height ?? 0)
+            typeof post.featuredImage === 'object'
+              ? (post.featuredImage?.height ?? 0)
               : 0
           }
        />
       )}
-      <h2 className={style.title}>{data.title}</h2>
+      <h2 className={style.title}>{post.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>
-        {formatDate(data.createdAt)}
+        {formatDate(post.createdAt)}
       </h3>
       <div className={style.content}>{contentParsed}</div>
       <span>← </span>

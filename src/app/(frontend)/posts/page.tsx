@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   description: 'Multidisciplinary digital creator & software engineer',
 }
 
-export const revalidate = 3600
-
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({
     collection: 'posts',
+    depth: 1,
+    limit: 12,
     where: {
       _status: { equals: 'published' },
     },
