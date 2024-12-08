@@ -28,23 +28,20 @@ const dirname = path.dirname(filename)
 
 // test db connection first
 
-
 export default buildConfig({
   admin: {
-    avatar: "default",
+    avatar: 'default',
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
     components: {
       graphics: {
-        Icon: "./components/Icon",
-        Logo: "./components/Logo",
+        Icon: './components/Icon',
+        Logo: './components/Logo',
       },
-      beforeNavLinks: [
-        "./components/Admin#ViewSite"
-      ],
-    }
+      beforeNavLinks: ['./components/Admin#ViewSite'],
+    },
   },
   collections: [Users, Media, Posts],
   globals: [Home, Info, Dev, Art, Footer],

@@ -64,12 +64,8 @@ const RandomShard = ({ position, color = '#FF0000' }) => {
 
   const rotation = useMemo(
     () =>
-      new THREE.Euler(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI
-      ),
-    []
+      new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
+    [],
   )
 
   const materialArgs = {
@@ -103,9 +99,7 @@ const getUniqueVertices = (geometry) => {
     const key = `${positions[i]},${positions[i + 1]},${positions[i + 2]}`
     if (!uniqueVerticesSet.has(key)) {
       uniqueVerticesSet.add(key)
-      uniqueVertices.push(
-        new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2])
-      )
+      uniqueVertices.push(new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]))
     }
   }
   return uniqueVertices
@@ -118,22 +112,14 @@ const Shards = () => {
 
   useFrame(() => {
     setTargetScale(
-      THREE.MathUtils.lerp(
-        targetScale,
-        state.scale,
-        targetScale <= state.scale ? 0.02 : 0.01
-      )
+      THREE.MathUtils.lerp(targetScale, state.scale, targetScale <= state.scale ? 0.02 : 0.01),
     )
   })
 
   const geometry = new THREE.IcosahedronGeometry(targetScale, 0)
   const uniqueVertices = getUniqueVertices(geometry)
   const shards = uniqueVertices.map((vertex, i) => (
-    <RandomShard
-      key={i}
-      position={vertex}
-      color={shardColors[i % shardColors.length]}
-    />
+    <RandomShard key={i} position={vertex} color={shardColors[i % shardColors.length]} />
   ))
 
   return <group ref={groupRef}>{shards}</group>
@@ -239,10 +225,8 @@ const ModelInfo = () => {
       const scrollThreshold = 0.1
 
       if (scroll.offset > scrollThreshold) {
-        const adjustedScrollOffset =
-          (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold)
-        actions.animation_0.time =
-          actions.animation_0.getClip().duration * adjustedScrollOffset
+        const adjustedScrollOffset = (scroll.offset * 1 - scrollThreshold) / (1 - scrollThreshold)
+        actions.animation_0.time = actions.animation_0.getClip().duration * adjustedScrollOffset
       }
     }
   })
@@ -261,11 +245,7 @@ const ModelInfo = () => {
       <mesh
         name="Torus"
         geometry={(nodes.Torus as THREE.Mesh).geometry}
-        position={[
-          nodes.Torus.position.x,
-          nodes.Torus.position.y,
-          nodes.Torus.position.z,
-        ]}
+        position={[nodes.Torus.position.x, nodes.Torus.position.y, nodes.Torus.position.z]}
       >
         <meshPhysicalMaterial
           emissive={'red'}
@@ -401,8 +381,7 @@ const RigPages = ({ page }) => {
     }
 
     if (anchorDev.current && sectionDev.current) {
-      anchorDev.current.position.y =
-        sectionDev.current.position.y + 2 - height / 2
+      anchorDev.current.position.y = sectionDev.current.position.y + 2 - height / 2
     }
 
     if (anchorArt.current && sectionArt.current) {
@@ -498,8 +477,8 @@ const HomeHTML = ({ homeData, router }: { homeData: Home; router: any }) => {
       <div className={style.sections} style={{ height: clientHeight }}>
         <div className={style.info}>
           <h2>
-            &ldquo;The only Zen you can find on the tops of mountains is the Zen
-            you bring up there.&rdquo;
+            &ldquo;The only Zen you can find on the tops of mountains is the Zen you bring up
+            there.&rdquo;
           </h2>
           <a className="btn" onClick={() => handleNavigation('/info')}>
             About me
@@ -528,8 +507,7 @@ const HomeHTML = ({ homeData, router }: { homeData: Home; router: any }) => {
   )
 }
 
-const useQueryParams = () =>
-  useMemo(() => new URLSearchParams(window.location.search), [])
+const useQueryParams = () => useMemo(() => new URLSearchParams(window.location.search), [])
 
 const Background = ({ pathname, router, homeData }) => {
   const searchParams = useQueryParams()
@@ -564,10 +542,7 @@ const Background = ({ pathname, router, homeData }) => {
       >
         {showStats && <StatsGl />}
 
-        <PerformanceMonitor
-          onDecline={() => setDpr(0.5)}
-          onIncline={() => setDpr(1)}
-        />
+        <PerformanceMonitor onDecline={() => setDpr(0.5)} onIncline={() => setDpr(1)} />
 
         <color attach="background" args={['#000000']} />
 

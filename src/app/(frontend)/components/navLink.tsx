@@ -2,13 +2,7 @@ import Link from 'next/link'
 import style from '../siteLayout.module.scss'
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 
-export default function NavLink({
-  label,
-  path,
-  targetSegment,
-  color,
-  closeMenu,
-}) {
+export default function NavLink({ label, path, targetSegment, color, closeMenu }) {
   const activeSegment = useSelectedLayoutSegment()
   const pathname = usePathname()
   const paths = pathname?.split('/').filter((a) => a.length > 0).length

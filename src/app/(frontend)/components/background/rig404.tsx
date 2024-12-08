@@ -22,9 +22,7 @@ const Rig404 = () => {
     const colors = ['rgb(255, 0, 0)', 'rgb(0, 255, 0)', 'rgb(0, 0, 255)']
     if (refMesh.current) {
       for (let i = 0; i < COUNT; i++) {
-        const color = new THREE.Color(
-          colors[Math.floor(Math.random() * colors.length)]
-        )
+        const color = new THREE.Color(colors[Math.floor(Math.random() * colors.length)])
         refMesh.current!.setColorAt(i, color)
         refMesh.current!.instanceColor!.needsUpdate = true
       }
@@ -45,11 +43,7 @@ const Rig404 = () => {
       const z = radius * Math.cos(phi)
       instances.push({
         key: `instance_${i}}`,
-        position: [
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-        ],
+        position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
         collisionGroups: interactionGroups(1),
       })
     }
@@ -59,16 +53,8 @@ const Rig404 = () => {
 
   return (
     <Physics gravity={[0, 0, 0]}>
-      <InstancedRigidBodies
-        ref={rigidBodies}
-        instances={instances}
-        colliders="ball"
-      >
-        <instancedMesh
-          ref={refMesh}
-          args={[undefined, undefined, COUNT]}
-          count={COUNT}
-        >
+      <InstancedRigidBodies ref={rigidBodies} instances={instances} colliders="ball">
+        <instancedMesh ref={refMesh} args={[undefined, undefined, COUNT]} count={COUNT}>
           <sphereGeometry args={[0.1]} />
           <meshBasicMaterial
             side={THREE.DoubleSide}
@@ -77,11 +63,7 @@ const Rig404 = () => {
             transparent={true}
             toneMapped={false}
           />
-          <Attractor
-            strength={-0.01}
-            range={0.45}
-            collisionGroups={interactionGroups(0, 1)}
-          />
+          <Attractor strength={-0.01} range={0.45} collisionGroups={interactionGroups(0, 1)} />
         </instancedMesh>
       </InstancedRigidBodies>
 

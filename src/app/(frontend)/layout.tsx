@@ -55,11 +55,7 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const getData = async () => {
     const payload = await getPayload({
       config: configPromise,
@@ -74,7 +70,7 @@ export default function RootLayout({
       }),
       payload.findGlobal({
         slug: 'home',
-      })
+      }),
     ])
 
     return { posts, footer, home }
@@ -85,11 +81,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} ${myFont.variable}`}>
-        <SiteLayout
-          homeData={homeData}
-          footerData={footerData}
-          postsData={postsData}
-        >
+        <SiteLayout homeData={homeData} footerData={footerData} postsData={postsData}>
           {children}
         </SiteLayout>
         <SpeedInsights />

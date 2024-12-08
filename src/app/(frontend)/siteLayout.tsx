@@ -77,9 +77,7 @@ const SiteLayout = ({ children, homeData, footerData, postsData }) => {
     },
   ]
 
-  const isNotFound = !links.some(
-    (link) => link.path === '/' + pathname.split('/')[1]
-  )
+  const isNotFound = !links.some((link) => link.path === '/' + pathname.split('/')[1])
   const router = useRouter()
 
   return (
@@ -98,18 +96,14 @@ const SiteLayout = ({ children, homeData, footerData, postsData }) => {
         className={`${style.header} ${isMenuOpen ? style.menuOpen : ''}`}
       >
         <div className={style.header_inner}>
-        <button
-            onClick={toggleMenu}
-            type="button"
-            className={style.hamburgerMenu}
-          >
+          <button onClick={toggleMenu} type="button" className={style.hamburgerMenu}>
             {isMenuOpen ? `- Close` : `+ Menu`}
           </button>
           <nav>
             {links.map((l, i) =>
               pathname === '/' && l.path === '/' ? null : (
                 <NavLink key={i} {...l} closeMenu={closeMenu} />
-              )
+              ),
             )}
           </nav>
         </div>

@@ -4,10 +4,7 @@ export function SplitText({ children }) {
   if (!children) return null
   return children.split('').map((letter, i) => {
     return (
-      <div
-        key={children + i}
-        style={{ display: 'inline-block', overflow: 'hidden' }}
-      >
+      <div key={children + i} style={{ display: 'inline-block', overflow: 'hidden' }}>
         <motion.div
           initial={{ opacity: 0, y: '100%' }}
           animate="visible"

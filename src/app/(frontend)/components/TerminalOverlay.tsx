@@ -129,10 +129,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
       if (currentDirectory.startsWith('Posts/')) {
         setOutput([...newOutput, ''])
       } else if (currentDirectory === 'Posts') {
-        setOutput([
-          ...newOutput,
-          `${posts.map((post) => post.slug).join('\t')}`,
-        ])
+        setOutput([...newOutput, `${posts.map((post) => post.slug).join('\t')}`])
       } else {
         setOutput([...newOutput, `Info\tDev\tArt\tPosts`])
       }
@@ -223,10 +220,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
     } else if (input.trim() === 'exit') {
       setIsOpen(false)
     } else if (input.trim() === 'blackjack stats') {
-      setOutput([
-        ...newOutput,
-        `Blackjack Stats: Wins - ${wins}, Losses - ${losses}`,
-      ])
+      setOutput([...newOutput, `Blackjack Stats: Wins - ${wins}, Losses - ${losses}`])
     } else if (input.trim() === 'blackjack clear') {
       updateWins(0)
       updateLosses(0)
@@ -259,9 +253,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
       if (match) {
         const prefix = match[1] || ''
         const dirInput = match[2]
-        const matchingDirs = directories.filter((dir) =>
-          dir?.startsWith(dirInput)
-        )
+        const matchingDirs = directories.filter((dir) => dir?.startsWith(dirInput))
 
         if (matchingDirs.length === 1) {
           setInput(`${prefix}${matchingDirs[0]}`)
@@ -285,10 +277,7 @@ blackjack <option>\tstart blackjack. Options: 'stats' to view stats, 'clear' to 
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
-      if (
-        inputRef.current &&
-        !(inputRef.current as Node).contains(e.target as Node)
-      ) {
+      if (inputRef.current && !(inputRef.current as Node).contains(e.target as Node)) {
         e.preventDefault()
         inputRef.current.focus()
       }

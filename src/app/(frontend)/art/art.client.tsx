@@ -36,18 +36,13 @@ export default function ArtClient(page: Art) {
     return [ref, value]
   }
 
-  const DoodleImage = ({
-    media,
-    ...props
-  }) => {
+  const DoodleImage = ({ media, ...props }) => {
     const [hoverRef, isHovered] = useHover<HTMLDivElement>()
 
     return (
       <div {...props} ref={hoverRef} className={style.media}>
         <LightBox media={media}>
-          <div
-            className={`${style.thumbnail} ${isHovered ? style.hovered : ''}`}
-          >
+          <div className={`${style.thumbnail} ${isHovered ? style.hovered : ''}`}>
             {media?.image && <Media media={media.image} thumbnail />}
           </div>
           <div className={style.caption}>{media?.title}</div>
@@ -69,9 +64,7 @@ export default function ArtClient(page: Art) {
         columnClassName={style['my-masonry-grid_column']}
       >
         {artwork?.map((item, i) => {
-          return item.image && (
-            <DoodleImage key={'media' + i} media={item} />
-          )
+          return item.image && <DoodleImage key={'media' + i} media={item} />
         })}
       </Masonry>
     </PageWrapper>

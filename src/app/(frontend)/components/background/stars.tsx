@@ -94,20 +94,13 @@ function Stars({ count = 50, startRadius = 2, canReset = true }) {
       const opacityIndex = i / 3
       let currentOpacity = opacity[opacityIndex]
 
-      if (
-        positions[i + 2] > -viewDistance &&
-        canReset &&
-        currentOpacity < maxOpacity
-      ) {
+      if (positions[i + 2] > -viewDistance && canReset && currentOpacity < maxOpacity) {
         currentOpacity += fadeSpeed
       } else if (!canReset) {
         currentOpacity -= fadeSpeed
       }
 
-      currentOpacity = Math.max(
-        minOpacity,
-        Math.min(maxOpacity, currentOpacity)
-      )
+      currentOpacity = Math.max(minOpacity, Math.min(maxOpacity, currentOpacity))
       opacity[opacityIndex] = currentOpacity
 
       if (positions[i + 2] >= 5) {

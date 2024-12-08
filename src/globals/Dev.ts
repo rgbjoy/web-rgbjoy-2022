@@ -1,9 +1,5 @@
 import { GlobalConfig } from 'payload'
-import {
-  lexicalEditor,
-  HTMLConverterFeature,
-  lexicalHTML,
-} from '@payloadcms/richtext-lexical'
+import { lexicalEditor, HTMLConverterFeature, lexicalHTML } from '@payloadcms/richtext-lexical'
 import { revalidateGlobal } from '../hooks/revalidateGlobal'
 
 export const Dev: GlobalConfig = {
@@ -35,10 +31,7 @@ export const Dev: GlobalConfig = {
       type: 'richText',
       label: 'Page Content',
       editor: lexicalEditor({
-        features: ({ defaultFeatures }) => [
-          ...defaultFeatures,
-          HTMLConverterFeature({}),
-        ],
+        features: ({ defaultFeatures }) => [...defaultFeatures, HTMLConverterFeature({})],
       }),
     },
     lexicalHTML('content', { name: 'content_html' }),
@@ -52,7 +45,7 @@ export const Dev: GlobalConfig = {
       },
       admin: {
         components: {
-          RowLabel: "../components/RowLabel",
+          RowLabel: '../components/RowLabel',
         },
       },
       fields: [

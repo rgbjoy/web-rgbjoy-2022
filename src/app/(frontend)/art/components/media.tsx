@@ -4,13 +4,7 @@ import { useEffect, useState } from 'react'
 import style from '../art.module.scss'
 import { Media as MediaType } from '@payload-types'
 
-const Media = ({
-  media,
-  thumbnail = false,
-}: {
-  media: MediaType
-  thumbnail?: boolean
-}) => {
+const Media = ({ media, thumbnail = false }: { media: MediaType; thumbnail?: boolean }) => {
   const animationVariants = {
     visible: {
       opacity: 1,
@@ -58,16 +52,8 @@ const Media = ({
                 ? media.sizes?.thumbnail?.url || ''
                 : media.url || media.sizes?.card?.url || ''
             }
-            width={
-              thumbnail
-                ? media.sizes?.thumbnail?.width || 300
-                : media.width || 300
-            }
-            height={
-              thumbnail
-                ? media.sizes?.thumbnail?.height || 300
-                : media.height || 300
-            }
+            width={thumbnail ? media.sizes?.thumbnail?.width || 300 : media.width || 300}
+            height={thumbnail ? media.sizes?.thumbnail?.height || 300 : media.height || 300}
             alt={media.alt}
             quality={thumbnail ? 75 : 100}
             onLoad={() => setLoaded(true)}

@@ -10,8 +10,6 @@ import { motion, useAnimation } from 'framer-motion'
 import { Info, Media } from '@payload-types'
 
 export default function InfoClient(info: Info) {
-
-
   const GetLinks = () => {
     return (
       <div className={style.links}>
@@ -21,12 +19,7 @@ export default function InfoClient(info: Info) {
 
           return (
             <span key={'links' + i}>
-              <a
-                className="underline"
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a className="underline" href={url} target="_blank" rel="noreferrer">
                 {title}
               </a>
               <span>{i < (info.links?.length || 0) - 1 ? ' • ' : ''}</span>

@@ -17,10 +17,7 @@ export default function Posts({ posts }: { posts: Post[] }) {
         return (
           <div key={node.slug}>
             <p className={style.date}>{formatDate(node.createdAt)}</p>
-            <Link
-              className={`underline ${style.postLink}`}
-              href={`/posts/${node.slug}`}
-            >
+            <Link className={`underline ${style.postLink}`} href={`/posts/${node.slug}`}>
               {node.title}
             </Link>
           </div>

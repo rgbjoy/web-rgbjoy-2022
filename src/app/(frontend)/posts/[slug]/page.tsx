@@ -30,10 +30,8 @@ const replaceTags = (node) => {
     // Handle p5js editor iframes
     if (node.attribs.src?.includes('editor.p5js.org')) {
       const parentDiv = node.parent
-      const width =
-        parentDiv?.attribs?.style?.match(/width:(\d+)px/)?.[1] || '400'
-      const baseHeight =
-        parentDiv?.attribs?.style?.match(/height:(\d+)px/)?.[1] || '400'
+      const width = parentDiv?.attribs?.style?.match(/width:(\d+)px/)?.[1] || '400'
+      const baseHeight = parentDiv?.attribs?.style?.match(/height:(\d+)px/)?.[1] || '400'
       const height = (parseInt(baseHeight) + 42).toString()
 
       return (
@@ -79,23 +77,13 @@ export default async function PostPage(props: PostPageProps) {
       </Link>
       {post.featuredImage && (
         <ImageWithShimmer
-        imageUrl={
-            typeof post.featuredImage === 'object'
-              ? (post.featuredImage?.url ?? '')
-              : ''
-          }
+          imageUrl={typeof post.featuredImage === 'object' ? (post.featuredImage?.url ?? '') : ''}
           post={post.title}
-          imageWidth={
-            typeof post.featuredImage === 'object'
-              ? (post.featuredImage?.width ?? 0)
-              : 0
-          }
+          imageWidth={typeof post.featuredImage === 'object' ? (post.featuredImage?.width ?? 0) : 0}
           imageHeight={
-            typeof post.featuredImage === 'object'
-              ? (post.featuredImage?.height ?? 0)
-              : 0
+            typeof post.featuredImage === 'object' ? (post.featuredImage?.height ?? 0) : 0
           }
-       />
+        />
       )}
       <h2 className={style.title}>{post.title}</h2>
       <h3 itemProp="datePublished" className={style.date}>
