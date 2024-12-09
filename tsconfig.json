@@ -1,35 +1,57 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
+    "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "esModuleInterop": true,
+    "incremental": true,
+    "jsx": "preserve",
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "sourceMap": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/pages/*": ["src/app/(frontend)/_pages/*"],
-      "@/components/*": ["src/app/(frontend)/components/*"],
-      "@/fields/*": ["src/fields/*"],
-      "@/utilities/*": ["src/utilities/*"],
-      "@payload-config": ["./src/payload.config.ts"],
-      "@payload-types": ["./src/payload-types.ts"]
-    },
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "paths": {
+      "@payload-config": [
+        "./src/payload.config.ts"
+      ],
+      "@payload-types": [
+        "./src/payload-types.ts"
+      ],
+      "react": [
+        "./node_modules/@types/react"
+      ],
+      "@/*": [
+        "./src/*",
+        "./src/app/*",
+        "./src/app/(frontend)/*",
+      ],
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "redirects.js",
+    "next.config.js",
+    "next-sitemap.config.cjs"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

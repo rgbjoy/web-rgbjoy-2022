@@ -2,7 +2,6 @@
 
 import * as THREE from 'three'
 import { Suspense, useState, useRef, useEffect, useMemo } from 'react'
-import { ResizeObserver } from '@juggle/resize-observer'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   Float,
@@ -534,7 +533,6 @@ const Background = ({ pathname, router, homeData }) => {
         className={`${style.background} ${page !== 'home' && style.disableScroll}`}
         camera={{ position: [0, 0, 5], fov: 50 }}
         dpr={dpr}
-        resize={{ polyfill: ResizeObserver }}
         gl={{
           antialias: false,
           toneMapping: THREE.ACESFilmicToneMapping,
