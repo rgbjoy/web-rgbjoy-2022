@@ -1,9 +1,7 @@
 import 'normalize.css/normalize.css'
 import './styles/global.scss'
 
-import { Analytics } from '@vercel/analytics/react'
 import { Viewport } from 'next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
@@ -84,8 +82,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteLayout homeData={homeData} footerData={footerData} postsData={postsData}>
           {children}
         </SiteLayout>
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   )
