@@ -4,7 +4,7 @@ export const ViewSite = () => {
   return (
     <div className="view-site-wrapper">
       <a
-        href={`${process.env.NEXT_PUBLIC_SERVER_URL}`}
+        href={`${process.env.SERVER_URL}`}
         target="_blank"
         rel="noopener noreferrer"
         style={{
