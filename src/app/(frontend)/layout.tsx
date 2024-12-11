@@ -1,9 +1,7 @@
 import 'normalize.css/normalize.css'
 import './styles/global.scss'
 
-import { Analytics } from '@vercel/analytics/react'
 import { Viewport } from 'next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
@@ -12,6 +10,8 @@ import SiteLayout from './siteLayout'
 import { use } from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
@@ -65,12 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       payload.find({
         collection: 'posts',
       }),
-      payload.findGlobal({
-        slug: 'footer',
-      }),
-      payload.findGlobal({
-        slug: 'home',
-      }),
+      getCachedGlobal('footer', 1)(),
+      getCachedGlobal('home', 1)(),
     ])
 
     return { posts, footer, home }
@@ -84,8 +80,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteLayout homeData={homeData} footerData={footerData} postsData={postsData}>
           {children}
         </SiteLayout>
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   )

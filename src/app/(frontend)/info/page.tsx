@@ -1,7 +1,7 @@
 import InfoClient from './info.client'
 import { Metadata } from 'next'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Info } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Info',
@@ -9,13 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const payload = await getPayload({
-    config: configPromise,
-  })
+  const infoData = await getCachedGlobal('info', 0)()
 
-  const infoData = await payload.findGlobal({
-    slug: 'info',
-  })
-
-  return <InfoClient {...infoData} />
+  return <InfoClient {...infoData as Info} />
 }
