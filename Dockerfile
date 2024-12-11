@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Copy package manager files and install dependencies
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN ls -la /app
 RUN \
     if [ -f pnpm-lock.yaml ]; then \
     corepack enable pnpm && pnpm i --frozen-lockfile; \
