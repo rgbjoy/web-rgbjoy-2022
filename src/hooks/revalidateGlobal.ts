@@ -2,12 +2,10 @@ import type { GlobalAfterChangeHook } from 'payload'
 
 import { revalidateTag } from 'next/cache'
 
-export const revalidateGlobal: GlobalAfterChangeHook = ({ doc, req: { payload, context }, }) => {
-  if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating ${JSON.stringify(payload)} ${JSON.stringify(context)}`)
+export const revalidateGlobal: GlobalAfterChangeHook = ({ doc, req }) => {
+  const urlPart = req.url?.split('globals/')[1].split('?')[0] || ''
+  console.log('Extracted URL Part:', urlPart)
 
-    revalidateTag(`global_${doc.slug}`)
-  }
-
+  revalidateTag(`global_${urlPart}`)
   return doc
 }
