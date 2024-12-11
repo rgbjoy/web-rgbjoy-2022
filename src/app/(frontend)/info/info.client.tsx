@@ -9,20 +9,20 @@ import { useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { Info, Media } from '@payload-types'
 
-export default function InfoClient(info: Info) {
+export default function InfoClient(page: Info) {
   const GetLinks = () => {
     return (
       <div className={style.links}>
-        {info.links?.map((value, i) => {
-          const title = value.link.title
-          const url = value.link.url
+        {page.links?.map((value, i) => {
+          const title = value.link?.title || ''
+          const url = value.link?.url || ''
 
           return (
             <span key={'links' + i}>
               <a className="underline" href={url} target="_blank" rel="noreferrer">
                 {title}
               </a>
-              <span>{i < (info.links?.length || 0) - 1 ? ' • ' : ''}</span>
+              <span>{i < (page.links?.length || 0) - 1 ? ' • ' : ''}</span>
             </span>
           )
         })}
@@ -33,7 +33,7 @@ export default function InfoClient(info: Info) {
   const GetStrengths = () => {
     return (
       <div>
-        {info.strengths?.map((value, i) => {
+        {page.strengths?.map((value, i) => {
           const title = value.title
           const detail = value.strengthsList
 
@@ -62,7 +62,7 @@ export default function InfoClient(info: Info) {
       }
     }, [loaded, animationControls])
 
-    const image = info.profileImage as Media
+    const image = page?.profileImage as Media
 
     if (!image) {
       return null
@@ -93,14 +93,14 @@ export default function InfoClient(info: Info) {
     <PageWrapper className={style.info}>
       <div className={style.selfie}>
         <h1 className={style.header}>
-          <SplitText>{info.header}</SplitText>
+          <SplitText>{page.header}</SplitText>
         </h1>
         <Selfie />
       </div>
 
       <GetLinks />
 
-      <div dangerouslySetInnerHTML={{ __html: info.content_html || '' }} />
+      <div dangerouslySetInnerHTML={{ __html: page.content_html || '' }} />
 
       <Link className={`btn ${style.btn}`} href="/dev">
         See some work

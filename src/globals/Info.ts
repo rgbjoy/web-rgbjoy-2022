@@ -30,9 +30,7 @@ export const Info: GlobalConfig = {
       name: 'profileImage',
       type: 'upload',
       relationTo: 'media',
-      filterOptions: {
-        mimeType: { contains: 'image' },
-      },
+      label: 'Profile Image',
     },
     {
       name: 'links',
