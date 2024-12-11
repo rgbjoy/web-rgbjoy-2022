@@ -20,7 +20,9 @@ const nextConfig = {
     },
   },
   sassOptions: {
-    quietDeps: true,
+    compilerOptions: {
+      quietDeps: true,
+    },
     silenceDeprecations: ['legacy-js-api', 'import'],
   },
 }
