@@ -2,6 +2,7 @@ import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   expireTime: 3600,
   experimental: {
