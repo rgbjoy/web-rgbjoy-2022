@@ -11,6 +11,8 @@ import { use } from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
+import { getCachedGlobal } from '@/utilities/getGlobals'
+
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
   src: '../../../public/fonts/Rhode-Regular.woff2',
@@ -63,12 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       payload.find({
         collection: 'posts',
       }),
-      payload.findGlobal({
-        slug: 'footer',
-      }),
-      payload.findGlobal({
-        slug: 'home',
-      }),
+      getCachedGlobal('footer', 1)(),
+      getCachedGlobal('home', 1)(),
     ])
 
     return { posts, footer, home }

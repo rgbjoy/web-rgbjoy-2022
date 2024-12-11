@@ -1,7 +1,6 @@
 import ArtClient from './art.client'
 import { Metadata } from 'next'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 export const metadata: Metadata = {
   title: 'Art & Design',
@@ -9,13 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const payload = await getPayload({
-    config: configPromise,
-  })
-
-  const artData = await payload.findGlobal({
-    slug: 'art',
-  })
+  const artData = await getCachedGlobal('art', 1)()
 
   return <ArtClient {...artData} />
 }

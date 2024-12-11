@@ -1,7 +1,6 @@
 import DevClient from './dev.client'
 import { Metadata } from 'next'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 export const metadata: Metadata = {
   title: 'Development',
@@ -9,13 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const payload = await getPayload({
-    config: configPromise,
-  })
-
-  const devData = await payload.findGlobal({
-    slug: 'dev',
-  })
+  const devData = await getCachedGlobal('dev', 1)()
 
   return <DevClient {...devData} />
 }
+
+
