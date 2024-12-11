@@ -45,3 +45,18 @@ $cursorPointer:
     @content;
   }
 }
+
+@mixin link-hover-effect {
+  &::before {
+    transition: transform 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    background-color: white;
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  @media (hover: hover) {
+    &:hover::before {
+      transform: scaleX(0);
+    }
+  }
+}

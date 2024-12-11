@@ -23,6 +23,10 @@
     margin-bottom: $gutter;
     padding-bottom: $gutter;
     border-bottom: 1px dotted white;
+
+    a {
+      @include link-hover-effect;
+    }
   }
 
   iframe {
