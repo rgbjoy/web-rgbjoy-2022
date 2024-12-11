@@ -49,11 +49,11 @@ const Media = ({ media, thumbnail = false }: { media: MediaType; thumbnail?: boo
           <Image
             src={
               thumbnail
-                ? media.sizes?.thumbnail?.url || ''
+                ? media.sizes?.card?.url || ''
                 : media.url || media.sizes?.card?.url || ''
             }
-            width={thumbnail ? media.sizes?.thumbnail?.width || 300 : media.width || 300}
-            height={thumbnail ? media.sizes?.thumbnail?.height || 300 : media.height || 300}
+            width={thumbnail ? media.sizes?.card?.width || 300 : media.width || 300}
+            height={thumbnail ? media.sizes?.card?.height || 300 : media.height || 300}
             alt={media.alt}
             quality={thumbnail ? 75 : 100}
             onLoad={() => setLoaded(true)}
