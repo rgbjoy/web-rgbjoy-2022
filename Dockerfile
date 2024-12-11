@@ -23,7 +23,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN \
     if [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm run build; \
+    corepack enable pnpm && pnpm run migrate_build; \
     else \
     echo "Lockfile not found." && exit 1; \
     fi
