@@ -25,6 +25,10 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # Set the environment variable for the Payload config path
 ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
+ARG PAYLOAD_SECRET
+ARG DATABASE_URL
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Run migrations and build the app
 RUN corepack enable pnpm && pnpm run migrate && pnpm run build
