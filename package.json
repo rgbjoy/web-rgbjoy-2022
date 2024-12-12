@@ -24,6 +24,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@next/third-parties": "^15.1.0",
     "@payloadcms/db-postgres": "^3.6.0",
     "@payloadcms/email-resend": "^3.6.0",
     "@payloadcms/next": "^3.6.0",

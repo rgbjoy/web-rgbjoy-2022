@@ -12,6 +12,8 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { GoogleAnalytics } from '@next/third-parties/google'
+
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const myFont = localFont({
@@ -80,6 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteLayout homeData={homeData} footerData={footerData} postsData={postsData}>
           {children}
         </SiteLayout>
+        <GoogleAnalytics gaId="G-Y8MFXEHKYX" />
       </body>
     </html>
   )
