@@ -3,7 +3,6 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
   expireTime: 3600,
   experimental: {
     reactCompiler: false,
