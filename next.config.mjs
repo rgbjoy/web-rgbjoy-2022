@@ -3,9 +3,7 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 const nextConfig = {
   reactStrictMode: true,
-  expireTime: 3600,
   experimental: {
-    reactCompiler: false,
     turbo: {
       rules: {
         '*.module.scss': {
