@@ -1,0 +1,10 @@
+[phases.build]
+# Install dependencies and run your PayloadCMS build step
+cmds = [
+  "pnpm install",
+  "pnpm migrate_build --no-cache",
+]
+
+[phases.start]
+# Start the server
+cmd = "pnpm start"
