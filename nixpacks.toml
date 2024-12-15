@@ -1,3 +1,5 @@
+# nixpacks.toml
+
 [phases.install]
 cmd = "pnpm install"
 
