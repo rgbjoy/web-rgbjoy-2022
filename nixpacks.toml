@@ -1,0 +1,7 @@
+[phases]
+install = "pnpm install"
+build = "pnpm migrate_build"
+start = "pnpm start"
+
+[static_cache]
+paths = []

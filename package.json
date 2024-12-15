@@ -16,7 +16,7 @@
     "migrate": "payload migrate",
     "generate:importmap": "payload generate:importmap",
     "=== Production commands ===": "",
-    "migrate_build": "payload migrate && pnpm build --no-cache",
+    "migrate_build": "payload migrate && pnpm build",
     "=== Development tools ===": "",
     "update packages": "pnpm update",
     "lint": "next lint",
