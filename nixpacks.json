@@ -1,0 +1,16 @@
+{
+  "phases": {
+    "install": {
+      "cmd": "pnpm install"
+    },
+    "build": {
+      "cmd": "pnpm migrate_build"
+    },
+    "start": {
+      "cmd": "pnpm start"
+    }
+  },
+  "static_cache": {
+    "paths": []
+  }
+}
