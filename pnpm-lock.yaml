@@ -2251,8 +2251,8 @@ packages:
     resolution: {integrity: sha512-DtCOLG98P007x7wiiOmfI0fi3eIKyWiLTGJ2MDnVi/E04lWGbf+JzrRHMm0rgIIZJGtHpKpbVgLWHrv8xXpc3Q==}
     engines: {node: '>=0.10.0'}
 
-  detect-gpu@5.0.60:
-    resolution: {integrity: sha512-HOUiexaACwaeTBelnR3OrUN0mxgPadneTf7VndBEieQa3cx7xzrsQ/pm3niim4hZhN8gaDpAbTdCrjveGnNToQ==}
+  detect-gpu@5.0.61:
+    resolution: {integrity: sha512-7fe6+weEj1JAQl4ys/pcuCtR0m70FCpsgAb4oox6udPUzBD44U+kMBfudCZWv3ytJZnbKT9hxaQto3jbIeJttQ==}
 
   detect-libc@2.0.3:
     resolution: {integrity: sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw==}
@@ -6166,7 +6166,7 @@ snapshots:
       '@use-gesture/react': 10.3.1(react@19.0.0)
       camera-controls: 2.9.0(three@0.160.1)
       cross-env: 7.0.3
-      detect-gpu: 5.0.60
+      detect-gpu: 5.0.61
       glsl-noise: 0.0.0
       hls.js: 1.5.17
       maath: 0.10.8(@types/three@0.160.0)(three@0.160.1)
@@ -7298,7 +7298,7 @@ snapshots:
 
   detect-file@1.0.0: {}
 
-  detect-gpu@5.0.60:
+  detect-gpu@5.0.61:
     dependencies:
       webgl-constants: 1.1.1
 
