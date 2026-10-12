@@ -8,6 +8,12 @@ uniform vec3 uLightPosition;
 uniform float uShadowSoftness;
 uniform float uAmbient;
 uniform vec3 uEmissive;
+// Where the movable objects are: two sphere centres, and the block's centre
+// and world-to-local rotation.
+uniform vec3 uGlowCenter;
+uniform vec3 uPebbleCenter;
+uniform vec3 uBlockCenter;
+uniform mat3 uBlockInverse;
 // The probe volume's spherical-harmonic light, one atlas texel per probe:
 // red, green and blue coefficients, then whether the probe can be used.
 uniform sampler2D uProbeRed;
@@ -23,22 +29,12 @@ uniform sampler2D uProbeMeta;
 
 // A closed concrete box floating in the sky, lit only through one square
 // window in its +x wall.
-const vec3 ROOM_CENTER = vec3(0.0, 2.25, 0.0);
-const vec3 ROOM_HALF = vec3(3.5, 2.25, 6.0);
-const float WALL = 0.6;
+// ROOM_CENTER, ROOM_HALF, WALL, WINDOW and the objects' sizes come in as
+// defines from room.ts, which picks objects against the same shapes.
 const vec3 SHELL_HALF = ROOM_HALF + WALL;
 const float INNER_X = ROOM_HALF.x;
 const float OUTER_X = ROOM_HALF.x + WALL;
-/** Centre y and z, then half height and half width. */
-const vec4 WINDOW = vec4(2.3, -2.0, 1.2, 1.2);
 
-const vec3 GLOW_CENTER = vec3(-1.7, 1.0, -2.7);
-const float GLOW_RADIUS = 1.0;
-const vec3 PEBBLE_CENTER = vec3(0.2, 0.55, -2.1);
-const float PEBBLE_RADIUS = 0.55;
-const vec3 BLOCK_CENTER = vec3(2.2, 1.0, -3.6);
-const vec3 BLOCK_HALF = vec3(1.0);
-const vec2 BLOCK_TURN = vec2(0.939373, 0.342898); // cos, sin of 0.35 rad about y
 
 const vec3 SUN = vec3(1.0, 0.9, 0.78) * 3.4;
 const vec3 SKY_ZENITH = vec3(0.05, 0.19, 0.62);
@@ -70,8 +66,7 @@ vec3 sky(vec3 rd) {
 }
 
 vec3 toBlock(vec3 p) {
-  p -= BLOCK_CENTER;
-  return vec3(BLOCK_TURN.x * p.x - BLOCK_TURN.y * p.z, p.y, BLOCK_TURN.y * p.x + BLOCK_TURN.x * p.z);
+  return uBlockInverse * (p - uBlockCenter);
 }
 
 float buildingDistance(vec3 p) {
@@ -83,20 +78,20 @@ float buildingDistance(vec3 p) {
 
 float sceneDistance(vec3 p) {
   float d = buildingDistance(p);
-  d = min(d, length(p - GLOW_CENTER) - GLOW_RADIUS);
-  d = min(d, length(p - PEBBLE_CENTER) - PEBBLE_RADIUS);
-  d = min(d, sdBox(toBlock(p), BLOCK_HALF) - 0.02);
+  d = min(d, length(p - uGlowCenter) - GLOW_RADIUS);
+  d = min(d, length(p - uPebbleCenter) - PEBBLE_RADIUS);
+  d = min(d, sdBox(toBlock(p), BLOCK_HALF) - BLOCK_ROUNDING);
   return d;
 }
 
 int materialAt(vec3 p) {
   float best = buildingDistance(p);
   int id = abs(p.y) < 0.02 ? MAT_FLOOR : MAT_WALL;
-  float glow = length(p - GLOW_CENTER) - GLOW_RADIUS;
+  float glow = length(p - uGlowCenter) - GLOW_RADIUS;
   if (glow < best) { best = glow; id = MAT_GLOW; }
-  float pebble = length(p - PEBBLE_CENTER) - PEBBLE_RADIUS;
+  float pebble = length(p - uPebbleCenter) - PEBBLE_RADIUS;
   if (pebble < best) { best = pebble; id = MAT_PEBBLE; }
-  float block = sdBox(toBlock(p), BLOCK_HALF) - 0.02;
+  float block = sdBox(toBlock(p), BLOCK_HALF) - BLOCK_ROUNDING;
   if (block < best) { id = MAT_BLOCK; }
   return id;
 }
@@ -141,8 +136,7 @@ float sphereShadow(vec3 p, vec3 rd, vec3 centre, float radius, float k) {
 }
 
 float blockShadow(vec3 p, vec3 rd) {
-  vec3 dir = vec3(BLOCK_TURN.x * rd.x - BLOCK_TURN.y * rd.z, rd.y, BLOCK_TURN.y * rd.x + BLOCK_TURN.x * rd.z);
-  vec2 span = boxSpan(toBlock(p), dir, vec3(0.0), BLOCK_HALF);
+  vec2 span = boxSpan(toBlock(p), uBlockInverse * rd, vec3(0.0), BLOCK_HALF);
   return span.x <= span.y && span.y > 0.0 ? 0.0 : 1.0;
 }
 
@@ -161,8 +155,8 @@ float airVisibility(vec3 p) {
     lit = smoothstep(1.0, -1.0, k * miss);
     if (lit <= 0.0) return 0.0;
   }
-  lit *= sphereShadow(p, rd, GLOW_CENTER, GLOW_RADIUS, k);
-  lit *= sphereShadow(p, rd, PEBBLE_CENTER, PEBBLE_RADIUS, k);
+  lit *= sphereShadow(p, rd, uGlowCenter, GLOW_RADIUS, k);
+  lit *= sphereShadow(p, rd, uPebbleCenter, PEBBLE_RADIUS, k);
   return lit * blockShadow(p, rd);
 }
 
@@ -224,10 +218,9 @@ float sphereHit(vec3 ro, vec3 rd, vec3 centre, float radius) {
   return -b - sqrt(h);
 }
 
-/** Nearest hit on the block from outside it (its 2 cm rounding ignored); -1 for a miss. */
+/** Nearest hit on the block from outside it (its rounding ignored); -1 for a miss. */
 float blockHit(vec3 ro, vec3 rd) {
-  vec3 dir = vec3(BLOCK_TURN.x * rd.x - BLOCK_TURN.y * rd.z, rd.y, BLOCK_TURN.y * rd.x + BLOCK_TURN.x * rd.z);
-  vec2 span = boxSpan(toBlock(ro), dir, vec3(0.0), BLOCK_HALF + 0.02);
+  vec2 span = boxSpan(toBlock(ro), uBlockInverse * rd, vec3(0.0), BLOCK_HALF + BLOCK_ROUNDING);
   return span.x <= span.y && span.x > 0.0 ? span.x : -1.0;
 }
 
@@ -239,9 +232,9 @@ float castFromRoom(vec3 ro, vec3 rd, out bool throughWindow) {
   vec3 exit = ro + rd * t;
   throughWindow = exit.x > INNER_X - 0.001 && windowMiss(exit.yz) < 0.0;
   float nearest = t;
-  float glow = sphereHit(ro, rd, GLOW_CENTER, GLOW_RADIUS);
+  float glow = sphereHit(ro, rd, uGlowCenter, GLOW_RADIUS);
   if (glow > 0.0) nearest = min(nearest, glow);
-  float pebble = sphereHit(ro, rd, PEBBLE_CENTER, PEBBLE_RADIUS);
+  float pebble = sphereHit(ro, rd, uPebbleCenter, PEBBLE_RADIUS);
   if (pebble > 0.0) nearest = min(nearest, pebble);
   float block = blockHit(ro, rd);
   if (block > 0.0) nearest = min(nearest, block);

@@ -21,3 +21,79 @@
 .stage canvas:active {
   cursor: grabbing;
 }
+
+/* Shown while an object is selected. Bottom-centre, clear of the back link
+   and the panel; the same frosted pill as the back link. */
+.toolbar {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  box-shadow: 0 8px 24px #0003;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--fg);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.toolbarLabel {
+  padding: 0 10px 0 12px;
+  opacity: 0.7;
+}
+
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  transition: background-color var(--rollover-fade);
+}
+
+.tool[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--fg) 18%, var(--bg));
+}
+
+.tool:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .tool:not(:disabled):hover {
+    background: color-mix(in srgb, var(--fg) 12%, var(--bg));
+  }
+}
+
+.tool:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    font-size: 11px;
+  }
+
+  .toolbarLabel {
+    display: none;
+  }
+}

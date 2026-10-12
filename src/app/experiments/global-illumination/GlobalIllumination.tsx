@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import GUI from "lil-gui"
-import { memo, useEffect, useMemo, useRef, type FC } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, type FC } from "react"
 import {
   BufferAttribute,
   BufferGeometry,
@@ -24,10 +24,9 @@ import {
   Vector3,
   WebGLRenderTarget,
 } from "three"
-import { OrbitControls } from "three/addons/controls/OrbitControls.js"
-
 import { Accumulator, cameraMoved, type FrameMode } from "./accumulation"
 import { Bloom, BLOOM_LEVELS } from "./bloom"
+import { Controls, type EditMode } from "./Controls"
 import { BLUE_NOISE_SIZE, blueNoiseRGBA } from "./blueNoise"
 import displayShader from "./display.frag"
 import probeShader from "./probe.frag"
@@ -38,6 +37,7 @@ import {
   ProbeSchedule,
   randomRotation,
 } from "./probes"
+import { blockInverse, OBJECTS, resetObjects, sceneDefines, type SceneObject } from "./room"
 import sceneShader from "./scene.glsl"
 import traceShader from "./trace.frag"
 
@@ -98,6 +98,15 @@ const emissive = new Color()
 
 /** How many frames the current method needs averaged at rest. */
 const sampleLimit = () => (SETTINGS.method === "Probe volume" ? PROBE_SAMPLE_LIMIT : SAMPLE_LIMIT)
+
+/** Copies where the objects are onto the passes (whose scene uniforms are shared). */
+function applyObjects(trace: ShaderMaterial) {
+  const u = trace.uniforms
+  u.uGlowCenter.value.copy(OBJECTS.glow.position)
+  u.uPebbleCenter.value.copy(OBJECTS.pebble.position)
+  u.uBlockCenter.value.copy(OBJECTS.block.position)
+  blockInverse(u.uBlockInverse.value)
+}
 
 /** Copies the panel's settings onto the passes. The scene's uniforms are shared, so this reaches both. */
 function applySettings(trace: ShaderMaterial, probe: ShaderMaterial) {
@@ -173,9 +182,14 @@ type Passes = {
   dispose: () => void
 }
 
-type SceneProps = { onReady: () => void }
+type SceneProps = {
+  onReady: () => void
+  selected: SceneObject | null
+  mode: EditMode
+  onSelect: (name: SceneObject | null) => void
+}
 
-const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
+const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode, onSelect }) => {
   const gl = useThree((state) => state.gl)
   const invalidate = useThree((state) => state.invalidate)
   const passes = useRef<Passes | null>(null)
@@ -187,6 +201,16 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
   const readyRef = useRef(false)
   /** Mirrors the sample and probe counts for the panel's readout. */
   const progress = useRef({ samples: "0", probes: "–" })
+  /** The transform gizmo, drawn over the finished picture. */
+  const gizmo = useMemo(() => new Scene(), [])
+
+  // A moved object changes all the light: start every mean over.
+  const objectsMoved = useCallback(() => {
+    if (passes.current) applyObjects(passes.current.trace)
+    accumulator.current.reset()
+    probeSchedule.current.reset()
+    invalidate()
+  }, [invalidate])
 
   useEffect(() => {
     // Float keeps a long running mean exact; half float is the fallback.
@@ -251,12 +275,16 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       uShadowSoftness: { value: 0 },
       uAmbient: { value: 0 },
       uEmissive: { value: new Vector3() },
+      uGlowCenter: { value: new Vector3() },
+      uPebbleCenter: { value: new Vector3() },
+      uBlockCenter: { value: new Vector3() },
+      uBlockInverse: { value: new Matrix3() },
       uProbeRed: { value: probes[0].textures[0] },
       uProbeGreen: { value: probes[0].textures[1] },
       uProbeBlue: { value: probes[0].textures[2] },
       uProbeMeta: { value: probes[0].textures[3] },
     }
-    const defines = probeDefines()
+    const defines = { ...sceneDefines(), ...probeDefines() }
 
     const trace = new ShaderMaterial({
       glslVersion: GLSL3,
@@ -312,6 +340,7 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       depthWrite: false,
     })
     applySettings(trace, probe)
+    applyObjects(trace)
 
     const composite = new ShaderMaterial({
       vertexShader,
@@ -406,6 +435,17 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
     scene.addColor(SETTINGS, "emissiveColor").name("Emissive color").onChange(sync)
     scene.add(SETTINGS, "emissiveIntensity", 0, 60, 0.5).name("Emissive intensity").onChange(sync)
     scene.add(SETTINGS, "exposure", 0.1, 2, 0.01).name("Exposure").onChange(redraw)
+    scene
+      .add(
+        {
+          resetObjects: () => {
+            resetObjects()
+            objectsMoved()
+          },
+        },
+        "resetObjects",
+      )
+      .name("Reset objects")
 
     const light = gui.addFolder("Light")
     light.add(SETTINGS, "lightX", -4.5, 24, 0.1).name("Position x").onChange(sync)
@@ -478,7 +518,7 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       window.removeEventListener("keydown", onKeyDown)
       gui.destroy()
     }
-  }, [invalidate])
+  }, [invalidate, objectsMoved])
 
   useFrame(
     ({ gl: renderer, camera }) => {
@@ -499,8 +539,12 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
           Math.tan((CAMERA.minHorizontalFov * Math.PI) / 360) / (width / height),
         )
         u.uTanHalfFov.value = tanHalfFov
-        // Only for the orbit's pan speed; the shader casts its own rays.
-        if ("fov" in camera) camera.fov = (Math.atan(tanHalfFov) * 360) / Math.PI
+        // The shader casts its own rays; the camera is matched to them so the
+        // gizmo draws, and clicks pick, exactly where the picture says.
+        if ("fov" in camera) {
+          camera.fov = (Math.atan(tanHalfFov) * 360) / Math.PI
+          camera.updateProjectionMatrix()
+        }
         accumulator.current.reset()
       }
 
@@ -593,6 +637,12 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       }
       renderer.setRenderTarget(null)
       renderer.render(pass.displayScene, pass.camera)
+      if (selected) {
+        const autoClear = renderer.autoClear
+        renderer.autoClear = false
+        renderer.render(gizmo, camera)
+        renderer.autoClear = autoClear
+      }
 
       if (!readyRef.current) {
         readyRef.current = true
@@ -603,51 +653,21 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
     { phase: "render" },
   )
 
-  return <RoomOrbit />
+  return (
+    <Controls
+      gizmo={gizmo}
+      selected={selected}
+      mode={mode}
+      onSelect={onSelect}
+      onMove={objectsMoved}
+      home={CAMERA}
+    />
+  )
 })
 
 GlobalIlluminationScene.displayName = "GlobalIlluminationScene"
 
-/** Drag to orbit, scroll to dolly in and out of the building, right-drag to pan. */
-function RoomOrbit() {
-  const camera = useThree((state) => state.camera)
-  const gl = useThree((state) => state.gl)
-  const invalidate = useThree((state) => state.invalidate)
-  const controls = useMemo(() => {
-    const orbit = new OrbitControls(camera)
-    orbit.enableDamping = true
-    // Settles in a few frames; a long glide just keeps the picture from resolving.
-    orbit.dampingFactor = 0.25
-    orbit.minDistance = 0.5
-    orbit.maxDistance = 40
-    return orbit
-  }, [camera])
-
-  useEffect(() => {
-    camera.position.copy(CAMERA.position)
-    controls.target.copy(CAMERA.target)
-    controls.update()
-    // Connect in the effect so Strict Mode's cleanup/reconnect stays symmetric.
-    controls.connect(gl.domElement)
-    // Wrapped: invalidate's first argument is a frame count, not an event.
-    const onChange = () => invalidate()
-    controls.addEventListener("change", onChange)
-    return () => {
-      controls.removeEventListener("change", onChange)
-      controls.dispose()
-    }
-  }, [camera, controls, gl, invalidate])
-
-  // Damping keeps the camera gliding after release; each step of it is a
-  // change, and each change asks for the next frame.
-  useFrame(() => {
-    controls.update()
-  })
-
-  return null
-}
-
-export const GlobalIlluminationCanvas: FC<SceneProps> = ({ onReady }) => (
+export const GlobalIlluminationCanvas: FC<SceneProps> = (props) => (
   <Canvas
     className={styles.canvas}
     frameloop="demand"
@@ -656,6 +676,6 @@ export const GlobalIlluminationCanvas: FC<SceneProps> = ({ onReady }) => (
     dpr={[1, 1.25]}
     gl={{ alpha: false, antialias: false, powerPreference: "high-performance" }}
   >
-    <GlobalIlluminationScene onReady={onReady} />
+    <GlobalIlluminationScene {...props} />
   </Canvas>
 )
