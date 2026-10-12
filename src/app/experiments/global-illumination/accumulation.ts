@@ -38,7 +38,8 @@ export class Accumulator {
   private fresh = true
   private frame = 0
 
-  constructor(readonly limit: number) {}
+  /** Frames to average at rest; the method decides how many it needs. */
+  constructor(public limit: number) {}
 
   /** The picture itself changed: nothing from before can be kept. */
   reset() {

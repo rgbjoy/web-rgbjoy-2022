@@ -11,6 +11,7 @@ import {
   FloatType,
   GLSL3,
   HalfFloatType,
+  Matrix3,
   Matrix4,
   Mesh,
   NearestFilter,
@@ -29,16 +30,31 @@ import { Accumulator, cameraMoved, type FrameMode } from "./accumulation"
 import { Bloom, BLOOM_LEVELS } from "./bloom"
 import { BLUE_NOISE_SIZE, blueNoiseRGBA } from "./blueNoise"
 import displayShader from "./display.frag"
+import probeShader from "./probe.frag"
+import {
+  PROBE_ATLAS_HEIGHT,
+  PROBE_ATLAS_WIDTH,
+  probeDefines,
+  ProbeSchedule,
+  randomRotation,
+} from "./probes"
+import sceneShader from "./scene.glsl"
 import traceShader from "./trace.frag"
 
 import styles from "./GlobalIllumination.module.css"
 
 /** Frames averaged at rest before the image counts as settled and tracing stops. */
 const SAMPLE_LIMIT = 512
+/** The probe volume's image has no noise to average away, only edges to antialias. */
+const PROBE_SAMPLE_LIMIT = 96
+
+/** Probe updates after a change before the volume counts as settled and stops. */
+const PROBE_LIMIT = 120
 
 /** Emissive intensity is in the panel's units; this brings it to scene radiance. */
 const EMISSIVE_SCALE = 0.1
 
+const METHODS = { "Path traced": 0, "Probe volume": 1 } as const
 const SAMPLING = { "White noise": 0, "Blue noise": 1 } as const
 const MARCH_STEPS = [4, 8, 16, 32, 64]
 const VOLUME_STEPS = [8, 16, 32, 64]
@@ -53,6 +69,8 @@ const SETTINGS = {
   shadowSoftness: 0.1,
   ambient: 0.02,
   accumulate: true,
+  method: "Path traced" as keyof typeof METHODS,
+  probeRays: 64,
   sampling: "Blue noise" as keyof typeof SAMPLING,
   bounces: 2,
   marchSteps: 32,
@@ -78,9 +96,14 @@ const CAMERA = {
 
 const emissive = new Color()
 
-/** Copies the panel's settings onto the trace pass. */
-function applySettings(trace: ShaderMaterial) {
+/** How many frames the current method needs averaged at rest. */
+const sampleLimit = () => (SETTINGS.method === "Probe volume" ? PROBE_SAMPLE_LIMIT : SAMPLE_LIMIT)
+
+/** Copies the panel's settings onto the passes. The scene's uniforms are shared, so this reaches both. */
+function applySettings(trace: ShaderMaterial, probe: ShaderMaterial) {
   const u = trace.uniforms
+  u.uMethod.value = METHODS[SETTINGS.method]
+  probe.uniforms.uProbeRays.value = SETTINGS.probeRays
   emissive.set(SETTINGS.emissiveColor)
   u.uEmissive.value
     .set(emissive.r, emissive.g, emissive.b)
@@ -133,9 +156,13 @@ function fullscreenPass(material: ShaderMaterial) {
 type Passes = {
   /** Ping-pong history: bounce light and sample count, direct light and depth, surface colour, air. */
   history: [WebGLRenderTarget, WebGLRenderTarget]
+  /** Ping-pong probe atlas: red, green and blue harmonics, and whether each probe is usable. */
+  probes: [WebGLRenderTarget, WebGLRenderTarget]
   /** The surface and the air combined, ready to bloom and grade. */
   image: WebGLRenderTarget
   trace: ShaderMaterial
+  probe: ShaderMaterial
+  probeScene: Scene
   composite: ShaderMaterial
   bloom: Bloom
   display: ShaderMaterial
@@ -152,13 +179,14 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
   const gl = useThree((state) => state.gl)
   const invalidate = useThree((state) => state.invalidate)
   const passes = useRef<Passes | null>(null)
-  const accumulator = useRef(new Accumulator(SAMPLE_LIMIT))
+  const accumulator = useRef(new Accumulator(sampleLimit()))
+  const probeSchedule = useRef(new ProbeSchedule(PROBE_LIMIT))
   /** The camera the history was traced from. */
   const tracedView = useRef(new Matrix4())
   const drawingSize = useRef(new Vector2())
   const readyRef = useRef(false)
-  /** Mirrors the sample count for the panel's readout. */
-  const progress = useRef({ samples: "0" })
+  /** Mirrors the sample and probe counts for the panel's readout. */
+  const progress = useRef({ samples: "0", probes: "–" })
 
   useEffect(() => {
     // Float keeps a long running mean exact; half float is the fallback.
@@ -179,6 +207,22 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       return target
     }
     const history: [WebGLRenderTarget, WebGLRenderTarget] = [makeHistory(), makeHistory()]
+    const makeProbes = () => {
+      const target = new WebGLRenderTarget(PROBE_ATLAS_WIDTH, PROBE_ATLAS_HEIGHT, {
+        count: 4,
+        type,
+        format: RGBAFormat,
+        minFilter: NearestFilter,
+        magFilter: NearestFilter,
+        depthBuffer: false,
+        stencilBuffer: false,
+      })
+      target.textures.forEach((texture, i) => {
+        texture.name = `Global Illumination probes ${["red", "green", "blue", "meta"][i]}`
+      })
+      return target
+    }
+    const probes: [WebGLRenderTarget, WebGLRenderTarget] = [makeProbes(), makeProbes()]
     const image = new WebGLRenderTarget(1, 1, {
       type: HalfFloatType,
       format: RGBAFormat,
@@ -200,11 +244,27 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
     blueNoise.magFilter = NearestFilter
     blueNoise.needsUpdate = true
 
+    // The scene's own uniforms, shared by reference between the trace and
+    // the probe pass: set once, seen by both.
+    const sceneUniforms = {
+      uLightPosition: { value: new Vector3() },
+      uShadowSoftness: { value: 0 },
+      uAmbient: { value: 0 },
+      uEmissive: { value: new Vector3() },
+      uProbeRed: { value: probes[0].textures[0] },
+      uProbeGreen: { value: probes[0].textures[1] },
+      uProbeBlue: { value: probes[0].textures[2] },
+      uProbeMeta: { value: probes[0].textures[3] },
+    }
+    const defines = probeDefines()
+
     const trace = new ShaderMaterial({
       glslVersion: GLSL3,
       vertexShader,
-      fragmentShader: traceShader,
+      fragmentShader: `${sceneShader}\n${traceShader}`,
+      defines,
       uniforms: {
+        ...sceneUniforms,
         uBounceHistory: { value: null },
         uDirectHistory: { value: null },
         uAlbedoHistory: { value: null },
@@ -227,10 +287,8 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
         uPreviousRight: { value: new Vector3() },
         uPreviousUp: { value: new Vector3() },
         uPreviousForward: { value: new Vector3() },
-        uLightPosition: { value: new Vector3() },
-        uShadowSoftness: { value: 0 },
-        uAmbient: { value: 0 },
-        uEmissive: { value: new Vector3() },
+        uMethod: { value: 0 },
+        uProbeSettling: { value: 0 },
         uBounces: { value: 1 },
         uVolumeSteps: { value: 1 },
         uVolumeDensity: { value: 0 },
@@ -238,7 +296,22 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       depthTest: false,
       depthWrite: false,
     })
-    applySettings(trace)
+
+    const probe = new ShaderMaterial({
+      glslVersion: GLSL3,
+      vertexShader,
+      fragmentShader: `${sceneShader}\n${probeShader}`,
+      defines,
+      uniforms: {
+        ...sceneUniforms,
+        uRayRotation: { value: new Matrix3() },
+        uProbeRays: { value: 1 },
+        uProbeWeight: { value: 1 },
+      },
+      depthTest: false,
+      depthWrite: false,
+    })
+    applySettings(trace, probe)
 
     const composite = new ShaderMaterial({
       vertexShader,
@@ -271,13 +344,17 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
     })
 
     const traceQuad = fullscreenPass(trace)
+    const probeQuad = fullscreenPass(probe)
     const compositeQuad = fullscreenPass(composite)
     const displayQuad = fullscreenPass(display)
 
     passes.current = {
       history,
+      probes,
       image,
       trace,
+      probe,
+      probeScene: probeQuad.scene,
       composite,
       bloom,
       display,
@@ -287,18 +364,22 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       camera: new OrthographicCamera(),
       dispose: () => {
         history.forEach((target) => target.dispose())
+        probes.forEach((target) => target.dispose())
         image.dispose()
         bloom.dispose()
         blueNoise.dispose()
         trace.dispose()
+        probe.dispose()
         composite.dispose()
         display.dispose()
         traceQuad.geometry.dispose()
+        probeQuad.geometry.dispose()
         compositeQuad.geometry.dispose()
         displayQuad.geometry.dispose()
       },
     }
     accumulator.current.reset()
+    probeSchedule.current.reset()
     invalidate()
 
     return () => {
@@ -312,8 +393,10 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
 
     // Anything that changes the light throws every running mean away.
     const sync = () => {
-      if (passes.current) applySettings(passes.current.trace)
+      if (passes.current) applySettings(passes.current.trace, passes.current.probe)
+      accumulator.current.limit = sampleLimit()
       accumulator.current.reset()
+      probeSchedule.current.reset()
       invalidate()
     }
     // Grading happens after the mean, so it only needs a redraw.
@@ -332,12 +415,35 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
     light.add(SETTINGS, "ambient", 0, 1, 0.01).name("Ambient fill").onChange(sync)
 
     const sampling = gui.addFolder("GI Sampling")
+    const method = sampling.add(SETTINGS, "method", Object.keys(METHODS)).name("Method")
     sampling.add(SETTINGS, "accumulate").name("Accumulate").onChange(sync)
-    sampling.add(SETTINGS, "bounces", [1, 2]).name("Bounces").onChange(sync)
-    sampling.add(SETTINGS, "sampling", Object.keys(SAMPLING)).name("Sampling").onChange(sync)
-    sampling.add(SETTINGS, "marchSteps", MARCH_STEPS).name("March steps").onChange(sync)
-    sampling.add(SETTINGS, "marchJitter").name("March jitter").onChange(sync)
+    // These only steer the path tracer's bounce rays.
+    const traced = [
+      sampling.add(SETTINGS, "bounces", [1, 2]).name("Bounces").onChange(sync),
+      sampling.add(SETTINGS, "sampling", Object.keys(SAMPLING)).name("Sampling").onChange(sync),
+      sampling.add(SETTINGS, "marchSteps", MARCH_STEPS).name("March steps").onChange(sync),
+      sampling.add(SETTINGS, "marchJitter").name("March jitter").onChange(sync),
+    ]
     sampling.add(progress.current, "samples").name("Samples").disable().listen()
+
+    const probeFolder = gui.addFolder("Probe Volume")
+    const probeRays = probeFolder
+      .add(SETTINGS, "probeRays", [16, 32, 64, 128])
+      .name("Rays per probe")
+      .onChange(sync)
+    probeFolder.add(progress.current, "probes").name("Updates").disable().listen()
+
+    // Grey out whatever the chosen method ignores.
+    const showMethod = () => {
+      const probing = SETTINGS.method === "Probe volume"
+      traced.forEach((controller) => controller.enable(!probing))
+      probeRays.enable(probing)
+    }
+    method.onChange(() => {
+      showMethod()
+      sync()
+    })
+    showMethod()
 
     const volume = gui.addFolder("Volumetrics")
     volume.add(SETTINGS, "volumetrics").name("Enabled").onChange(sync)
@@ -403,7 +509,30 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
       const moving = cameraMoved(view.elements, tracedView.current.elements)
       const accumulate = SETTINGS.accumulate
 
-      if (moving || accumulator.current.pending(accumulate)) {
+      // The probe volume settles on its own clock, whatever the camera does.
+      const probing = SETTINGS.method === "Probe volume" && probeSchedule.current.pending()
+      const shared = u
+      if (probing) {
+        const [before, after] = pass.probes
+        shared.uProbeRed.value = before.textures[0]
+        shared.uProbeGreen.value = before.textures[1]
+        shared.uProbeBlue.value = before.textures[2]
+        shared.uProbeMeta.value = before.textures[3]
+        const p = pass.probe.uniforms
+        p.uProbeWeight.value = probeSchedule.current.next()
+        p.uRayRotation.value.fromArray(randomRotation())
+        renderer.setRenderTarget(after)
+        renderer.render(pass.probeScene, pass.camera)
+        pass.probes = [after, before]
+      }
+      const [probesNow] = pass.probes
+      shared.uProbeRed.value = probesNow.textures[0]
+      shared.uProbeGreen.value = probesNow.textures[1]
+      shared.uProbeBlue.value = probesNow.textures[2]
+      shared.uProbeMeta.value = probesNow.textures[3]
+      u.uProbeSettling.value = probing ? 0.1 : 0
+
+      if (moving || probing || accumulator.current.pending(accumulate)) {
         const sample = accumulator.current.next(accumulate, moving)
         const [previous, next] = pass.history
 
@@ -435,11 +564,13 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady }) => {
         pass.history = [next, previous]
         invalidate()
       }
+      progress.current.probes =
+        SETTINGS.method === "Probe volume" ? `${probeSchedule.current.frames} / ${PROBE_LIMIT}` : "–"
       progress.current.samples = !accumulate
         ? "1 (no accumulation)"
         : moving
           ? "moving"
-          : `${accumulator.current.samples} / ${SAMPLE_LIMIT}`
+          : `${Math.min(accumulator.current.samples, accumulator.current.limit)} / ${accumulator.current.limit}`
 
       const [latest] = pass.history
       const composite = pass.composite.uniforms
