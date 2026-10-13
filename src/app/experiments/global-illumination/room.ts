@@ -1,4 +1,4 @@
-import { Matrix3, Matrix4, Object3D, Quaternion, Vector3 } from "three"
+import { Euler, Matrix3, Matrix4, Object3D, Quaternion, Vector3 } from "three"
 
 /**
  * The room's shape, in one place: fed to scene.glsl as defines, and used here
@@ -15,8 +15,13 @@ export const PEBBLE_RADIUS = 0.55
 export const BLOCK_HALF = 1
 /** The block's edges are rounded this much. */
 export const BLOCK_ROUNDING = 0.02
+/** The chrome torus: from its centre to the middle of its tube, then the tube's own radius. */
+export const TORUS_RADIUS = 0.72
+export const TORUS_TUBE = 0.28
+/** The torus fits in a sphere this big. */
+export const TORUS_REACH = TORUS_RADIUS + TORUS_TUBE
 
-export type SceneObject = "glow" | "pebble" | "block"
+export type SceneObject = "glow" | "pebble" | "block" | "torus"
 
 const vec3 = (v: readonly number[]) => `vec3(${v.map((n) => n.toFixed(4)).join(", ")})`
 
@@ -30,14 +35,22 @@ export function sceneDefines() {
     PEBBLE_RADIUS: PEBBLE_RADIUS.toFixed(4),
     BLOCK_HALF: `vec3(${BLOCK_HALF.toFixed(4)})`,
     BLOCK_ROUNDING: BLOCK_ROUNDING.toFixed(4),
+    TORUS_RADIUS: TORUS_RADIUS.toFixed(4),
+    TORUS_TUBE: TORUS_TUBE.toFixed(4),
+    TORUS_REACH: TORUS_REACH.toFixed(4),
   }
 }
 
 const DEFAULTS = {
   glow: new Vector3(-1.7, 1.0, -2.7),
   pebble: new Vector3(0.2, 0.55, -2.1),
-  block: new Vector3(2.2, 1.0, -3.6),
+  block: new Vector3(1.7, 1.0, -3.6),
   blockTurn: new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), 0.35),
+  // Towards the back, between the orange sphere and the block, up in the
+  // sun's shaft so it catches a glint and throws a ring of shadow: stood on
+  // edge, turned partway between the sun and the camera.
+  torus: new Vector3(-0.72, 2.2, -4.3),
+  torusTurn: new Quaternion().setFromEuler(new Euler(Math.PI / 2, 0.35, 0, "YXZ")),
 }
 
 /**
@@ -49,6 +62,7 @@ export const OBJECTS: Record<SceneObject, Object3D> = {
   glow: new Object3D(),
   pebble: new Object3D(),
   block: new Object3D(),
+  torus: new Object3D(),
 }
 
 export function resetObjects() {
@@ -58,11 +72,35 @@ export function resetObjects() {
   OBJECTS.pebble.quaternion.identity()
   OBJECTS.block.position.copy(DEFAULTS.block)
   OBJECTS.block.quaternion.copy(DEFAULTS.blockTurn)
+  OBJECTS.torus.position.copy(DEFAULTS.torus)
+  OBJECTS.torus.quaternion.copy(DEFAULTS.torusTurn)
 }
 resetObjects()
 
-/** Only the block shows a turn; a plain sphere looks the same however it's spun. */
-export const rotatable = (name: SceneObject) => name === "block"
+/** Only the block and the torus show a turn; a plain sphere looks the same however it's spun. */
+export const rotatable = (name: SceneObject) => name === "block" || name === "torus"
+
+export type Pose = {
+  position: [number, number, number]
+  /** Degrees about x, then y, then z — three.js's own Euler order. Null for a sphere. */
+  rotation: [number, number, number] | null
+}
+
+const degrees = (radians: number) => (radians * 180) / Math.PI
+
+/** A plain-number copy of where every object is and how it's turned, for the page to show. */
+export function allPoses(): Record<SceneObject, Pose> {
+  const poses = {} as Record<SceneObject, Pose>
+  for (const name of Object.keys(OBJECTS) as SceneObject[]) {
+    // An Object3D keeps its rotation in step with the quaternion the gizmo turns.
+    const { position, rotation } = OBJECTS[name]
+    poses[name] = {
+      position: position.toArray(),
+      rotation: rotatable(name) ? [degrees(rotation.x), degrees(rotation.y), degrees(rotation.z)] : null,
+    }
+  }
+  return poses
+}
 
 /** How far each object's centre has to keep from the walls, floor and ceiling. */
 const CLEARANCE: Record<SceneObject, number> = {
@@ -71,6 +109,9 @@ const CLEARANCE: Record<SceneObject, number> = {
   // Its corners stick out furthest; only its middle is held off the walls,
   // so a turned block can still sit flush in a corner.
   block: BLOCK_HALF,
+  // Held off by its whole reach, so its rim never cuts into a wall however
+  // it's turned.
+  torus: TORUS_REACH,
 }
 
 /** Keeps an object's centre inside the room, its surface off the walls. */
@@ -86,9 +127,14 @@ export function keepInRoom(name: SceneObject, position: Vector3) {
 
 const turn = new Matrix4()
 
-/** The block's world-to-local rotation, as the shader wants it. */
-export function blockInverse(target = new Matrix3()) {
-  return target.setFromMatrix4(turn.makeRotationFromQuaternion(OBJECTS.block.quaternion)).transpose()
+/** A turnable object's world-to-local rotation, as the shader wants it. */
+export function inverseTurn(name: SceneObject, target = new Matrix3()) {
+  return target.setFromMatrix4(turn.makeRotationFromQuaternion(OBJECTS[name].quaternion)).transpose()
+}
+
+/** Distance to the torus in its own frame, lying flat around its y axis — as scene.glsl has it. */
+export function torusDistance(x: number, y: number, z: number) {
+  return Math.hypot(Math.hypot(x, z) - TORUS_RADIUS, y) - TORUS_TUBE
 }
 
 /** Where a ray enters and leaves an axis-aligned box; null if it misses or the box is behind it. */
@@ -116,12 +162,30 @@ function sphereHit(origin: Vector3, direction: Vector3, centre: Vector3, radius:
 }
 
 function blockHit(origin: Vector3, direction: Vector3) {
-  const inverse = blockInverse()
+  const inverse = inverseTurn("block")
   const o = origin.clone().sub(OBJECTS.block.position).applyMatrix3(inverse)
   const d = direction.clone().applyMatrix3(inverse)
   const half = BLOCK_HALF + BLOCK_ROUNDING
   const span = boxSpan(o, d, [0, 0, 0], [half, half, half])
   return span && span.near > 0 ? span.near : Infinity
+}
+
+/** Marched across the sphere it fits in, like the shader does. */
+function torusHit(origin: Vector3, direction: Vector3) {
+  const inverse = inverseTurn("torus")
+  const o = origin.clone().sub(OBJECTS.torus.position).applyMatrix3(inverse)
+  const d = direction.clone().applyMatrix3(inverse)
+  const b = o.dot(d)
+  const h = b * b - o.lengthSq() + TORUS_REACH * TORUS_REACH
+  if (h < 0) return Infinity
+  const far = -b + Math.sqrt(h)
+  let t = Math.max(-b - Math.sqrt(h), 0)
+  for (let i = 0; i < 64 && t <= far; i++) {
+    const dist = torusDistance(o.x + d.x * t, o.y + d.y * t, o.z + d.z * t)
+    if (dist < 1e-3) return t
+    t += dist
+  }
+  return Infinity
 }
 
 /**
@@ -150,6 +214,7 @@ export function pickObject(origin: Vector3, direction: Vector3): SceneObject | n
     ["glow", sphereHit(origin, direction, OBJECTS.glow.position, GLOW_RADIUS)],
     ["pebble", sphereHit(origin, direction, OBJECTS.pebble.position, PEBBLE_RADIUS)],
     ["block", blockHit(origin, direction)],
+    ["torus", torusHit(origin, direction)],
   ]
   const [name, t] = hits.reduce((best, hit) => (hit[1] < best[1] ? hit : best))
   return t < Infinity && t >= from ? name : null

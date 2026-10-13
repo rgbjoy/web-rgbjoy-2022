@@ -22,18 +22,24 @@
   cursor: grabbing;
 }
 
-/* Shown while an object is selected. Bottom-centre, clear of the back link
-   and the panel; the same frosted pill as the back link. */
-.toolbar {
+/* Shown while an object is selected: where it is, over the tools that move
+   it. Bottom-centre, clear of the back link and the panel. */
+.editor {
   position: fixed;
   z-index: 20;
   left: 50%;
   bottom: max(var(--gutter), env(safe-area-inset-bottom));
   translate: -50% 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
+  gap: 8px;
+  max-width: calc(100vw - 2 * var(--gutter));
+}
+
+/* Both the same frosted pill as the back link. */
+.toolbar,
+.readout {
   border: 1px solid var(--hairline);
   border-radius: 999px;
   background: color-mix(in srgb, var(--bg) 72%, transparent);
@@ -46,6 +52,36 @@
   line-height: 1;
   letter-spacing: 0.02em;
   white-space: nowrap;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+}
+
+/* Selectable, so the numbers can be copied out. Position and turn wrap onto
+   their own lines when the screen is too narrow for both. */
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-variant-numeric: tabular-nums;
+  user-select: text;
+  cursor: text;
+}
+
+.readoutGroup {
+  white-space: pre;
+}
+
+.axis {
+  opacity: 0.5;
 }
 
 .toolbarLabel {
@@ -89,7 +125,8 @@
 }
 
 @media (max-width: 640px) {
-  .toolbar {
+  .toolbar,
+  .readout {
     font-size: 11px;
   }
 

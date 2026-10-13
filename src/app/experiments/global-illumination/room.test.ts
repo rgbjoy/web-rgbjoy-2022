@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from 'bun:test'
 import { Quaternion, Vector3 } from 'three'
 
-import { blockInverse, keepInRoom, OBJECTS, pickObject, resetObjects, rotatable, sceneDefines } from './room'
+import { allPoses, inverseTurn, keepInRoom, OBJECTS, pickObject, resetObjects, rotatable, sceneDefines, torusDistance } from './room'
 
 afterEach(resetObjects)
 
@@ -12,6 +12,10 @@ test('a ray from inside the room picks what it meets first', () => {
   expect(pickObject(eye, toward(eye, OBJECTS.glow.position))).toBe('glow')
   expect(pickObject(eye, toward(eye, OBJECTS.pebble.position))).toBe('pebble')
   expect(pickObject(eye, toward(eye, OBJECTS.block.position))).toBe('block')
+  // Its centre is the hole; its rim is what's there to click — the top of
+  // it, as the orange sphere stands in front of the bottom.
+  const rim = new Vector3(0, 0, -0.86).applyQuaternion(OBJECTS.torus.quaternion).add(OBJECTS.torus.position)
+  expect(pickObject(eye, toward(eye, rim))).toBe('torus')
   // Straight up at the ceiling: nothing.
   expect(pickObject(eye, new Vector3(0, 1, 0))).toBeNull()
 })
@@ -25,6 +29,8 @@ test('the nearer of two objects in line wins', () => {
 
 test('from outside, only what shows through the window can be picked', () => {
   OBJECTS.block.position.set(0, 2.3, -2)
+  // The torus hangs in the window's light; out of the way.
+  OBJECTS.torus.position.set(0, 2.3, 4)
   // Level with the window, looking in through it.
   const window = new Vector3(14, 2.3, -2)
   expect(pickObject(window, new Vector3(-1, 0, 0))).toBe('block')
@@ -45,21 +51,59 @@ test('a turned block is picked by its own corners, not its upright box', () => {
   expect(pickObject(corner, new Vector3(1, 0, -1).normalize())).toBeNull()
 })
 
-test('the block’s inverse rotation undoes its turn', () => {
-  OBJECTS.block.quaternion.copy(new Quaternion().setFromAxisAngle(new Vector3(1, 1, 0).normalize(), 0.7))
-  const v = new Vector3(0.3, -0.2, 0.9)
-  const turned = v.clone().applyQuaternion(OBJECTS.block.quaternion)
-  expect(turned.applyMatrix3(blockInverse()).distanceTo(v)).toBeLessThan(1e-9)
+test('a torus is picked by its tube, and looked through at its hole', () => {
+  OBJECTS.torus.position.set(0, 2, 0)
+  OBJECTS.torus.quaternion.identity()
+  // Straight down onto it as it lies flat.
+  const eye = new Vector3(0, 4, 0)
+  const down = new Vector3(0, -1, 0)
+  expect(pickObject(eye.clone().setX(0.72), down)).toBe('torus')
+  expect(pickObject(eye.clone().setZ(-0.9), down)).toBe('torus')
+  // Through the hole, and past the rim: nothing.
+  expect(pickObject(eye, down)).toBeNull()
+  expect(pickObject(eye.clone().setX(1.05), down)).toBeNull()
+})
+
+test('the torus’s distance is exact: the tube’s radius from its core circle', () => {
+  expect(torusDistance(0.72, 0, 0)).toBeCloseTo(-0.28)
+  expect(torusDistance(0, 0, 0)).toBeCloseTo(0.44)
+  expect(torusDistance(0, 1, -0.72)).toBeCloseTo(0.72)
+})
+
+test('an inverse rotation undoes its object’s turn', () => {
+  for (const name of ['block', 'torus'] as const) {
+    OBJECTS[name].quaternion.copy(new Quaternion().setFromAxisAngle(new Vector3(1, 1, 0).normalize(), 0.7))
+    const v = new Vector3(0.3, -0.2, 0.9)
+    const turned = v.clone().applyQuaternion(OBJECTS[name].quaternion)
+    expect(turned.applyMatrix3(inverseTurn(name)).distanceTo(v)).toBeLessThan(1e-9)
+  }
 })
 
 test('objects stay inside the room, clear of its walls', () => {
   const p = keepInRoom('glow', new Vector3(10, -4, -20))
   expect(p.toArray()).toEqual([2.5, 1, -5])
   expect(keepInRoom('pebble', new Vector3(0, 0, 0)).y).toBe(0.55)
+  // The torus keeps its whole reach clear, so its rim never cuts into a wall.
+  expect(keepInRoom('torus', new Vector3(0, 0, 0)).y).toBe(1)
 })
 
-test('only the block turns', () => {
+test('poses read back as plain numbers, turns in degrees', () => {
+  OBJECTS.pebble.position.set(0.5, 0.55, -1)
+  const poses = allPoses()
+  expect(poses.pebble).toEqual({ position: [0.5, 0.55, -1], rotation: null })
+  // The torus stands on edge, then turns 20° towards the window.
+  const [x, y, z] = poses.torus.rotation!
+  expect(x).toBeCloseTo(90)
+  expect(y).toBeCloseTo(0)
+  expect(z).toBeCloseTo(-20.05, 1)
+  // A snapshot: moving on afterwards doesn't change it.
+  OBJECTS.pebble.position.x = 2
+  expect(poses.pebble.position[0]).toBe(0.5)
+})
+
+test('only the block and the torus turn', () => {
   expect(rotatable('block')).toBe(true)
+  expect(rotatable('torus')).toBe(true)
   expect(rotatable('glow')).toBe(false)
   expect(rotatable('pebble')).toBe(false)
 })
@@ -70,5 +114,7 @@ test('the shader gets the same shapes', () => {
     ROOM_HALF: 'vec3(3.5000, 2.2500, 6.0000)',
     WINDOW: 'vec4(2.3000, -2.0000, 1.2000, 1.2000)',
     BLOCK_HALF: 'vec3(1.0000)',
+    TORUS_RADIUS: '0.7200',
+    TORUS_REACH: '1.0000',
   })
 })

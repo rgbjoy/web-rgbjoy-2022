@@ -1,5 +1,5 @@
 // The scene both passes share: a concrete box in the sky with one window,
-// two spheres and a block, as a signed distance field with exact shortcuts
+// two spheres, a block and a chrome torus, as a signed distance field with exact shortcuts
 // for the room's inside; the sun and its shadows; and the probe volume that
 // stores the light bouncing around the room. Joined ahead of trace.frag and
 // probe.frag (WebGL has no #include).
@@ -8,12 +8,14 @@ uniform vec3 uLightPosition;
 uniform float uShadowSoftness;
 uniform float uAmbient;
 uniform vec3 uEmissive;
-// Where the movable objects are: two sphere centres, and the block's centre
-// and world-to-local rotation.
+// Where the movable objects are: two sphere centres, and the block's and the
+// torus's centres and world-to-local rotations.
 uniform vec3 uGlowCenter;
 uniform vec3 uPebbleCenter;
 uniform vec3 uBlockCenter;
 uniform mat3 uBlockInverse;
+uniform vec3 uTorusCenter;
+uniform mat3 uTorusInverse;
 // The probe volume's spherical-harmonic light, one atlas texel per probe:
 // red, green and blue coefficients, then whether the probe can be used.
 uniform sampler2D uProbeRed;
@@ -26,6 +28,7 @@ uniform sampler2D uProbeMeta;
 #define MAT_GLOW 2
 #define MAT_PEBBLE 3
 #define MAT_BLOCK 4
+#define MAT_CHROME 5
 
 // A closed concrete box floating in the sky, lit only through one square
 // window in its +x wall.
@@ -41,6 +44,13 @@ const vec3 SKY_ZENITH = vec3(0.05, 0.19, 0.62);
 const vec3 SKY_HORIZON = vec3(0.24, 0.45, 0.92);
 // Flat fill for the bounces past the first; kept low so the traced bounce leads.
 const vec3 AMBIENT_TINT = vec3(0.86, 0.9, 1.0) * 0.35;
+// Polished chrome reflects most of what reaches it, a little cool, and all
+// of it at a glancing angle.
+const vec3 CHROME = vec3(0.8, 0.81, 0.83);
+// What the rest of the room gets back from the torus. A mirror sends each ray
+// on in one direction, which a matte bounce can't follow; on average it
+// returns about what it reflects, so that's the colour it bounces as.
+const vec3 CHROME_DIFFUSE = vec3(0.6);
 
 float sdBox(vec3 p, vec3 b) {
   vec3 q = abs(p) - b;
@@ -69,6 +79,15 @@ vec3 toBlock(vec3 p) {
   return uBlockInverse * (p - uBlockCenter);
 }
 
+vec3 toTorus(vec3 p) {
+  return uTorusInverse * (p - uTorusCenter);
+}
+
+/** The chrome torus in its own frame, lying flat around its y axis. room.ts picks against the same. */
+float torusDistance(vec3 q) {
+  return length(vec2(length(q.xz) - TORUS_RADIUS, q.y)) - TORUS_TUBE;
+}
+
 float buildingDistance(vec3 p) {
   vec3 q = p - ROOM_CENTER;
   float shell = max(sdBox(q, SHELL_HALF), -sdBox(q, ROOM_HALF));
@@ -81,6 +100,7 @@ float sceneDistance(vec3 p) {
   d = min(d, length(p - uGlowCenter) - GLOW_RADIUS);
   d = min(d, length(p - uPebbleCenter) - PEBBLE_RADIUS);
   d = min(d, sdBox(toBlock(p), BLOCK_HALF) - BLOCK_ROUNDING);
+  d = min(d, torusDistance(toTorus(p)));
   return d;
 }
 
@@ -92,7 +112,8 @@ int materialAt(vec3 p) {
   float pebble = length(p - uPebbleCenter) - PEBBLE_RADIUS;
   if (pebble < best) { best = pebble; id = MAT_PEBBLE; }
   float block = sdBox(toBlock(p), BLOCK_HALF) - BLOCK_ROUNDING;
-  if (block < best) { id = MAT_BLOCK; }
+  if (block < best) { best = block; id = MAT_BLOCK; }
+  if (torusDistance(toTorus(p)) < best) id = MAT_CHROME;
   return id;
 }
 
@@ -103,6 +124,7 @@ void surface(int id, out vec3 albedo, out vec3 emission) {
   // Saturated enough that their colour carries into the light they bounce.
   else if (id == MAT_PEBBLE) albedo = vec3(0.3, 0.8, 0.22);
   else if (id == MAT_BLOCK) albedo = vec3(0.08, 0.3, 0.9);
+  else if (id == MAT_CHROME) albedo = CHROME_DIFFUSE;
   // Mid-grey walls: pale ones would bounce so much neutral light around
   // that every colour washed out in it.
   else albedo = vec3(0.42, 0.4, 0.38);
@@ -140,9 +162,39 @@ float blockShadow(vec3 p, vec3 rd) {
   return span.x <= span.y && span.y > 0.0 ? 0.0 : 1.0;
 }
 
-// Sunlight reaching a point inside the room. All of it analytic — the
+/** Where a ray from q crosses the sphere the torus fits in, in the torus's frame; empty when x > y. */
+vec2 torusSpan(vec3 q, vec3 rd) {
+  float b = dot(q, rd);
+  float h = b * b - dot(q, q) + TORUS_REACH * TORUS_REACH;
+  if (h < 0.0) return vec2(1.0, -1.0);
+  h = sqrt(h);
+  return vec2(-b - h, -b + h);
+}
+
+// A torus has no handy closed form to shadow with (its hit is a quartic), so
+// this one is marched — but only across the sphere it fits in, which most
+// sun rays miss altogether. Same penumbra as sunShadow's, from how closely
+// the ray grazes the tube.
+float torusShadow(vec3 p, vec3 rd, float k) {
+  vec3 q = toTorus(p);
+  vec3 d = uTorusInverse * rd;
+  vec2 span = torusSpan(q, d);
+  if (span.x > span.y || span.y < 0.0) return 1.0;
+  float lit = 1.0;
+  float t = max(span.x, 0.02);
+  for (int i = 0; i < 32; i++) {
+    float h = torusDistance(q + d * t);
+    lit = min(lit, k * h / t);
+    t += clamp(h, 0.01, 0.25);
+    if (lit < -1.0 || t > span.y) break;
+  }
+  return smoothstep(-1.0, 1.0, lit);
+}
+
+// Sunlight reaching a point inside the room. Nearly all of it analytic — the
 // window's aperture, the spheres, the block — so the air march can ask it
-// dozens of times a pixel, and the surfaces never need a shadow ray marched.
+// dozens of times a pixel, and the surfaces never need a shadow ray marched
+// through the whole room; only the torus's own small sphere is.
 float airVisibility(vec3 p) {
   vec3 rd = normalize(uLightPosition - p);
   float k = 1.0 / max(uShadowSoftness * 0.005, 0.0005);
@@ -157,7 +209,9 @@ float airVisibility(vec3 p) {
   }
   lit *= sphereShadow(p, rd, uGlowCenter, GLOW_RADIUS, k);
   lit *= sphereShadow(p, rd, uPebbleCenter, PEBBLE_RADIUS, k);
-  return lit * blockShadow(p, rd);
+  lit *= blockShadow(p, rd);
+  if (lit <= 0.0) return 0.0;
+  return lit * torusShadow(p, rd, k);
 }
 
 // Penumbrae from how closely the shadow ray grazes everything on its way out
@@ -172,8 +226,8 @@ float sunShadow(vec3 p, vec3 n) {
 
   if (sdBox(uLightPosition - ROOM_CENTER, SHELL_HALF) > 0.0) {
     // Inside the room, an outdoor sun only gets in through the window, past
-    // the spheres and the block — all of which have exact answers, so
-    // there's nothing to march.
+    // the spheres, the block and the torus — which have answers of their
+    // own, so there's no march through the room.
     if (sdBox(ro - ROOM_CENTER, ROOM_HALF) < 0.0) return airVisibility(ro);
 
     // Past the building there is nothing left to hit.
@@ -224,9 +278,26 @@ float blockHit(vec3 ro, vec3 rd) {
   return span.x <= span.y && span.x > 0.0 ? span.x : -1.0;
 }
 
+/** Nearest hit on the torus, marched across the sphere it fits in; -1 for a miss. */
+float torusHit(vec3 ro, vec3 rd) {
+  vec3 q = toTorus(ro);
+  vec3 d = uTorusInverse * rd;
+  vec2 span = torusSpan(q, d);
+  if (span.x > span.y || span.y < 0.0) return -1.0;
+  float t = max(span.x, 0.0);
+  for (int i = 0; i < 64; i++) {
+    float h = torusDistance(q + d * t);
+    if (h < max(0.0004 * t, 0.0002)) return t;
+    t += h;
+    if (t > span.y) break;
+  }
+  return -1.0;
+}
+
 // From inside the room the scene is simple enough to hit exactly: the room's
-// walls, two spheres and a block. Only a ray that leaves through the window
-// needs marching, from the opening on.
+// walls, two spheres and a block — and the torus, marched only where a ray
+// crosses its sphere. Only a ray that leaves through the window needs
+// marching through the open, from the opening on.
 float castFromRoom(vec3 ro, vec3 rd, out bool throughWindow) {
   float t = boxSpan(ro, rd, ROOM_CENTER, ROOM_HALF).y;
   vec3 exit = ro + rd * t;
@@ -238,6 +309,8 @@ float castFromRoom(vec3 ro, vec3 rd, out bool throughWindow) {
   if (pebble > 0.0) nearest = min(nearest, pebble);
   float block = blockHit(ro, rd);
   if (block > 0.0) nearest = min(nearest, block);
+  float torus = torusHit(ro, rd);
+  if (torus > 0.0) nearest = min(nearest, torus);
   if (nearest < t) throughWindow = false;
   return nearest;
 }

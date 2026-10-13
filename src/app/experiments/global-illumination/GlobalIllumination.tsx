@@ -37,7 +37,7 @@ import {
   ProbeSchedule,
   randomRotation,
 } from "./probes"
-import { blockInverse, OBJECTS, resetObjects, sceneDefines, type SceneObject } from "./room"
+import { inverseTurn, OBJECTS, resetObjects, sceneDefines, type SceneObject } from "./room"
 import sceneShader from "./scene.glsl"
 import traceShader from "./trace.frag"
 
@@ -105,7 +105,9 @@ function applyObjects(trace: ShaderMaterial) {
   u.uGlowCenter.value.copy(OBJECTS.glow.position)
   u.uPebbleCenter.value.copy(OBJECTS.pebble.position)
   u.uBlockCenter.value.copy(OBJECTS.block.position)
-  blockInverse(u.uBlockInverse.value)
+  inverseTurn("block", u.uBlockInverse.value)
+  u.uTorusCenter.value.copy(OBJECTS.torus.position)
+  inverseTurn("torus", u.uTorusInverse.value)
 }
 
 /** Copies the panel's settings onto the passes. The scene's uniforms are shared, so this reaches both. */
@@ -187,9 +189,11 @@ type SceneProps = {
   selected: SceneObject | null
   mode: EditMode
   onSelect: (name: SceneObject | null) => void
+  /** An object moved or turned, or they were all put back. */
+  onMove: () => void
 }
 
-const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode, onSelect }) => {
+const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode, onSelect, onMove }) => {
   const gl = useThree((state) => state.gl)
   const invalidate = useThree((state) => state.invalidate)
   const passes = useRef<Passes | null>(null)
@@ -210,7 +214,8 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
     accumulator.current.reset()
     probeSchedule.current.reset()
     invalidate()
-  }, [invalidate])
+    onMove()
+  }, [invalidate, onMove])
 
   useEffect(() => {
     // Float keeps a long running mean exact; half float is the fallback.
@@ -279,6 +284,8 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
       uPebbleCenter: { value: new Vector3() },
       uBlockCenter: { value: new Vector3() },
       uBlockInverse: { value: new Matrix3() },
+      uTorusCenter: { value: new Vector3() },
+      uTorusInverse: { value: new Matrix3() },
       uProbeRed: { value: probes[0].textures[0] },
       uProbeGreen: { value: probes[0].textures[1] },
       uProbeBlue: { value: probes[0].textures[2] },

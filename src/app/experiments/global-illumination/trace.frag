@@ -10,6 +10,10 @@
 //
 // With the probe volume, the bounce isn't traced per pixel at all: it's read
 // from the probes around each surface, which probe.frag keeps up to date.
+//
+// The chrome torus bounces nothing matte; it mirrors. What it shows depends on
+// where it's seen from, so it all goes with the sharp, cheap part — traced
+// fresh each frame — and none of it with the bounce carried across moves.
 
 /** Light arriving by bouncing off other surfaces (rgb), and how many samples that mean holds (a). */
 layout(location = 0) out vec4 outBounce;
@@ -55,6 +59,7 @@ uniform float uVolumeDensity;
 
 #define SAMPLING_BLUE 1
 #define METHOD_PROBES 1
+#define MODE_FRESH 0
 #define MODE_REST 1
 #define MODE_MOVING 2
 /** Samples after which a surface's bounce light is carried across camera
@@ -70,6 +75,10 @@ uniform float uVolumeDensity;
 /** Henyey–Greenstein asymmetry: the air scatters a little forward, so the
  *  shafts brighten as you look toward the window. */
 #define FORWARD_SCATTER 0.35
+/** How tight the sun's glint on the chrome is (a Phong exponent). A true
+ *  mirror would show the sun as a speck smaller than a pixel; a little
+ *  polish spreads it wide enough to catch. */
+#define GLINT 900.0
 
 uvec4 pcg4d(uvec4 v) {
   v = v * 1664525u + 1013904223u;
@@ -209,20 +218,17 @@ vec2 previousPixel(vec3 p, out float range) {
   return (ndc * 0.5 + 0.5) * uResolution;
 }
 
-// What this pixel already knows about the bounce light reaching its surface.
-// At rest that's simply its own history. On the move, the light reaching a
-// point doesn't depend on where it's seen from, so last frame's still holds:
-// find where the surface was, check it's the same one and not something
-// newly uncovered, and carry it over.
-vec4 bounceHistory(vec3 ro, vec3 rd, float t) {
-  if (uMode == MODE_REST) return texelFetch(uBounceHistory, ivec2(gl_FragCoord.xy), 0);
-  if (uMode != MODE_MOVING || t < 0.0) return vec4(0.0);
-
+// The bounce light last frame gathered for a surface point, wherever on
+// screen it was. The light reaching a point doesn't depend on where it's seen
+// from, so it still holds: find where the point was, check that pixel saw
+// this same surface and not something in front of it, and carry it over.
+// Nothing (a = 0) if last frame didn't see it.
+vec4 carriedBounce(vec3 p) {
   // Bilinear between the four nearest texels, each kept only if it saw this
   // same surface. Nearest-texel would snap a little every frame, and edges
   // carried across many frames would come out in stair steps.
   float range;
-  vec2 previous = previousPixel(ro + rd * t, range) - 0.5;
+  vec2 previous = previousPixel(p, range) - 0.5;
   ivec2 base = ivec2(floor(previous));
   vec2 f = previous - vec2(base);
   vec3 light = vec3(0.0);
@@ -241,9 +247,63 @@ vec4 bounceHistory(vec3 ro, vec3 rd, float t) {
     total += w;
     count = min(count, history.a);
   }
-  // Nothing here saw it: newly uncovered, so it starts again.
   if (total < 0.01) return vec4(0.0);
   return vec4(light / total, count);
+}
+
+// What this pixel already knows about the bounce light reaching its surface.
+// At rest that's simply its own history. On the move it's carried over from
+// wherever last frame saw the surface; where nothing did, it's newly
+// uncovered and starts again.
+vec4 bounceHistory(vec3 ro, vec3 rd, float t) {
+  if (uMode == MODE_REST) return texelFetch(uBounceHistory, ivec2(gl_FragCoord.xy), 0);
+  if (uMode != MODE_MOVING || t < 0.0) return vec4(0.0);
+  return carriedBounce(ro + rd * t);
+}
+
+// The bounce light reaching a surface seen in the chrome. The probes have it
+// for anywhere. The path tracer only has it for what's on screen — so most
+// of what the torus mirrors costs nothing, already averaged; the rest (behind
+// the camera, or hidden from it) gets one fresh noisy bounce, which settles
+// as the frames average.
+vec3 mirroredBounce(vec3 q, vec3 nq) {
+  if (uMethod == METHOD_PROBES) return probeLight(q, nq) * occlusion(q, nq);
+  if (uMode != MODE_FRESH) {
+    vec4 carried = carriedBounce(q);
+    if (carried.a > 0.0) return carried.rgb;
+  }
+  vec3 light = bounce(q, nq, sampleNoise(2).xyz, sampleNoise(3).xyz);
+  return any(isnan(light)) || any(isinf(light)) ? vec3(0.0) : light;
+}
+
+/** The sun's glint: a tight lobe around the mirror direction, shadowed like any sunlight. */
+vec3 glint(vec3 p, vec3 n, vec3 r) {
+  vec3 l = normalize(uLightPosition - p);
+  float lobe = (GLINT + 2.0) / 6.28318530718 * pow(max(dot(r, l), 0.0), GLINT);
+  float facing = dot(n, l);
+  if (lobe < 1e-3 || facing <= 0.0) return vec3(0.0);
+  return SUN * lobe * facing * sunShadow(p, n);
+}
+
+// Chrome: the room in mirror image, through a Fresnel term that turns
+// everything to a full mirror at a glancing angle, and through the same sunlit
+// air the camera looks through — without it, a mirror hung in the shaft
+// shows a room clearer than the one around it. One reflection deep: where
+// the torus mirrors itself, its matte stand-in shows instead.
+vec3 chrome(vec3 p, vec3 n, vec3 rd, float jitter) {
+  vec3 r = reflect(rd, n);
+  vec3 fresnel = CHROME + (1.0 - CHROME) * pow(1.0 - max(dot(n, r), 0.0), 5.0);
+  vec3 ro = p + n * 0.02;
+  float t = castCamera(ro, r);
+  vec3 seen = sky(r);
+  if (t >= 0.0) {
+    vec3 q = ro + r * t;
+    vec3 nq = normalAt(q);
+    seen = radianceAt(q, nq, mirroredBounce(q, nq));
+  }
+  float transmittance;
+  vec3 air = airLight(ro, r, t >= 0.0 ? t : 1e4, jitter, transmittance);
+  return fresnel * (seen * transmittance + air + glint(p, n, r));
 }
 
 void main() {
@@ -262,11 +322,21 @@ void main() {
   if (t >= 0.0) {
     vec3 p = uCameraPosition + rd * t;
     vec3 n = normalAt(p);
+    int id = materialAt(p);
     vec3 emission;
-    surface(materialAt(p), albedo, emission);
+    surface(id, albedo, emission);
     direct = emission + albedo * (sunlight(p, n) + AMBIENT_TINT * uAmbient);
 
-    if (uMethod == METHOD_PROBES) {
+    if (id == MAT_CHROME) {
+      // All mirror and no matte: nothing for the bounce light to land on.
+      // The pixel's bounce mean is left as it was, so where the torus's edge
+      // shares a pixel with the wall behind, the wall's mean keeps building.
+      direct = chrome(p, n, rd, noise.w);
+      albedo = vec3(0.0);
+      bounced = uMethod == METHOD_PROBES
+        ? vec4(texelFetch(uBounceHistory, pixel, 0).rgb, 1.0)
+        : bounceHistory(uCameraPosition, rd, t);
+    } else if (uMethod == METHOD_PROBES) {
       // Noiseless, and the same from any viewpoint: nothing to carry over,
       // only the antialiasing to average while the camera rests. A pixel
       // still follows the probes quickly while they settle.

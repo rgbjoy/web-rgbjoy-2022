@@ -56,7 +56,7 @@ export const EXPERIMENTS: Experiment[] = [
     href: "/experiments/global-illumination",
     title: "Global Illumination",
     description:
-      "A concrete box in the sky: sun shafts through one window, lit a second time by its own bounce light — one blue-noise ray a pixel, averaged frame over frame until the grain settles. Orbit in and out through the walls, and click an object to move or turn it.",
+      "A concrete box in the sky: sun shafts through one window, lit a second time by its own bounce light — one blue-noise ray a pixel, averaged frame over frame until the grain settles, while a chrome torus mirrors the room. Orbit in and out through the walls, and click an object to move or turn it.",
     group: "3D & Spatial",
     status: "wip",
     tech: ["Three.js", "R3F", "GLSL", "lil-gui"],
@@ -71,6 +71,9 @@ export const EXPERIMENTS: Experiment[] = [
       "accumulation",
       "path tracing",
       "emissive",
+      "chrome",
+      "reflection",
+      "torus",
       "soft shadows",
       "volumetric",
       "god rays",
