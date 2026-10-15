@@ -22,6 +22,8 @@ type ControlsProps = {
   /** An object moved or turned. */
   onMove: () => void
   home: { position: Vector3; target: Vector3 }
+  /** What a click along a ray selects; the room's own objects unless a page adds more to the scene. */
+  pick?: (origin: Vector3, direction: Vector3) => SceneObject | null
 }
 
 /**
@@ -29,9 +31,10 @@ type ControlsProps = {
  * pan. Click an object to select it and drag its gizmo to move or turn it;
  * click empty space to let it go.
  */
-export function Controls({ gizmo, selected, mode, onSelect, onMove, home }: ControlsProps) {
+export function Controls({ gizmo, selected, mode, onSelect, onMove, home, pick = pickObject }: ControlsProps) {
   const camera = useThree((state) => state.camera)
-  const gl = useThree((state) => state.gl)
+  // `renderer`, not `gl`: the same controls drive the WebGL page and the WebGPU one.
+  const gl = useThree((state) => state.renderer)
   const invalidate = useThree((state) => state.invalidate)
 
   const orbit = useMemo(() => {
@@ -120,7 +123,7 @@ export function Controls({ gizmo, selected, mode, onSelect, onMove, home }: Cont
         -((event.clientY - rect.top) / rect.height) * 2 + 1,
       )
       raycaster.setFromCamera(ndc, camera)
-      return pickObject(raycaster.ray.origin, raycaster.ray.direction)
+      return pick(raycaster.ray.origin, raycaster.ray.direction)
     }
 
     let pressed: { x: number; y: number } | null = null
@@ -147,7 +150,7 @@ export function Controls({ gizmo, selected, mode, onSelect, onMove, home }: Cont
       canvas.removeEventListener("pointermove", onHover)
       canvas.style.cursor = ""
     }
-  }, [camera, gl, onSelect, transform])
+  }, [camera, gl, onSelect, pick, transform])
 
   // Damping keeps the camera gliding after release; each step of it is a
   // change, and each change asks for the next frame.

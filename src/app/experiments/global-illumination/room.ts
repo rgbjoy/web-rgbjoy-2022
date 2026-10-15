@@ -189,12 +189,12 @@ function torusHit(origin: Vector3, direction: Vector3) {
 }
 
 /**
- * The object a ray from the camera lands on first, or null. Same shapes the
- * shader draws: from inside the room — or from inside a wall, which the
- * camera sees straight through — anything goes; from outside, only what can
- * be seen in through the window.
+ * The object a ray from the camera lands on first, and how far along the ray,
+ * or null. Same shapes the shader draws: from inside the room — or from inside
+ * a wall, which the camera sees straight through — anything goes; from
+ * outside, only what can be seen in through the window.
  */
-export function pickObject(origin: Vector3, direction: Vector3): SceneObject | null {
+export function pickHit(origin: Vector3, direction: Vector3): { name: SceneObject; distance: number } | null {
   const shell = ROOM_HALF.map((h) => h + WALL)
   const outside = ROOM_CENTER.some((c, axis) => Math.abs(origin.getComponent(axis) - c) > shell[axis])
   let from = 0
@@ -217,5 +217,10 @@ export function pickObject(origin: Vector3, direction: Vector3): SceneObject | n
     ["torus", torusHit(origin, direction)],
   ]
   const [name, t] = hits.reduce((best, hit) => (hit[1] < best[1] ? hit : best))
-  return t < Infinity && t >= from ? name : null
+  return t < Infinity && t >= from ? { name, distance: t } : null
+}
+
+/** The object a ray from the camera lands on first, or null. */
+export function pickObject(origin: Vector3, direction: Vector3): SceneObject | null {
+  return pickHit(origin, direction)?.name ?? null
 }

@@ -1,0 +1,57 @@
+/* The traced picture underneath; the gizmo, and every pointer event, on a
+   transparent canvas over it. */
+.layers {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  padding: 0 var(--gutter);
+  color: var(--fg);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.notice p {
+  max-width: 36ch;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.noticeLink {
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .noticeLink:hover {
+    background: color-mix(in srgb, var(--fg) 12%, var(--bg));
+  }
+}
+
+.noticeLink:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}

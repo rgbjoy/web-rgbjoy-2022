@@ -26,8 +26,9 @@ import {
 } from "three"
 import { Accumulator, cameraMoved, type FrameMode } from "./accumulation"
 import { Bloom, BLOOM_LEVELS } from "./bloom"
-import { Controls, type EditMode } from "./Controls"
+import { Controls } from "./Controls"
 import { BLUE_NOISE_SIZE, blueNoiseRGBA } from "./blueNoise"
+import { GpuTimer } from "./gpuTimer"
 import displayShader from "./display.frag"
 import probeShader from "./probe.frag"
 import {
@@ -37,9 +38,10 @@ import {
   ProbeSchedule,
   randomRotation,
 } from "./probes"
-import { inverseTurn, OBJECTS, resetObjects, sceneDefines, type SceneObject } from "./room"
+import { inverseTurn, OBJECTS, resetObjects, sceneDefines } from "./room"
 import sceneShader from "./scene.glsl"
 import traceShader from "./trace.frag"
+import type { CanvasProps } from "./Viewer"
 
 import styles from "./GlobalIllumination.module.css"
 
@@ -59,6 +61,8 @@ const SAMPLING = { "White noise": 0, "Blue noise": 1 } as const
 const MARCH_STEPS = [4, 8, 16, 32, 64]
 const VOLUME_STEPS = [8, 16, 32, 64]
 const MODES: Record<FrameMode, number> = { fresh: 0, rest: 1, moving: 2 }
+/** Past 1.5 the float history (128 bytes a pixel) outgrows what most GPUs have to give. */
+const PIXEL_RATIOS = [1, 1.25, 1.5]
 
 const SETTINGS = {
   emissiveColor: "#f2701f",
@@ -82,6 +86,9 @@ const SETTINGS = {
   bloom: 1.2,
   bloomThreshold: 0.9,
   bloomRadius: 1.2,
+  // Every pixel is traced, and on a 120 Hz screen a frame has 8 ms. The
+  // accumulated jitter antialiases what a lower ceiling gives up.
+  pixelRatio: 1.25,
 }
 
 /** Where the orbit starts: inside, looking across the room at the window wall. */
@@ -184,27 +191,20 @@ type Passes = {
   dispose: () => void
 }
 
-type SceneProps = {
-  onReady: () => void
-  selected: SceneObject | null
-  mode: EditMode
-  onSelect: (name: SceneObject | null) => void
-  /** An object moved or turned, or they were all put back. */
-  onMove: () => void
-}
-
-const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode, onSelect, onMove }) => {
+const GlobalIlluminationScene: FC<CanvasProps> = memo(({ onReady, selected, mode, onSelect, onMove }) => {
   const gl = useThree((state) => state.gl)
   const invalidate = useThree((state) => state.invalidate)
+  const setDpr = useThree((state) => state.setDpr)
   const passes = useRef<Passes | null>(null)
+  const timer = useRef<GpuTimer | null>(null)
   const accumulator = useRef(new Accumulator(sampleLimit()))
   const probeSchedule = useRef(new ProbeSchedule(PROBE_LIMIT))
   /** The camera the history was traced from. */
   const tracedView = useRef(new Matrix4())
   const drawingSize = useRef(new Vector2())
   const readyRef = useRef(false)
-  /** Mirrors the sample and probe counts for the panel's readout. */
-  const progress = useRef({ samples: "0", probes: "–" })
+  /** Mirrors the sample and probe counts, and the GPU's timings, for the panel's readout. */
+  const progress = useRef({ samples: "0", probes: "–", probesTime: "–", traceTime: "–", postTime: "–" })
   /** The transform gizmo, drawn over the finished picture. */
   const gizmo = useMemo(() => new Scene(), [])
 
@@ -216,6 +216,23 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
     invalidate()
     onMove()
   }, [invalidate, onMove])
+
+  // The same GPU timings the WebGPU page shows, from WebGL's timer queries.
+  useEffect(() => {
+    const readout = progress.current
+    const milliseconds = (value: number | null) => (value === null ? "idle" : `${value.toFixed(2)} ms`)
+    const gpuTimer = new GpuTimer(gl.getContext() as WebGL2RenderingContext, (timings) => {
+      readout.probesTime = milliseconds(timings.probes)
+      readout.traceTime = milliseconds(timings.trace)
+      readout.postTime = milliseconds(timings.post)
+    })
+    if (!gpuTimer.supported) readout.probesTime = readout.traceTime = readout.postTime = "not offered"
+    timer.current = gpuTimer
+    return () => {
+      gpuTimer.dispose()
+      timer.current = null
+    }
+  }, [gl])
 
   useEffect(() => {
     // Float keeps a long running mean exact; half float is the fallback.
@@ -502,6 +519,16 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
     bloom.add(SETTINGS, "bloomThreshold", 0, 3, 0.05).name("Threshold").onChange(redraw)
     bloom.add(SETTINGS, "bloomRadius", 0.5, 2, 0.05).name("Radius").onChange(redraw)
 
+    // Laid out as the WebGPU page's, so the two can be compared at the same size.
+    const gpu = gui.addFolder("GPU")
+    gpu
+      .add(SETTINGS, "pixelRatio", PIXEL_RATIOS)
+      .name("Max pixel ratio")
+      .onChange(() => setDpr([1, SETTINGS.pixelRatio]))
+    gpu.add(progress.current, "probesTime").name("Probe update").disable().listen()
+    gpu.add(progress.current, "traceTime").name("Trace").disable().listen()
+    gpu.add(progress.current, "postTime").name("Composite to screen").disable().listen()
+
     let hidden = true
     const setHidden = (value: boolean) => {
       hidden = value
@@ -525,7 +552,7 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
       window.removeEventListener("keydown", onKeyDown)
       gui.destroy()
     }
-  }, [invalidate, objectsMoved])
+  }, [invalidate, objectsMoved, setDpr])
 
   useFrame(
     ({ gl: renderer, camera }) => {
@@ -572,8 +599,10 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
         const p = pass.probe.uniforms
         p.uProbeWeight.value = probeSchedule.current.next()
         p.uRayRotation.value.fromArray(randomRotation())
+        timer.current?.begin("probes")
         renderer.setRenderTarget(after)
         renderer.render(pass.probeScene, pass.camera)
+        timer.current?.end()
         pass.probes = [after, before]
       }
       const [probesNow] = pass.probes
@@ -610,8 +639,10 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
         u.uWeight.value = sample.weight
         u.uNoiseIndex.value = sample.index
         u.uJitter.value.set(sample.jitterX, sample.jitterY)
+        timer.current?.begin("trace")
         renderer.setRenderTarget(next)
         renderer.render(pass.traceScene, pass.camera)
+        timer.current?.end()
         pass.history = [next, previous]
         invalidate()
       }
@@ -629,6 +660,7 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
       composite.uDirect.value = latest.textures[1]
       composite.uAlbedo.value = latest.textures[2]
       composite.uAir.value = latest.textures[3]
+      timer.current?.begin("post")
       renderer.setRenderTarget(pass.image)
       renderer.render(pass.compositeScene, pass.camera)
 
@@ -644,6 +676,8 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
       }
       renderer.setRenderTarget(null)
       renderer.render(pass.displayScene, pass.camera)
+      timer.current?.end()
+      timer.current?.finish()
       if (selected) {
         const autoClear = renderer.autoClear
         renderer.autoClear = false
@@ -674,13 +708,12 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(({ onReady, selected, mode,
 
 GlobalIlluminationScene.displayName = "GlobalIlluminationScene"
 
-export const GlobalIlluminationCanvas: FC<SceneProps> = (props) => (
+export const GlobalIlluminationCanvas: FC<CanvasProps> = (props) => (
   <Canvas
     className={styles.canvas}
     frameloop="demand"
-    // Every pixel is traced, and on a 120 Hz screen a frame has 8 ms. The
-    // accumulated jitter antialiases what the lower ceiling gives up.
-    dpr={[1, 1.25]}
+    // The panel's ceiling, 1.25 unless changed (see SETTINGS.pixelRatio).
+    dpr={[1, SETTINGS.pixelRatio]}
     gl={{ alpha: false, antialias: false, powerPreference: "high-performance" }}
   >
     <GlobalIlluminationScene {...props} />

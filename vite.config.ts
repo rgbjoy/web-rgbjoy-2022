@@ -12,6 +12,8 @@ export default defineConfig({
       name: "portfolio-shaders",
       enforce: "pre",
       transform(source, id) {
+        // WGSL has no glslify; it comes in as written.
+        if (/\.wgsl$/.test(id)) return { code: `export default ${JSON.stringify(source)}`, map: null };
         if (!/\.(glsl|vs|fs|vert|frag)$/.test(id)) return;
         return { code: `export default ${JSON.stringify(glslify.compile(source, { basedir: dirname(id) }))}`, map: null };
       },

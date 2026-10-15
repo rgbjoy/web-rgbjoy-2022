@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       "*.fs": { loaders: shaderLoaders, as: "*.js" },
       "*.vert": { loaders: shaderLoaders, as: "*.js" },
       "*.frag": { loaders: shaderLoaders, as: "*.js" },
+      "*.wgsl": { loaders: ["raw-loader"], as: "*.js" },
     },
   },
 }
