@@ -583,6 +583,7 @@
 /* Item */
 
 .item {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 120px;
   gap: var(--gap);
@@ -591,6 +592,31 @@
   padding: 14px var(--gutter);
   color: inherit;
   text-decoration: none;
+}
+
+/* A row's title, as its link, stretched over the whole row: anywhere on it
+   follows the link, as when the row itself was one. */
+.itemLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-tight);
+  color: inherit;
+  text-decoration: none;
+}
+
+.itemLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.itemLink:focus-visible {
+  outline: none;
+}
+
+.itemLink:focus-visible::after {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
 }
 
 .item:focus-visible {
@@ -631,21 +657,23 @@
 /* Only the link itself answers, the same way the section headers do. The
    description and date belong to the row, not to the thing being clicked. */
 @media (hover: hover) {
-  .item:hover .itemTitle,
-  .item:hover .itemExternal {
+  .item:hover:not(:has(.itemMore:hover)) .itemTitle,
+  .item:hover:not(:has(.itemMore:hover)) .itemExternal {
     color: var(--rollover-seed, var(--fg));
   }
 }
 
 @media (hover: hover) {
-  .item:active .itemTitle,
-  .item:active .itemExternal {
+  .item:active:not(:has(.itemMore:active)) .itemTitle,
+  .item:active:not(:has(.itemMore:active)) .itemExternal {
     color: var(--rollover-seed, var(--fg));
   }
 }
 
 .item:focus-visible .itemTitle,
-.item:focus-visible .itemExternal {
+.item:focus-visible .itemExternal,
+.itemLink:focus-visible .itemTitle,
+.itemLink:focus-visible .itemExternal {
   color: var(--rollover-seed, var(--fg));
 }
 
@@ -654,6 +682,43 @@
   font-size: 16px;
   line-height: 1.55;
   color: var(--muted);
+}
+
+/* Two lines to catch the eye; the rest on asking. */
+.itemDescClamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Faint, like the tags: there when you want the rest, quiet otherwise.
+   Raised above the row's stretched link so a press opens the text. */
+.itemMore {
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .itemMore:hover {
+    color: var(--fg);
+  }
+}
+
+.itemMore:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
 }
 
 /* Sits at the faint level, like the date: present when you look for it, quiet
@@ -712,6 +777,7 @@
   .categoryName, .itemTitle { font-size: 15px; }
   .categoryCount, .groupName, .groupCount, .itemDate { font-size: 12px; }
   .itemTechTag { font-size: 10px; padding: 2px 6px; }
+  .itemMore { font-size: 12px; }
   .controlButton, .sortButton { font-size: 11px; min-height: 36px; }
   .category { margin-top: 14px; }
   .group { margin-top: 18px; }

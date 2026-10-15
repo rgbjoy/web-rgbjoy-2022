@@ -15,6 +15,7 @@ import {
 import Link from "next/link"
 import {
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -968,6 +969,48 @@ function TechTags({ tech }: { tech?: string[] }) {
   )
 }
 
+/** Roughly what two lines hold at full width; a first guess at whether a
+ *  description needs its toggle, before the browser has measured it. */
+const CLAMP_GUESS = 140
+
+/** A description held to two lines, with a toggle for the rest when it runs
+ *  longer. The toggle sits above the row's link, so it opens the text
+ *  instead of following the link. */
+function Description({ id, text }: { id: string; text: string }) {
+  const textRef = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false)
+  const [overflows, setOverflows] = useState(text.length > CLAMP_GUESS)
+
+  // Measured while clamped, and again whenever the width changes: whether
+  // the text runs past its two lines decides whether there's anything to open.
+  useLayoutEffect(() => {
+    const element = textRef.current
+    if (!element || open) return
+    const observer = new ResizeObserver(() => setOverflows(element.scrollHeight > element.clientHeight + 1))
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [open, text])
+
+  return (
+    <>
+      <div id={id} ref={textRef} className={`${styles.itemDesc} ${open ? "" : styles.itemDescClamped}`}>
+        {text}
+      </div>
+      {(overflows || open) && (
+        <button
+          type="button"
+          className={styles.itemMore}
+          aria-expanded={open}
+          aria-controls={id}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? "Show less" : "Read more"}
+        </button>
+      )}
+    </>
+  )
+}
+
 function LinkRow({ link }: { link: SiteLink }) {
   // mailto: opens a mail client rather than a tab, so it skips target/rel.
   const external = link.href.startsWith("http")
@@ -993,48 +1036,60 @@ function LinkRow({ link }: { link: SiteLink }) {
   )
 }
 
+// The rows below are a box with the title as its link, and the link
+// stretched over the whole row, so anywhere on it still follows the link —
+// while the description's toggle, which can't sit inside a link, sits above.
+
 function ProjectRow({ project }: { project: PortfolioProject }) {
+  const descriptionId = useId()
+
   return (
-    <a
-      href={project.href}
-      className={styles.item}
-      target="_blank"
-      rel="noreferrer"
-    >
+    <div className={styles.item}>
       <div className={styles.itemBody}>
         <div className={styles.itemTitleRow}>
-          <span className={styles.itemTitle}>{project.title}</span>
-          <ArrowUpRight
-            className={styles.itemExternal}
-            size={14}
-            strokeWidth={1.75}
-            aria-hidden
-          />
+          <a
+            href={project.href}
+            className={styles.itemLink}
+            target="_blank"
+            rel="noreferrer"
+            aria-describedby={project.description ? descriptionId : undefined}
+          >
+            <span className={styles.itemTitle}>{project.title}</span>
+            <ArrowUpRight
+              className={styles.itemExternal}
+              size={14}
+              strokeWidth={1.75}
+              aria-hidden
+            />
+          </a>
         </div>
-        {project.description ? (
-          <div className={styles.itemDesc}>{project.description}</div>
-        ) : null}
+        {project.description ? <Description id={descriptionId} text={project.description} /> : null}
         <TechTags tech={project.tech} />
       </div>
       <span className={styles.itemDate}>{project.year}</span>
-    </a>
+    </div>
   )
 }
 
 function ExperimentRow({ experiment }: { experiment: Experiment }) {
+  const descriptionId = useId()
+
   return (
-    <Link
-      href={experiment.href}
-      className={styles.item}
-      onNavigate={() => rememberIndexScroll()}
-    >
+    <div className={styles.item}>
       <div className={styles.itemBody}>
         <div className={styles.itemTitleRow}>
-          <span className={styles.itemTitle}>{experiment.title}</span>
+          <Link
+            href={experiment.href}
+            className={styles.itemLink}
+            aria-describedby={descriptionId}
+            onNavigate={() => rememberIndexScroll()}
+          >
+            <span className={styles.itemTitle}>{experiment.title}</span>
+          </Link>
         </div>
-        <div className={styles.itemDesc}>{experiment.description}</div>
+        <Description id={descriptionId} text={experiment.description} />
         <TechTags tech={experiment.tech} />
       </div>
-    </Link>
+    </div>
   )
 }
