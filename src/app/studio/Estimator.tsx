@@ -30,7 +30,7 @@ import {
   type Step,
 } from "./pricing"
 import styles from "./page.module.css"
-import { Disc } from "./Disc"
+import { Prism } from "./Prism"
 import { useSectionReveal } from "./useSectionReveal"
 
 /** Tom, cut out on a transparent ground, beside the part where he says who he is. Width and height are the file's own. */
@@ -488,10 +488,7 @@ export function Estimator() {
 
   return (
     <div ref={pageRef} className={styles.page}>
-      {/* A disc tilted into the top right corner, turning slowly. Decorative only. */}
-      <div className={styles.backdrop} aria-hidden="true">
-        <Disc className={styles.disc} />
-      </div>
+      <Prism className={styles.prism} still={reducedMotion} />
       <Link href="/" className={styles.back}>
         <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
         rgbjoy.com
@@ -501,7 +498,7 @@ export function Estimator() {
         <span className={styles.smile}>
           <SmileIcon size={56} />
         </span>
-        <h1 className={styles.title}>A small studio for what the web is becoming.</h1>
+        <h1 className={styles.title}>A small studio for the new AI era ahead.</h1>
         <p className={styles.lead}>
           RGBJOY is me, Tom Fletcher, a designer and engineer who builds with AI, without the slop. I build what
           you actually need, ready for how people are starting to use the web, and I look after it once it&rsquo;s
@@ -509,7 +506,7 @@ export function Estimator() {
         </p>
       </header>
 
-      <section className={styles.section} aria-labelledby="without-the-slop">
+      <section className={`${styles.section} ${styles.band}`} aria-labelledby="without-the-slop">
         <SectionHeading id="without-the-slop" index={1}>
           ai, without the slop
         </SectionHeading>
