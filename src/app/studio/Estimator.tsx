@@ -1,13 +1,11 @@
 "use client"
 
-import { ArrowDown, ArrowLeft, ChevronUp } from "lucide-react"
+import { ArrowDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { SITE } from "../data/site"
 import { ContactDialog } from "../utilities/contact/ContactDialog"
-import { SmileIcon } from "../utilities/SmileIcon"
 import { useReducedMotion } from "../utilities/settings/useSettings"
 import {
   CARE_PLANS,
@@ -31,6 +29,7 @@ import {
 } from "./pricing"
 import styles from "./page.module.css"
 import { Prism } from "./Prism"
+import { StudioNav } from "./StudioNav"
 import { useSectionReveal } from "./useSectionReveal"
 
 /** Tom, cut out on a transparent ground, beside the part where he says who he is. Width and height are the file's own. */
@@ -489,16 +488,10 @@ export function Estimator() {
   return (
     <div ref={pageRef} className={styles.page}>
       <Prism className={styles.prism} still={reducedMotion} />
-      <Link href="/" className={styles.back}>
-        <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
-        rgbjoy.com
-      </Link>
+      <StudioNav />
 
       <header className={styles.hero}>
-        <span className={styles.smile}>
-          <SmileIcon size={56} />
-        </span>
-        <h1 className={styles.title}>A small studio for the new AI era ahead.</h1>
+        <h1 className={styles.title}>A studio for the new AI era ahead.</h1>
         <p className={styles.lead}>
           RGBJOY is me, Tom Fletcher, a designer and engineer who builds with AI, without the slop. I build what
           you actually need, ready for how people are starting to use the web, and I look after it once it&rsquo;s
@@ -557,7 +550,7 @@ export function Estimator() {
         </ul>
       </section>
 
-      <section className={styles.section} aria-labelledby="every-step">
+      <section className={`${styles.section} ${styles.band}`} aria-labelledby="every-step">
         <SectionHeading id="every-step" index={3}>
           every step of the way
         </SectionHeading>
@@ -668,7 +661,7 @@ export function Estimator() {
         >
           <span className={styles.peekLabel}>estimate</span>
           <span aria-live="polite">{priced ? formatRange(result.price) : "—"}</span>
-          {priced && <span className={styles.peekWeeks}>· about {formatWeeks(result.weeks)}</span>}
+          {priced && <span className={styles.peekWeeks}>· {formatWeeks(result.weeks)}</span>}
           <ChevronUp className={styles.peekChevron} size={14} strokeWidth={1.75} aria-hidden />
         </button>
         {/* Folded rather than unmounted, so it can animate; inert keeps a folded breakdown out of reach. */}

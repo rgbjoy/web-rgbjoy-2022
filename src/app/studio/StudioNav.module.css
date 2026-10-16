@@ -1,0 +1,171 @@
+/* A floating, frosted menu that stays at the top while the page scrolls. */
+.bar {
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nav {
+  /* The button sits this far in on every side, with corners that follow the menu's. */
+  --inset: 9px;
+  --radius: 18px;
+  width: min(680px, 100%);
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: var(--inset) var(--inset) var(--inset) 16px;
+  border: 1px solid color-mix(in srgb, var(--fg) 13%, transparent);
+  border-radius: var(--radius);
+  /* Glass: mostly see-through, with a faint sheen from the top, a lit top edge, and a
+     strong blur of whatever scrolls underneath. */
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--fg) 10%, transparent),
+      color-mix(in srgb, var(--fg) 2.5%, transparent)
+    ),
+    color-mix(in srgb, var(--bg) 36%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fg) 14%, transparent),
+    0 16px 44px rgb(0 0 0 / 0.32);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
+  backdrop-filter: blur(28px) saturate(185%);
+  font-size: 14px;
+  pointer-events: auto;
+}
+
+/* Without the blur, the see-through version would put text over busy content. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav {
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+/* A slow turn; the global reduced-motion reset stops it. */
+.smile {
+  display: inline-flex;
+  animation: smile-spin 8s linear infinite;
+}
+
+@keyframes smile-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+
+.links a {
+  color: var(--muted);
+  text-decoration: none;
+  text-underline-offset: 6px;
+  transition: color var(--rollover-fade);
+}
+
+/* The section being read. */
+.links a[aria-current] {
+  color: var(--fg);
+  text-decoration: underline 1px;
+}
+
+.cta {
+  /* Pushed to the end, with the menu key after it, whether or not the links show. */
+  margin-left: auto;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 15px;
+  border-radius: calc(var(--radius) - var(--inset));
+  background: var(--fg);
+  color: var(--bg);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--rollover-fade),
+    color var(--rollover-fade);
+}
+
+/* At the estimate, the button steps back to the glass key: you're already there. */
+.cta[aria-current] {
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--fg);
+}
+
+/* The site's hamburger as a square key beside the estimate button, with the same inset corners.
+   Doubled up to outrank the site menu's own trigger styles. */
+.menu.menu {
+  /* Only in the condensed menu, standing in for the section links. */
+  display: none;
+  align-self: stretch;
+  width: auto;
+  aspect-ratio: 1;
+  margin: 0 0 0 calc(var(--inset) - 24px);
+  border-radius: calc(var(--radius) - var(--inset));
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+/* The site menu's rows, in the same glass as the bar. */
+.dropdown.dropdown {
+  border: 1px solid color-mix(in srgb, var(--fg) 13%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  box-shadow: 0 16px 44px rgb(0 0 0 / 0.32);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
+  backdrop-filter: blur(28px) saturate(185%);
+}
+
+.dropdown > * {
+  border-radius: 10px;
+}
+
+@media (hover: hover) {
+  .brand:hover,
+  .links a:hover {
+    color: var(--rollover-seed, var(--fg));
+  }
+
+  .cta:hover {
+    background: var(--rollover-seed, var(--fg));
+  }
+}
+
+.nav a:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* The sections are a short scroll away; the menu keeps the name and the estimate. */
+@media (max-width: 860px) {
+  .bar {
+    top: 10px;
+  }
+
+  .nav {
+    height: 54px;
+  }
+
+  .links {
+    display: none;
+  }
+
+  .menu.menu {
+    display: flex;
+  }
+}

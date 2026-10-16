@@ -7,6 +7,9 @@ precision mediump float;
 
 uniform vec2 uResolution;
 uniform float uTime;
+// The cursor in canvas pixels (origin bottom left), and how much it's felt, 0 to 1. Both eased in JS.
+uniform vec2 uPointer;
+uniform float uPull;
 
 const int RAYS = 14;
 // Down and to the left, away from the top right corner.
@@ -42,17 +45,23 @@ float shot(float r, float f, float t) {
 }
 
 // Light at angle `a` from every ray, each with its own heading, width and flicker.
-float rays(float a, float r, float t) {
+// Rays near the cursor's angle lean toward it and brighten, by `pull`.
+float rays(float a, float r, float t, float aim, float pull) {
   float light = 0.0;
+  // Rays widen toward the source, so it's a soft haze rather than a point they all meet at.
+  float spread = 1.0 + 3.0 * exp(-r * 2.2);
   for (int i = 0; i < RAYS; i++) {
     float f = float(i);
     float heading = AIM + (hash(f) - 0.5) * 1.1 + 0.04 * sin(t * 0.15 + f * 1.9);
-    float width = 0.012 + 0.05 * hash(f + 7.0);
-    float strength = 0.35 + 0.65 * hash(f + 3.0);
+    float near = pull * exp(-pow((heading - aim) / 0.35, 2.0));
+    heading = mix(heading, aim, 0.175 * near);
+    float width = (0.012 + 0.05 * hash(f + 7.0)) * spread;
+    float strength = (0.35 + 0.65 * hash(f + 3.0)) * (1.0 + 0.45 * near);
     float d = (a - heading) / width;
     light += strength * (0.12 + shot(r, f, t)) * exp(-d * d);
   }
-  return light;
+  // The same light spread wider, not more of it.
+  return light / sqrt(spread);
 }
 
 void main() {
@@ -63,9 +72,18 @@ void main() {
   float a = atan(p.y, p.x);
   float t = uTime;
 
+  // The cursor's angle from the source, felt less the further it is from the light.
+  vec2 cursor = (uPointer - uResolution) / uResolution.y - SOURCE;
+  float aim = atan(cursor.y, cursor.x);
+  float pull = uPull * smoothstep(2.6, 0.8, length(cursor));
+
   // Each colour bends a little differently, and more the further out it goes, so ray edges split into a rainbow.
   float split = 0.008 + 0.014 * r;
-  vec3 light = vec3(rays(a - split, r, t), rays(a, r, t), rays(a + split, r, t));
+  vec3 light = vec3(
+    rays(a - split, r, t, aim, pull),
+    rays(a, r, t, aim, pull),
+    rays(a + split, r, t, aim, pull)
+  );
 
   // Brightest near the corner, gone before it reaches the content.
   light *= smoothstep(2.3, 0.6, r) * 0.8;

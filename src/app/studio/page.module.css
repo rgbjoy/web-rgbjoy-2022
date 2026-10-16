@@ -1,9 +1,16 @@
+/* On this page, links to a section glide there, still stopping short of the menu.
+   Only with full motion; reduced motion jumps straight there. */
+:global(html[data-motion="full"]):has(.page) {
+  scroll-behavior: smooth;
+}
+
 .page {
   /* Isolated, so the backdrop can sit behind the content without slipping behind the body. */
   position: relative;
   isolation: isolate;
   width: min(100%, 1120px);
   margin: 0 auto;
+  --section-gap: 72px;
   padding: 40px var(--gutter) 96px;
   color: var(--fg);
   font-size: 16px;
@@ -28,50 +35,11 @@
   color: var(--bg);
 }
 
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  transition: color var(--rollover-fade);
-}
-
-.back svg {
-  flex-shrink: 0;
-}
-
-@media (hover: hover) {
-  .back:hover {
-    color: var(--rollover-seed, var(--fg));
-  }
-}
-
-.back:focus-visible {
-  outline: 1px solid var(--fg);
-  outline-offset: 4px;
-}
-
 /* Hero */
 
 .hero {
   max-width: 640px;
-  padding: 56px 0 24px;
-}
-
-/* A slow turn; the global reduced-motion reset stops it. */
-.smile {
-  display: inline-flex;
-  margin-bottom: 24px;
-  animation: smile-spin 8s linear infinite;
-}
-
-@keyframes smile-spin {
-  to {
-    rotate: 360deg;
-  }
+  padding: 56px 0 var(--section-gap);
 }
 
 /* The masthead's display face, at the masthead's size. */
@@ -92,16 +60,15 @@
 
 /* Sections */
 
+/* Every section is a full-width strip with the same padding, so the rhythm stays even
+   whether or not it has glass behind it. */
 .section {
-  margin-top: 72px;
+  position: relative;
+  padding-block: var(--section-gap);
 }
 
-/* A full-width strip of the same frosted glass as the estimate summary. The page column stays
+/* Every other strip gets the same frosted glass as the estimate summary. The page column stays
    as it is; the glass is drawn behind it, edge to edge (body clips the overflow). */
-.band {
-  position: relative;
-  padding-block: 72px;
-}
 
 .band::before {
   content: "";
@@ -117,6 +84,8 @@
 }
 
 .heading {
+  /* Anchor jumps land with the section's own gap above, clear of the floating menu. */
+  scroll-margin-top: calc(var(--section-gap) + 24px);
   display: flex;
   align-items: baseline;
   gap: var(--gap);
@@ -644,7 +613,6 @@
 
 .closing {
   max-width: 420px;
-  margin-top: 88px;
   padding-top: 32px;
   border-top: 1px solid var(--hairline);
 }
@@ -666,6 +634,16 @@
 }
 
 @media (max-width: 860px) {
+  /* The menu starts where it sticks, close to the top edge. */
+  .page {
+    --section-gap: 48px;
+    padding-top: 10px;
+  }
+
+  .hero {
+    padding-top: 32px;
+  }
+
   .columns {
     grid-template-columns: minmax(0, 1fr);
   }
