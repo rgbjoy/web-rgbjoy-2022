@@ -1,6 +1,6 @@
 /** Deployment identity and seed defaults; editable Info and SEO are stored in D1. */
 export const SITE = {
-  name: "rgbjoy.com",
+  name: "rgbjoy",
   author: "Tom Fletcher",
   email: "tom@rgbjoy.com",
   url: "https://rgbjoy.com",

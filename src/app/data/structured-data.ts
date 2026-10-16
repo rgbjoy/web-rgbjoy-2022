@@ -14,6 +14,14 @@ export const SITE_STRUCTURED_DATA = {
       sameAs: PUBLIC_PROFILE.profiles.map(({ url }) => url),
     },
     {
+      '@type': 'Organization',
+      '@id': `${SITE.url}/#studio`,
+      name: 'RGBJOY',
+      url: `${SITE.url}/studio`,
+      description: 'A one-person design and development studio: websites designed, built, launched and looked after by Tom Fletcher.',
+      founder: { '@id': `${SITE.url}/#person` },
+    },
+    {
       '@type': 'WebSite',
       '@id': `${SITE.url}/#website`,
       name: SITE.name,

@@ -49,6 +49,7 @@
 .introPending .controls,
 .introPending .footer,
 .introPending .availability,
+.introPending .studioLink,
 .introPending [data-intro="toggle"],
 .introPending [data-intro="name"],
 .introPending [data-intro="count"] {
@@ -174,12 +175,14 @@
 .subtitleLink {
   padding: 0;
   border: none;
-  background: none;
   font: inherit;
   cursor: pointer;
   color: var(--fg);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  /* Drawn as one line, not text-decoration: the typing effect wraps every
+     character in its own span, and a text underline is painted per span,
+     which leaves seams between the letters. */
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 calc(50% + 0.5em) / 100% 1px;
   transition: color var(--rollover-fade);
 }
 
@@ -196,6 +199,30 @@
 }
 
 .subtitleLink:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* Points from the intro to the studio page. */
+.studioLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .studioLink:hover {
+    color: var(--rollover-seed, var(--muted));
+  }
+}
+
+.studioLink:focus-visible {
   outline: 1px solid var(--fg);
   outline-offset: 2px;
 }
@@ -287,6 +314,7 @@
   line-height: 1;
   cursor: pointer;
   transition: background-color var(--rollover-fade);
+  text-decoration: none;
 }
 
 .availabilityAction {
@@ -399,6 +427,52 @@
   color: var(--fg);
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+/* Pushed to the right end of the toolbar. */
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  min-width: 160px;
+  margin-left: auto;
+  padding: 0 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--bg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  color: var(--faint);
+  transition: color var(--rollover-fade), border-color var(--rollover-fade);
+}
+
+.searchHint {
+  margin-left: auto;
+  font-size: 11px;
+}
+
+@media (hover: hover) {
+  .searchField:hover {
+    color: var(--rollover-seed, var(--fg));
+    border-color: currentColor;
+  }
+}
+
+.searchField:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .searchField {
+    min-width: 0;
+  }
+
+  .searchHint {
+    display: none;
+  }
 }
 
 /* Sort dropdown (narrow screens) */

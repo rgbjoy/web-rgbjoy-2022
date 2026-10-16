@@ -1,6 +1,7 @@
 "use client"
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import Link from "next/link"
 import { useRef } from "react"
 
 import { setMotion, setTheme, useMotion, useTheme } from "./useSettings"
@@ -43,6 +44,14 @@ export function SettingsMenu({
             openingPromptRef.current = false
           }}
         >
+          {/* The studio page's only way in: it isn't listed anywhere else. */}
+          <DropdownMenu.Item className={styles.item} asChild>
+            <Link href="/studio">
+              <span className={styles.mark} aria-hidden="true" />
+              studio
+            </Link>
+          </DropdownMenu.Item>
+
           <DropdownMenu.Item className={styles.item} onSelect={onSearch}>
             <span className={styles.mark} aria-hidden="true" />
             search

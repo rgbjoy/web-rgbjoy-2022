@@ -101,7 +101,7 @@ export default async function RootLayout({
   const entries = await getPublicCatalog()
   const info = await getInfo()
   const seo = await getSeo()
-  const structuredData = { ...SITE_STRUCTURED_DATA, "@graph": SITE_STRUCTURED_DATA["@graph"].map(node => ({ ...node, ...(node["@type"] === "Person" ? { name: info.author } : {}), description: seo.description })) }
+  const structuredData = { ...SITE_STRUCTURED_DATA, "@graph": SITE_STRUCTURED_DATA["@graph"].map(node => ({ ...node, ...(node["@type"] === "Person" ? { name: info.author } : {}), ...(node["@type"] === "Organization" ? {} : { description: seo.description }) })) }
   return (
     // The boot script stamps data-theme / data-motion before React hydrates.
     <html lang="en" suppressHydrationWarning>

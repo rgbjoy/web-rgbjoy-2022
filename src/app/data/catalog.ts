@@ -65,6 +65,7 @@ export function catalogMarkdown(entries: CatalogEntry[], description: string = S
     '',
     '## Read and explore',
     '',
+    `- [Studio](${SITE.url}/studio): How ${author} works with clients, what every build includes, and a website estimate.`,
     `- [Conversation guide](${SITE.url}/prompt.md): Instructions and portfolio context for exploring rgbjoy with an AI assistant.`,
     `- [Project directory](${SITE.url}/directory): Accessible HTML with every entry.`,
     `- [JSON catalog](${SITE.url}/api/catalog): Public, read-only profile and entries. Optional q search and kind=project or kind=experiment filters.`,

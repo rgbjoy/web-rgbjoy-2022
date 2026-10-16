@@ -1,0 +1,920 @@
+.page {
+  /* Isolated, so the backdrop can sit behind the content without slipping behind the body. */
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 40px var(--gutter) 96px;
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 1.6;
+  user-select: text;
+}
+
+/* Top right: the disc, tilted back and cropped by the corner, turning once a minute.
+   The global reduced-motion reset leaves it still. */
+.backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
+  width: min(520px, 80vw);
+  aspect-ratio: 1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--fg);
+  opacity: 0.35;
+  perspective: 900px;
+  /* Fades out toward the content, so it never competes with the heading. */
+  mask-image: radial-gradient(circle at 100% 0%, #000 35%, transparent 75%);
+}
+
+.disc {
+  position: absolute;
+  top: -45%;
+  right: -45%;
+  width: 140%;
+  transform: rotateX(28deg) rotateY(-18deg);
+  animation: disc-turn 60s linear infinite;
+}
+
+/* The backdrop ignores the pointer; only the arcs themselves catch it. */
+.arc {
+  pointer-events: auto;
+}
+
+/* Quick to light, slow to fade, so a sweep of the cursor leaves a trail. */
+.tint {
+  opacity: 0;
+  transition: opacity 1.4s ease-out;
+}
+
+.arc:hover .tint {
+  opacity: 1;
+  transition-duration: 0.12s;
+}
+
+@keyframes disc-turn {
+  from {
+    transform: rotateX(28deg) rotateY(-18deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(28deg) rotateY(-18deg) rotateZ(360deg);
+  }
+}
+
+.page ::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: color var(--rollover-fade);
+}
+
+.back svg {
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .back:hover {
+    color: var(--rollover-seed, var(--fg));
+  }
+}
+
+.back:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* Hero */
+
+.hero {
+  max-width: 640px;
+  padding: 56px 0 24px;
+}
+
+/* A slow turn; the global reduced-motion reset stops it. */
+.smile {
+  display: inline-flex;
+  margin-bottom: 24px;
+  animation: smile-spin 8s linear infinite;
+}
+
+@keyframes smile-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* The masthead's display face, at the masthead's size. */
+.title {
+  margin: 0;
+  font-family: var(--font-redaction), var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(44px, 9vw, 68px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.lead {
+  margin-top: 20px;
+  max-width: 520px;
+  color: var(--muted);
+}
+
+/* Sections */
+
+.section {
+  margin-top: 72px;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap);
+  margin: 0 0 24px;
+  font-weight: inherit;
+}
+
+.headingName {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.headingRule {
+  flex: 1;
+  align-self: center;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.headingIndex {
+  color: var(--faint);
+}
+
+.intro {
+  max-width: 560px;
+  margin-bottom: 28px;
+  color: var(--muted);
+}
+
+/* Estimator: questions on the left, the running total pinned beside them. */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 48px;
+  align-items: start;
+}
+
+.questions {
+  min-width: 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* One step: a header row that always shows, over a body that folds away. */
+.question {
+  border-top: 1px solid var(--hairline);
+}
+
+.questionHeader {
+  display: grid;
+  grid-template-columns: 3ch auto minmax(0, 1fr) auto;
+  gap: var(--gap-tight);
+  align-items: baseline;
+  padding: 16px 0;
+}
+
+.questionIndex {
+  color: var(--faint);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.questionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  transition: color var(--transition);
+}
+
+/* Not reached yet: there, so the whole path shows, but quiet. */
+.questionUpcoming .questionTitle {
+  color: var(--faint);
+}
+
+.questionAnswer {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: right;
+}
+
+.change {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .change:hover {
+    color: var(--rollover-seed, var(--fg));
+  }
+}
+
+.change:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* Rows from 0fr to 1fr animate to the content's own height, whatever it is. */
+.questionBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.28s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+}
+
+.questionOpen .questionBody {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* The clip is what folds it; the few pixels either side keep focus rings whole. */
+.questionInner {
+  min-height: 0;
+  margin: 0 -3px;
+  padding: 0 3px;
+  overflow: hidden;
+}
+
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.hint {
+  margin: 0 0 12px;
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.questionActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 24px;
+}
+
+.confirm {
+  padding: 8px 22px;
+  border: 1px solid var(--fg);
+  background: var(--fg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--bg);
+  transition: border-color var(--rollover-fade), background var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .confirm:hover:not(:disabled) {
+    border-color: var(--rollover-seed, var(--fg));
+    background: var(--rollover-seed, var(--fg));
+  }
+}
+
+.confirm:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.confirm:disabled {
+  border-color: var(--hairline);
+  background: none;
+  color: var(--faint);
+  cursor: default;
+}
+
+/* Kept in the accessibility tree and the tab order; the row shows its state. */
+.native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.choice {
+  position: relative;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: var(--gap-tight);
+  align-items: baseline;
+  padding: 12px;
+  border-top: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+@media (hover: hover) {
+  .choice:hover {
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+}
+
+.choice:has(.native:checked) {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.choice:has(.native:focus-visible),
+.chip:has(.native:focus-visible) {
+  outline: 1px solid var(--fg);
+  outline-offset: -1px;
+}
+
+.choice:has(.native:disabled) {
+  cursor: default;
+}
+
+.mark {
+  color: var(--fg);
+}
+
+.choiceBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.choiceLabel {
+  color: var(--fg);
+}
+
+.choiceDescription {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.choiceAside {
+  color: var(--faint);
+  font-size: 13px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  position: relative;
+  padding: 8px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--fg);
+  }
+}
+
+.chip:has(.native:checked) {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Summary */
+
+.summary {
+  position: sticky;
+  top: 24px;
+  padding: 20px;
+  border: 1px solid var(--hairline);
+  background: var(--bg);
+}
+
+.summaryLabel {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.total {
+  margin-top: 8px;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.weeks {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.lines {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.lineValue {
+  flex-shrink: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Priced from the open step, not confirmed yet. */
+.linePending,
+.linePending .lineValue {
+  color: var(--faint);
+}
+
+.care {
+  margin-top: 12px;
+  border-top: 1px solid var(--hairline);
+}
+
+.note {
+  margin-top: 16px;
+  color: var(--faint);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* The contact dialog's send button, a size up. */
+.cta {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px 18px;
+  border: 1px solid var(--fg);
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--fg);
+  transition: border-color var(--rollover-fade), background var(--rollover-fade), color var(--transition);
+}
+
+@media (hover: hover) {
+  .cta:hover:not(:disabled) {
+    border-color: var(--rollover-seed, var(--fg));
+    background: var(--rollover-seed, var(--fg));
+    color: var(--bg);
+  }
+}
+
+.cta:active:not(:disabled) {
+  border-color: var(--rollover-seed, var(--fg));
+  background: var(--rollover-seed, var(--fg));
+  color: var(--bg);
+}
+
+.cta:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.cta:disabled {
+  border-color: var(--hairline);
+  color: var(--faint);
+  cursor: default;
+}
+
+.ctaHint {
+  margin-top: 8px;
+  color: var(--faint);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Prose, with Tom beside it */
+
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 640px) 280px;
+  justify-content: space-between;
+  gap: 48px;
+  align-items: start;
+}
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.prose p:first-child {
+  color: var(--muted);
+}
+
+.proseClose {
+  font-family: var(--font-redaction), var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+.portrait {
+  margin: 0;
+}
+
+/* A cutout, so no frame: it stands on a hairline where the photo cuts off, in
+   the site's black and white until it's looked at. */
+.portraitImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid var(--hairline);
+  filter: grayscale(1);
+  transition: filter 0.4s ease;
+}
+
+@media (hover: hover) {
+  .portrait:hover .portraitImage {
+    filter: none;
+  }
+}
+
+.portraitCaption {
+  margin-top: 8px;
+  color: var(--faint);
+  font-size: 13px;
+}
+
+/* Details */
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 48px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail {
+  padding: 16px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.detailTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.detailText {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* Process */
+
+.process {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processStep {
+  padding: 16px 0 24px;
+  border-top: 1px solid var(--hairline);
+}
+
+.processIndex {
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.processTitle {
+  margin: 6px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.processText {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* Closing */
+
+.closing {
+  max-width: 420px;
+  margin-top: 88px;
+  padding-top: 32px;
+  border-top: 1px solid var(--hairline);
+}
+
+.closingLead {
+  font-family: var(--font-redaction), var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 36px;
+  line-height: 1.2;
+}
+
+.closingText {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+/* Narrow screens only: the running total, pinned to the bottom edge. */
+.peek {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The photo leads, smaller, above what it's beside on a wide screen. */
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .portrait {
+    order: -1;
+    width: 200px;
+  }
+
+  .summary {
+    position: static;
+  }
+
+  .process {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .peek {
+    position: fixed;
+    z-index: 20;
+    left: 50%;
+    bottom: max(var(--gutter), env(safe-area-inset-bottom));
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: calc(100vw - 2 * var(--gutter));
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    box-shadow: 0 8px 24px #0003;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    color: var(--fg);
+    font-size: 13px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: opacity 0.2s ease, translate 0.2s ease, border-radius 0.2s ease;
+  }
+
+  /* Enlarged: a sheet wide enough to read, capped so the question behind it is never wholly covered. */
+  .peekOpen {
+    width: min(420px, calc(100vw - 2 * var(--gutter)));
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+
+  .peekBar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    white-space: nowrap;
+  }
+
+  .peekBar:focus-visible,
+  .peekJump:focus-visible,
+  .peekSend:focus-visible {
+    outline: 1px solid var(--fg);
+    outline-offset: -3px;
+  }
+
+  .peekChevron {
+    flex-shrink: 0;
+    margin-left: auto;
+    transition: rotate 0.2s ease;
+  }
+
+  .peekOpen .peekChevron {
+    rotate: 180deg;
+  }
+
+  .peekWeeks {
+    color: var(--muted);
+  }
+
+  /* Folds like a question body: rows from 0fr to 1fr reach the content's own height. */
+  .peekBody {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.28s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+  }
+
+  .peekOpen .peekBody {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .peekInner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .peekScroll {
+    max-height: min(52dvh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 2px 16px 14px;
+    line-height: 1.45;
+  }
+
+  .peek .lines {
+    margin-top: 12px;
+  }
+
+  .peekActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .peekJump {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--fg);
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .peekSend {
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--fg);
+    background: var(--fg);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: var(--bg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .peek,
+    .peekBody,
+    .peekChevron {
+      transition: none;
+    }
+  }
+
+  /* The summary is on screen, send button and all, or already behind: nothing below to point at. */
+  .peekHidden {
+    opacity: 0;
+    translate: -50% 8px;
+    pointer-events: none;
+  }
+
+  .peekLabel {
+    color: var(--faint);
+  }
+
+  .page {
+    padding-bottom: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .details,
+  .process {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* A confirmed answer drops under its question rather than squeezing beside it. */
+  .questionHeader {
+    grid-template-columns: 3ch minmax(0, 1fr) auto;
+    grid-template-areas:
+      "index title change"
+      ". answer answer";
+    row-gap: 2px;
+  }
+
+  .questionIndex {
+    grid-area: index;
+  }
+
+  .questionTitle {
+    grid-area: title;
+  }
+
+  .questionAnswer {
+    grid-area: answer;
+    text-align: left;
+  }
+
+  .change {
+    grid-area: change;
+  }
+
+  /* The price stays beside the name; the description runs the full width under both. */
+  .choice {
+    grid-template-areas:
+      "mark label aside"
+      "mark description description";
+    row-gap: 2px;
+    padding: 12px 8px;
+  }
+
+  .mark {
+    grid-area: mark;
+  }
+
+  .choiceBody {
+    display: contents;
+  }
+
+  .choiceLabel {
+    grid-area: label;
+  }
+
+  .choiceDescription {
+    grid-area: description;
+  }
+
+  .choiceAside {
+    grid-area: aside;
+  }
+}

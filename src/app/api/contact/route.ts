@@ -10,6 +10,8 @@ import { SITE } from "../../data/site"
 const MAX_NAME = 120
 const MAX_EMAIL = 254
 const MAX_MESSAGE = 5000
+/** An estimate is a few dozen lines at most. */
+const MAX_ATTACHMENT = 4000
 /** Anything shorter is almost always a bot or a misfire. */
 const MIN_MESSAGE = 10
 
@@ -20,6 +22,8 @@ type Payload = {
   name?: unknown
   email?: unknown
   message?: unknown
+  /** Sent alongside the message, like an estimate. Its first line is its title. */
+  attachment?: unknown
   /** Honeypot. Real people never see this field, so anything in it is a bot. */
   company?: unknown
 }
@@ -85,6 +89,8 @@ export async function POST(request: Request) {
   const name = singleLine(asString(body.name, MAX_NAME))
   const email = singleLine(asString(body.email, MAX_EMAIL))
   const message = asString(body.message, MAX_MESSAGE)
+  const attachment = asString(body.attachment, MAX_ATTACHMENT)
+  const attachmentTitle = singleLine(attachment.split("\n")[0] ?? "").slice(0, 60)
 
   if (!name) {
     return NextResponse.json({ error: "Add your name." }, { status: 400 })
@@ -95,7 +101,8 @@ export async function POST(request: Request) {
       { status: 400 },
     )
   }
-  if (message.length < MIN_MESSAGE) {
+  // An attachment speaks for itself; without one, the message has to.
+  if (!attachment && message.length < MIN_MESSAGE) {
     return NextResponse.json(
       { error: "Add a little more detail." },
       { status: 400 },
@@ -123,17 +130,25 @@ export async function POST(request: Request) {
         ReplyToAddresses: [`${name} <${email}>`],
         Content: {
           Simple: {
-            Subject: { Data: `${SITE.name} — ${name}`, Charset: "UTF-8" },
+            Subject: {
+              Data: `${SITE.name} — ${name}${attachmentTitle ? ` · ${attachmentTitle}` : ""}`,
+              Charset: "UTF-8",
+            },
             Body: {
               Text: {
-                Data: `From: ${name} <${email}>\n\n${message}`,
+                Data:
+                  `From: ${name} <${email}>\n\n${message || "(no message)"}` +
+                  (attachment ? `\n\n----\n${attachment}` : ""),
                 Charset: "UTF-8",
               },
               Html: {
                 Data:
                   `<p><strong>${escapeHtml(name)}</strong> ` +
                   `&lt;${escapeHtml(email)}&gt;</p>` +
-                  `<p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
+                  `<p style="white-space:pre-wrap">${escapeHtml(message || "(no message)")}</p>` +
+                  (attachment
+                    ? `<hr><pre style="white-space:pre-wrap;font-family:ui-monospace,monospace">${escapeHtml(attachment)}</pre>`
+                    : ""),
                 Charset: "UTF-8",
               },
             },

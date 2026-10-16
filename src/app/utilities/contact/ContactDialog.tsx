@@ -1,23 +1,38 @@
 "use client"
 
 import * as Dialog from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
+import { Paperclip, X } from "lucide-react"
 import { useEffect, useState } from "react"
 
 import styles from "./ContactDialog.module.css"
 
 type Status = "idle" | "sending" | "sent" | "error"
 
+/** Something sent along with the message, like an estimate; shown as a card, not typed into the message. */
+export type ContactAttachment = {
+  title: string
+  /** The headline: for an estimate, its total and timeline. */
+  summary: string
+  /** Smaller, under the headline. */
+  details?: string
+  /** What's actually sent. */
+  body: string
+}
+
 /** Controlled, because both the masthead invite and the menu open it. */
 export function ContactDialog({
   open,
   onOpenChange,
+  attachment,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  attachment?: ContactAttachment
 }) {
   const [status, setStatus] = useState<Status>("idle")
   const [error, setError] = useState("")
+  const [detached, setDetached] = useState(false)
+  const attached = attachment && !detached ? attachment : null
 
   // Reset a moment after closing, so the form does not visibly rewind mid-fade.
   useEffect(() => {
@@ -25,6 +40,7 @@ export function ContactDialog({
     const id = window.setTimeout(() => {
       setStatus("idle")
       setError("")
+      setDetached(false)
     }, 200)
     return () => window.clearTimeout(id)
   }, [open])
@@ -45,6 +61,7 @@ export function ContactDialog({
           name: data.get("name"),
           email: data.get("email"),
           message: data.get("message"),
+          attachment: attached?.body,
           company: data.get("company"),
         }),
       })
@@ -87,6 +104,26 @@ export function ContactDialog({
             </div>
           ) : (
             <form className={styles.form} onSubmit={submit}>
+              {attached ? (
+                <div className={styles.attachment}>
+                  <Paperclip className={styles.attachmentIcon} size={14} strokeWidth={1.75} aria-hidden />
+                  <div className={styles.attachmentBody}>
+                    <p className={styles.attachmentTitle}>{attached.title}</p>
+                    <p className={styles.attachmentSummary}>{attached.summary}</p>
+                    {attached.details ? <p className={styles.attachmentDetails}>{attached.details}</p> : null}
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.detach}
+                    onClick={() => setDetached(true)}
+                    aria-label={`Remove the attached ${attached.title}`}
+                    title="Remove"
+                  >
+                    <X size={14} strokeWidth={1.75} aria-hidden />
+                  </button>
+                </div>
+              ) : null}
+
               <label className={styles.field}>
                 <span className={styles.label}>name</span>
                 <input
@@ -112,14 +149,19 @@ export function ContactDialog({
               </label>
 
               <label className={styles.field}>
-                <span className={styles.label}>message</span>
+                <span className={styles.label}>
+                  message
+                  {attached ? <span className={styles.optional}> · optional</span> : null}
+                </span>
+                {/* With something attached it can speak for itself; a note is up to them. */}
                 <textarea
                   className={styles.textarea}
                   name="message"
-                  required
-                  minLength={10}
+                  required={!attached}
+                  minLength={attached ? undefined : 10}
                   maxLength={5000}
                   rows={5}
+                  placeholder={attached ? "Anything to add? Your business, timing, sites you like…" : undefined}
                 />
               </label>
 

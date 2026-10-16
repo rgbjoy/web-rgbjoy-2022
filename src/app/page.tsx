@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   Minus,
   Plus,
+  Search,
   X,
 } from "lucide-react"
 import Link from "next/link"
@@ -44,6 +45,7 @@ import { FluidVelocityBackground } from "./utilities/FluidVelocityBackground"
 import { openPalette } from "./utilities/SearchPalette/paletteState"
 import { SettingsMenu } from "./utilities/settings/SettingsMenu"
 import { RgbLogo } from "./utilities/RgbLogo/RgbLogo"
+import { SmileIcon } from "./utilities/SmileIcon"
 import { SmoothScroll } from "./utilities/SmoothScroll"
 import { useReducedMotion, useTheme } from "./utilities/settings/useSettings"
 import styles from "./page.module.css"
@@ -272,6 +274,11 @@ function Masthead({
               renderText={(text, offset) => <TypedText text={text} seeds={introSeeds} offset={offset} />} />
           </div>
         </div>
+        {/* Fades in right after the intro has typed out; the load choreography finds it by data-intro. */}
+        <Link href="/studio" className={styles.studioLink} data-intro="studio">
+          learn about the studio
+          <SmileIcon />
+        </Link>
       </header>
     </>
   )
@@ -501,6 +508,7 @@ export default function Home() {
     const main = mainRef.current
     const footer = footerRef.current
     const availability = availabilityRef.current
+    const studioLink = document.querySelector<HTMLElement>('[data-intro="studio"]')
     if (!controls || !main || !footer) return
 
     const categories = Array.from(
@@ -535,7 +543,8 @@ export default function Home() {
     })
 
     // CSS already hides these; lock matching GSAP state before the timeline runs.
-    gsap.set([controls, footer, ...(availability ? [availability] : [])], { autoAlpha: 0 })
+    const revealed = [controls, footer, ...(availability ? [availability] : []), ...(studioLink ? [studioLink] : [])]
+    gsap.set(revealed, { autoAlpha: 0 })
     for (const part of parts) {
       gsap.set(part.lead, { autoAlpha: 0 })
       gsap.set(part.count, { autoAlpha: 0 })
@@ -569,6 +578,7 @@ export default function Home() {
         onUpdate: () => setIntroCount(Math.floor(intro.i)),
         onComplete: () => setIntroCount(INTRO_TOTAL),
       })
+      .to(studioLink, { autoAlpha: 1, duration: 0.35 }, "+=0.1")
       .to(controls, {
         autoAlpha: 1,
         duration: 0.35,
@@ -620,7 +630,7 @@ export default function Home() {
       waiting = false
       window.clearTimeout(fontTimer)
       timeline.kill()
-      gsap.set([controls, footer, ...(availability ? [availability] : [])], { clearProps: "opacity,visibility" })
+      gsap.set(revealed, { clearProps: "opacity,visibility" })
       for (const part of parts) {
         gsap.set(part.lead, { clearProps: "opacity,visibility" })
         gsap.set(part.count, { clearProps: "opacity,visibility" })
@@ -859,6 +869,13 @@ export default function Home() {
             >
               a–z
             </button>
+
+            {/* Looks like a field, opens the same search palette as the menu and ⌘F. */}
+            <button type="button" className={styles.searchField} onClick={openPalette}>
+              <Search size={14} strokeWidth={1.75} aria-hidden />
+              search
+              <span className={styles.searchHint} aria-hidden="true">⌘F</span>
+            </button>
           </div>
 
           <main ref={mainRef} className={styles.main}>
@@ -931,11 +948,11 @@ export default function Home() {
         </div>
         {availableForWork && (
           <div ref={availabilityRef} className={styles.availability} hidden={availabilityDismissed}>
-            <button type="button" className={styles.availabilityAction} onClick={() => setContactOpen(true)}>
+            <Link href="/studio" className={styles.availabilityAction}>
               <span className={styles.availabilityDot} aria-hidden="true" />
               Available for new work
               <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden="true" />
-            </button>
+            </Link>
             <button type="button" className={styles.availabilityClose} onClick={dismissAvailability} aria-label="Dismiss availability message" title="Dismiss">
               <X size={14} strokeWidth={1.75} aria-hidden="true" />
             </button>

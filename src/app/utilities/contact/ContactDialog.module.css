@@ -118,6 +118,78 @@
   line-height: 1.55;
 }
 
+.textarea::placeholder {
+  color: var(--faint);
+}
+
+.optional {
+  color: var(--faint);
+}
+
+/* An attachment: a card above the fields, read-only, removable. */
+.attachment {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--gap-tight);
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--hairline);
+}
+
+.attachmentIcon {
+  margin-top: 3px;
+  color: var(--faint);
+}
+
+.attachmentBody {
+  min-width: 0;
+}
+
+.attachmentTitle {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.attachmentSummary {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.attachmentDetails {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.detach {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -4px -4px 0 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--faint);
+  transition: color var(--rollover-fade);
+}
+
+@media (hover: hover) {
+  .detach:hover {
+    color: var(--rollover-seed, var(--fg));
+  }
+}
+
+.detach:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 2px;
+}
+
 .input:focus,
 .textarea:focus {
   outline: none;
