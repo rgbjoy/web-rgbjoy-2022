@@ -159,7 +159,6 @@
     color: var(--bg);
   }
 
-  .resultSelected .resultDesc,
   .resultSelected .resultMeta {
     color: var(--bg);
   }
@@ -176,7 +175,6 @@
   color: var(--bg);
 }
 
-.result:active .resultDesc,
 .result:active .resultMeta {
   color: var(--bg);
 }
@@ -210,14 +208,6 @@
   letter-spacing: 0.06em;
   text-transform: lowercase;
   color: var(--faint);
-}
-
-.resultDesc {
-  display: block;
-  margin-top: 2px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--muted);
 }
 
 .resultMeta {
