@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { SITE } from "../data/site"
+import { AskAboutWork } from "../utilities/AskAboutWork/AskAboutWork"
 import { ContactDialog } from "../utilities/contact/ContactDialog"
 import { useReducedMotion } from "../utilities/settings/useSettings"
 import {
@@ -28,6 +29,7 @@ import {
   type Step,
 } from "./pricing"
 import styles from "./page.module.css"
+import { DETAILS, PROCESS } from "./content"
 import { Prism } from "./Prism"
 import { StudioNav } from "./StudioNav"
 import { useSectionReveal } from "./useSectionReveal"
@@ -39,46 +41,6 @@ const PORTRAIT = {
   width: 452,
   height: 365,
 }
-
-/** The things that only get noticed when they're missing. */
-const DETAILS = [
-  {
-    title: "your email keeps working",
-    text: "The records that keep your inbox and contact form out of spam (MX, SPF, DKIM, DMARC), set up right.",
-  },
-  {
-    title: "your rankings come with you",
-    text: "Every old address redirected to its new page, so Google and old links still land somewhere real.",
-  },
-  {
-    title: "fast on one bar of signal",
-    text: "Images sized for each screen, nothing loaded that isn't needed, tested on a real phone.",
-  },
-  {
-    title: "everyone can use it",
-    text: "Keyboard, screen readers, contrast and resizable text, checked by hand.",
-  },
-  {
-    title: "found by search and assistants",
-    text: "Structured data, a sitemap and plain-text versions, so search engines and AI tools describe you correctly.",
-  },
-  {
-    title: "you own it",
-    text: "Your domain, your accounts, your content. Nothing held hostage, and everything written down.",
-  },
-]
-
-const PROCESS = [
-  { title: "talk", text: "A free call about what you need, who it's for and what isn't working now." },
-  { title: "plan", text: "A written scope and a fixed price, so you know what you're getting before anything starts." },
-  { title: "design", text: "You see it before it's built, and we change whatever doesn't feel right." },
-  { title: "build", text: "A private preview link you can click through on your own phone as it comes together." },
-  {
-    title: "launch",
-    text: "I register or move your domain, set up hosting, SSL, email records, redirects and analytics, and stay on hand all launch day.",
-  },
-  { title: "look after", text: "I host it and keep it healthy. When you need something, you email me, not a support queue." },
-]
 
 const pad2 = (n: number) => String(n).padStart(2, "0")
 
@@ -217,6 +179,7 @@ export function Estimator() {
   const [confirmed, setConfirmed] = useState<ReadonlySet<Step>>(() => new Set())
   const [editing, setEditing] = useState<Step | null>(null)
   const [contactOpen, setContactOpen] = useState(false)
+  const [promptOpen, setPromptOpen] = useState(false)
   /** Whether the summary is on screen or scrolled past, so the pinned total pointing down at it can step aside. */
   const [summaryReached, setSummaryReached] = useState(false)
   /** Narrow screens only: the pinned total enlarged in place, so the breakdown can be read without leaving the question in hand. */
@@ -494,8 +457,8 @@ export function Estimator() {
         <h1 className={styles.title}>A studio for the new AI era ahead.</h1>
         <p className={styles.lead}>
           RGBJOY is me, Tom Fletcher, a designer and engineer who builds with AI, without the slop. I build what
-          you actually need, ready for how people are starting to use the web, and I look after it once it&rsquo;s
-          live. <a href="#estimate">Price yours at the bottom</a>.
+          you actually need, ready for how people are starting to use the web.{" "}
+          <a href="#estimate">Price yours at the bottom</a>.
         </p>
       </header>
 
@@ -506,18 +469,27 @@ export function Estimator() {
         <div className={styles.about}>
           <div className={styles.prose}>
             <p>
-              Anyone can prompt a website into existence now. It looks fine in the demo, then the contact form lands
-              in spam, the old links die, and there&rsquo;s nobody to call.
+              Anyone can prompt a website into existence now. It looks fine in the demo, then the details start to
+              fall apart, the art is AI that nobody asked for, and the whole thing feels generic.
             </p>
             <p>
               I use AI tools every day, and they let one person do what used to take a team. But they&rsquo;re tools,
               not the author. I decide what gets built, read every line before it ships, and test it the way your
-              customers will use it. The speed goes into what you actually need, like a booking flow shaped like your
-              week, not whatever a theme happened to include.
+              customers will use it.
             </p>
             <p>
               More people now ask an assistant about a business instead of clicking through its menu. I build sites
-              that read well to both. This one does.
+              that read well to both.{" "}
+              {/* A real link to the prompt without JavaScript; with it, the same copy-a-prompt popup as the homepage. */}
+              <a
+                href="/prompt.md"
+                onClick={(event) => {
+                  event.preventDefault()
+                  setPromptOpen(true)
+                }}
+              >
+                This one does.
+              </a>
             </p>
             <p className={styles.proseClose}>The speed comes from the tools. The judgment and the care come from me.</p>
           </div>
@@ -694,6 +666,8 @@ export function Estimator() {
           </div>
         </div>
       </div>
+
+      <AskAboutWork open={promptOpen} onOpenChange={setPromptOpen} />
 
       <ContactDialog
         open={contactOpen}

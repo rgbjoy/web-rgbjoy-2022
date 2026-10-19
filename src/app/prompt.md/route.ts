@@ -1,6 +1,7 @@
 import { getSettings, getPublicCatalog, getSeo, getInfo } from "../server/content"
 import { catalogMarkdown } from "../data/catalog"
 import { SITE } from "../data/site"
+import { studioMarkdown } from "../studio/content"
 
 export const dynamic = "force-dynamic"
 
@@ -22,7 +23,7 @@ Read the portfolio below. Briefly introduce the portfolio owner, what he does, a
 - Preserve Coming soon, Ongoing, and work-in-progress labels. Publication months are not last-modified dates.
 - Base factual claims on the published content. Do not invent roles, outcomes, endorsements, technologies, or experience. Clearly distinguish a possible fit from demonstrated experience.
 - For current details, read ${SITE.url}/directory or ${SITE.url}/api/catalog. The API accepts an optional q query and kind=project or kind=experiment. Start with the complete catalog when a question calls for a conceptual match.
-- If the visitor asks about working together, direct them to the Contact menu on ${SITE.url}.
+- If the visitor asks about working together, pricing or how a build works, answer from the Studio section below and link to ${SITE.url}/studio, where they can get an estimate and get in touch.
 
 ## Scope
 
@@ -32,7 +33,8 @@ Use this guide for the visitor's requested portfolio conversation. No installati
 
 ## Public portfolio
 
-${catalogMarkdown(await getPublicCatalog(settings), (await getSeo(settings)).description, (await getInfo(settings)).author)}`
+${catalogMarkdown(await getPublicCatalog(settings), (await getSeo(settings)).description, (await getInfo(settings)).author)}
+${studioMarkdown((await getInfo(settings)).author)}`
 
   return new Response(instructions, {
     // Some AI web fetchers reject text/markdown; plain text preserves the

@@ -104,7 +104,9 @@ export default async function RootLayout({
   const structuredData = { ...SITE_STRUCTURED_DATA, "@graph": SITE_STRUCTURED_DATA["@graph"].map(node => ({ ...node, ...(node["@type"] === "Person" ? { name: info.author } : {}), ...(node["@type"] === "Organization" ? {} : { description: seo.description }) })) }
   return (
     // The boot script stamps data-theme / data-motion before React hydrates.
-    <html lang="en" suppressHydrationWarning>
+    // data-scroll-behavior lets the router drop the studio's smooth scrolling
+    // while it resets to the top, so a new page doesn't visibly glide up.
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <link
           rel="alternate"
