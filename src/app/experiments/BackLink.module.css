@@ -1,11 +1,17 @@
 /* Shared by every experiment, so it follows the site's theme tokens rather than
    any one scene. Frosted instead of filled: it has to read over the bright
    scenes and the dark ones alike. Under the search palette (40). */
-.back {
+.bar {
   position: fixed;
   z-index: 20;
   top: max(var(--gutter), env(safe-area-inset-top));
   left: max(var(--gutter), env(safe-area-inset-left));
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.back {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -52,4 +58,51 @@
   .back {
     font-size: 11px;
   }
+}
+
+/* The info button wears the back link's pill, squared off around the icon.
+   The card hangs from the whole bar, not the button, so it fits on phones. */
+.infoButton {
+  padding: 9px;
+}
+
+.card {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: none;
+  width: min(320px, calc(100vw - 2 * var(--gutter)));
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  box-shadow: 0 8px 24px #0003;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--fg);
+}
+
+/* Tap toggles it everywhere; hover only shows it where hover is real. */
+.infoOpen .card {
+  display: block;
+}
+
+@media (hover: hover) {
+  .info:hover .card {
+    display: block;
+  }
+}
+
+.cardTitle {
+  margin: 0 0 4px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.cardText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
 }

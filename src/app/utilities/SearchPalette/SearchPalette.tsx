@@ -16,7 +16,6 @@ import styles from "./SearchPalette.module.css"
 type Entry = {
   href: string
   title: string
-  description?: string
   meta: string
   external: boolean
   haystack: string
@@ -30,7 +29,6 @@ function makeIndex(projects: PortfolioProject[], experiments: Experiment[]): Ent
   ...projects.map((project) => ({
     href: project.href,
     title: project.title,
-    description: project.description,
     meta: project.year,
     external: true,
     haystack: [project.title, project.year, project.description ?? "", ...project.tech]
@@ -40,7 +38,6 @@ function makeIndex(projects: PortfolioProject[], experiments: Experiment[]): Ent
   ...experiments.map((experiment) => ({
     href: experiment.href,
     title: experiment.title,
-    description: experiment.description,
     meta: "experiment",
     external: false,
     haystack: experimentSearchText(experiment),
@@ -225,11 +222,6 @@ function PalettePanel({ pathname }: { pathname: string }) {
                       <span className={styles.badge}>current</span>
                     ) : null}
                   </span>
-                  {entry.description ? (
-                    <span className={styles.resultDesc}>
-                      {entry.description}
-                    </span>
-                  ) : null}
                 </span>
                 <span className={styles.resultMeta}>{entry.meta}</span>
               </button>
