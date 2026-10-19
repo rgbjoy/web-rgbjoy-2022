@@ -134,8 +134,6 @@ export class FrameUniforms {
   smoothHistory = false
   /** Whether the probe volume holds any light yet. */
   probesReady = false
-  /** Whether the bounce is traced at a quarter of the pixels and upsampled. */
-  halfBounce = false
   /** Whether, while the plus turns, only surfaces near it keep a short memory. */
   localRefresh = false
 
@@ -174,8 +172,7 @@ export class FrameUniforms {
     this.plusPreviousCenter.toArray(d, 56)
     u[59] = this.smoothHistory ? 1 : 0
     u[60] = this.probesReady ? 1 : 0
-    u[61] = this.halfBounce ? 1 : 0
-    u[62] = this.localRefresh ? 1 : 0
+    u[61] = this.localRefresh ? 1 : 0
     return this.buffer
   }
 }

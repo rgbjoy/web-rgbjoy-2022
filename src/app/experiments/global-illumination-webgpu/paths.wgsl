@@ -1,8 +1,8 @@
-// What the trace and the half-resolution bounce share: the noise, the bounce
-// rays and their marches, where a surface was last frame, and how long a
-// surface's bounce light may be remembered while the plus turns. Joined
-// after scene.wgsl and frame.wgsl; each module that joins it declares its
-// own `frame` and `blueNoise` bindings.
+// The path tracer's own toolkit: the noise, the bounce rays and their
+// marches, where a surface was last frame, and how long a surface's bounce
+// light may be remembered while the plus turns. Joined after scene.wgsl and
+// frame.wgsl, ahead of trace.wgsl, which declares the `frame` and
+// `blueNoise` bindings it uses.
 
 const SAMPLING_BLUE = 1u;
 const METHOD_PROBES = 1u;
@@ -146,20 +146,6 @@ fn previousPixel(p: vec3f) -> vec3f {
   return vec3f((ndc * 0.5 + 0.5) * frame.resolution, range);
 }
 
-// A half-resolution bounce has a quarter as many samples over any patch of
-// surface as a per-pixel one, so it needs four times the samples to be as
-// smooth: it settles at four times the count, and while the plus turns it
-// keeps four times the memory near it. A frame's four times cheaper, so the
-// settling takes no more work; near the plus, the light follows it a little
-// more slowly.
-fn sampleScale() -> f32 {
-  return select(1.0, 4.0, frame.halfBounce == 1u);
-}
-
-/** The sample count past which a surface's bounce is carried across camera moves untraced. */
-fn settledAt() -> f32 {
-  return SETTLED * sampleScale();
-}
 
 /** How many samples a surface's bounce mean may hold, and whether, once settled, it may coast on them untraced while the camera moves. */
 struct Memory {
@@ -175,9 +161,8 @@ struct Memory {
 // Without it, everywhere is treated as near.
 fn memory(p: vec3f) -> Memory {
   if (frame.animating == 0u) { return Memory(1e9, true); }
-  let shortMemory = ANIMATED_SAMPLES * sampleScale();
-  if (frame.localRefresh == 0u) { return Memory(shortMemory, false); }
+  if (frame.localRefresh == 0u) { return Memory(ANIMATED_SAMPLES, false); }
   let clear = length(p - scene.plusCenter) - PLUS_REACH;
   let near = 1.0 - smoothstep(REFRESH_NEAR, REFRESH_FAR, clear);
-  return Memory(mix(settledAt(), shortMemory, near), near <= 0.0);
+  return Memory(mix(SETTLED, ANIMATED_SAMPLES, near), near <= 0.0);
 }

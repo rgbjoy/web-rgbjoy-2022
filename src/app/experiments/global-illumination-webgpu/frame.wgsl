@@ -1,7 +1,6 @@
 // One frame of the camera and the path tracer's settings, shared by the
-// trace, the half-resolution bounce, its upsampling and the denoiser, with
-// the surface the trace leaves behind for the others to tell surfaces apart
-// by. Each module that joins this declares its own `frame` binding.
+// trace and the denoiser, with the surface the trace leaves behind for the
+// denoiser to tell surfaces apart by. Each module that joins this declares its own `frame` binding.
 
 struct Frame {
   cameraPosition: vec3f,
@@ -40,8 +39,6 @@ struct Frame {
   smoothHistory: u32,
   /** 1 once the probe volume holds any light, for reflections to fall back on. */
   probesReady: u32,
-  /** 1 when the bounce is traced at a quarter of the pixels and upsampled, not per pixel. */
-  halfBounce: u32,
   /** 1 when, while the plus turns, only surfaces near it keep a short memory. */
   localRefresh: u32,
 }

@@ -52,10 +52,8 @@ fn luminance(c: vec3f) -> f32 {
   return dot(c, vec3f(0.2126, 0.7152, 0.0722));
 }
 
-/** How many rounds a pixel holding this many samples takes; 512 or more takes none. A half-resolution
- *  sample is shared by four pixels, so it counts as a quarter of one. */
-fn rounds(count: f32) -> u32 {
-  let samples = select(count, count * 0.25, frame.halfBounce == 1u);
+/** How many rounds a pixel holding this many samples takes; 512 or more takes none. */
+fn rounds(samples: f32) -> u32 {
   let halvings = floor(log2(max(samples, 1.0)) * 0.5 + 0.5);
   return u32(clamp(5.0 - halvings, 0.0, 5.0));
 }

@@ -1,7 +1,6 @@
 import { BLUE_NOISE_SIZE, blueNoiseRGBA } from "../global-illumination/blueNoise"
 import { PROBE_COUNT } from "../global-illumination/probes"
 import { Bloom, BLOOM_LEVELS } from "./bloom"
-import bounceSource from "./bounce.wgsl"
 import denoiseSource from "./denoise.wgsl"
 import displaySource from "./display.wgsl"
 import frameSource from "./frame.wgsl"
@@ -10,15 +9,12 @@ import pathsSource from "./paths.wgsl"
 import probeSource from "./probe.wgsl"
 import sceneSource from "./scene.wgsl"
 import traceSource from "./trace.wgsl"
-import upsampleSource from "./upsample.wgsl"
 
 /**
  * Every GPU resource and pass behind the picture, and the order they run in:
  *
  *   probes A ─probe update─> probes B            (one workgroup per probe)
  *   probes B + history A ─trace─> history B      (one invocation per pixel)
- *   history B + half A ─bounce─> half B          (one invocation per 2×2, when half-res)
- *   half B ─upsample─> history B's bounce
  *   history B ─variance─> D0 + geometry ─à-trous─> D1 ─> D0 … D1   (the bounce, denoised)
  *   history B + D1 ─composite─> image ─bloom─> glow
  *   image + glow ─display─> canvas
@@ -29,8 +25,6 @@ import upsampleSource from "./upsample.wgsl"
 
 /** Per pixel: bounce light and sample count, direct light and depth, surface colour, air. */
 const HISTORY = ["bounce", "direct", "albedo", "air"] as const
-/** Per 2×2 block, for the half-resolution bounce: its mean and count, and the surface it traced from. */
-const HALF = ["bounce", "surface"] as const
 const IMAGE_FORMAT: GPUTextureFormat = "rgba16float"
 /** Float keeps a long running mean exact; 1/512 of a difference vanishes in half floats. */
 const HISTORY_FORMAT: GPUTextureFormat = "rgba32float"
@@ -115,26 +109,6 @@ function createLayouts(device: GPUDevice) {
         sampled(10, COMPUTE, "unfilterable-float"),
       ],
     }),
-    // This frame's depth and normals, and last frame's blocks, in; this frame's blocks, out.
-    bounce: device.createBindGroupLayout({
-      label: "Half-res bounce",
-      entries: [
-        uniform(0, COMPUTE),
-        sampled(1, COMPUTE, "float"),
-        ...[2, 3, 4, 5].map((binding) => sampled(binding, COMPUTE, "unfilterable-float")),
-        writes(6, HISTORY_FORMAT),
-        writes(7, HISTORY_FORMAT),
-      ],
-    }),
-    // This frame's blocks, depth and normals, in; the per-pixel bounce, out.
-    upsample: device.createBindGroupLayout({
-      label: "Bounce upsample",
-      entries: [
-        uniform(0, COMPUTE),
-        ...[1, 2, 3, 4].map((binding) => sampled(binding, COMPUTE, "unfilterable-float")),
-        writes(5, HISTORY_FORMAT),
-      ],
-    }),
     // The trace's bounce, direct (for depth) and albedo (for normals), in;
     // the bounce with its variance, and each pixel's position and normal, out.
     variance: device.createBindGroupLayout({
@@ -177,8 +151,6 @@ type Layouts = ReturnType<typeof createLayouts>
 type Pipelines = {
   probe: GPUComputePipeline
   trace: GPUComputePipeline
-  bounce: GPUComputePipeline
-  upsample: GPUComputePipeline
   variance: GPUComputePipeline
   atrous: GPUComputePipeline
   composite: GPUComputePipeline
@@ -317,10 +289,6 @@ export class GpuPasses {
   private history: [GPUTexture[], GPUTexture[]] = [[], []]
   private image: GPUTexture | null = null
   private traceGroups: GPUBindGroup[] = []
-  /** The half-resolution blocks, A and B, and per history the bounce and upsample groups. */
-  private half: [GPUTexture[], GPUTexture[]] = [[], []]
-  private bounceGroups: GPUBindGroup[] = []
-  private upsampleGroups: GPUBindGroup[] = []
   private compositeGroups: GPUBindGroup[] = []
   private displayGroup: GPUBindGroup | null = null
   private denoised: [GPUTexture, GPUTexture] | null = null
@@ -409,11 +377,9 @@ export class GpuPasses {
     const layouts = createLayouts(device)
     const scene = `${wgslConstants()}\n${sceneSource}`
     const paths = `${scene}\n${frameSource}\n${pathsSource}`
-    const [traceModule, bounceModule, upsampleModule, probeModule, denoiseModule, compositeModule, displayModule, bloom] =
+    const [traceModule, probeModule, denoiseModule, compositeModule, displayModule, bloom] =
       await Promise.all([
         compile(device, "trace.wgsl", `${paths}\n${traceSource}`),
-        compile(device, "bounce.wgsl", `${paths}\n${bounceSource}`),
-        compile(device, "upsample.wgsl", `${scene}\n${frameSource}\n${upsampleSource}`),
         compile(device, "probe.wgsl", `${scene}\n${probeSource}`),
         compile(device, "denoise.wgsl", `${frameSource}\n${denoiseSource}`),
         compile(device, "composite.wgsl", compositeSource),
@@ -422,21 +388,11 @@ export class GpuPasses {
       ])
     const layout = (label: string, ...groups: GPUBindGroupLayout[]) =>
       device.createPipelineLayout({ label, bindGroupLayouts: groups })
-    const [trace, bounce, upsample, probe, variance, atrous, composite, display] = await Promise.all([
+    const [trace, probe, variance, atrous, composite, display] = await Promise.all([
       device.createComputePipelineAsync({
         label: "Trace",
         layout: layout("Trace", layouts.scene, layouts.trace),
         compute: { module: traceModule, entryPoint: "main" },
-      }),
-      device.createComputePipelineAsync({
-        label: "Half-res bounce",
-        layout: layout("Half-res bounce", layouts.scene, layouts.bounce),
-        compute: { module: bounceModule, entryPoint: "main" },
-      }),
-      device.createComputePipelineAsync({
-        label: "Bounce upsample",
-        layout: layout("Bounce upsample", layouts.scene, layouts.upsample),
-        compute: { module: upsampleModule, entryPoint: "main" },
       }),
       device.createComputePipelineAsync({
         label: "Probe update",
@@ -469,7 +425,7 @@ export class GpuPasses {
       device,
       canvas,
       layouts,
-      { trace, bounce, upsample, probe, variance, atrous, composite, display },
+      { trace, probe, variance, atrous, composite, display },
       bloom,
       onTimings,
     )
@@ -494,18 +450,9 @@ export class GpuPasses {
     const { device, layouts } = this
 
     this.history.flat().forEach((texture) => texture.destroy())
-    this.half.flat().forEach((texture) => texture.destroy())
     this.image?.destroy()
     this.denoised?.forEach((texture) => texture.destroy())
     this.geometry?.destroy()
-    const halfTexture = (name: string, i: number) =>
-      device.createTexture({
-        label: `Half-res ${name} ${"AB"[i]}`,
-        size: [Math.ceil(width / 2), Math.ceil(height / 2)],
-        format: HISTORY_FORMAT,
-        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING,
-      })
-    this.half = [HALF.map((name) => halfTexture(name, 0)), HALF.map((name) => halfTexture(name, 1))]
     const historyTexture = (name: string, i: number) =>
       device.createTexture({
         label: `History ${name} ${"AB"[i]}`,
@@ -565,39 +512,6 @@ export class GpuPasses {
         entries: [...views(i).map((resource, j) => ({ binding: j, resource })), { binding: 4, resource: image.createView() }],
       }),
     )
-    // History i is last frame's: the bounce pass reads this frame's surfaces
-    // (history 1 - i) and last frame's blocks (half i), and writes this
-    // frame's blocks (half 1 - i), which the upsample spreads over history 1 - i.
-    const halfViews = (i: number) => this.half[i].map((texture) => texture.createView())
-    this.bounceGroups = [0, 1].map((i) => {
-      const [, direct, albedo] = views(1 - i)
-      return device.createBindGroup({
-        label: `Half-res bounce from ${"AB"[i]}`,
-        layout: layouts.bounce,
-        entries: [
-          { binding: 0, resource: { buffer: this.frameBuffer } },
-          { binding: 1, resource: this.blueNoise.createView() },
-          { binding: 2, resource: direct },
-          { binding: 3, resource: albedo },
-          ...halfViews(i).map((resource, j) => ({ binding: 4 + j, resource })),
-          ...halfViews(1 - i).map((resource, j) => ({ binding: 6 + j, resource })),
-        ],
-      })
-    })
-    this.upsampleGroups = [0, 1].map((i) => {
-      const [bounce, direct, albedo] = views(1 - i)
-      return device.createBindGroup({
-        label: `Bounce upsample into ${"AB"[1 - i]}`,
-        layout: layouts.upsample,
-        entries: [
-          { binding: 0, resource: { buffer: this.frameBuffer } },
-          ...halfViews(1 - i).map((resource, j) => ({ binding: 1 + j, resource })),
-          { binding: 3, resource: direct },
-          { binding: 4, resource: albedo },
-          { binding: 5, resource: bounce },
-        ],
-      })
-    })
     // Five rounds from D0 end in D1, which the composite reads for the bounce.
     this.denoisedCompositeGroups = [0, 1].map((i) =>
       device.createBindGroup({
@@ -714,16 +628,6 @@ export class GpuPasses {
       pass.setBindGroup(0, this.sceneGroups[this.probesNow])
       pass.setBindGroup(1, this.traceGroups[this.historyNow])
       pass.dispatchWorkgroups(Math.ceil(this.width / TILE), Math.ceil(this.height / TILE))
-      // The bounce at a quarter of the pixels, then spread back over them all.
-      // Dispatches in one pass each see what the one before wrote.
-      if (this.frame.halfBounce) {
-        pass.setPipeline(pipelines.bounce)
-        pass.setBindGroup(1, this.bounceGroups[this.historyNow])
-        pass.dispatchWorkgroups(Math.ceil(this.width / 2 / TILE), Math.ceil(this.height / 2 / TILE))
-        pass.setPipeline(pipelines.upsample)
-        pass.setBindGroup(1, this.upsampleGroups[this.historyNow])
-        pass.dispatchWorkgroups(Math.ceil(this.width / TILE), Math.ceil(this.height / TILE))
-      }
       pass.end()
       this.historyNow = 1 - this.historyNow
       this.denoiseCurrent = false
@@ -788,7 +692,6 @@ export class GpuPasses {
     this.timer?.dispose()
     this.bloom.dispose()
     this.history.flat().forEach((texture) => texture.destroy())
-    this.half.flat().forEach((texture) => texture.destroy())
     this.image?.destroy()
     this.denoised?.forEach((texture) => texture.destroy())
     this.geometry?.destroy()

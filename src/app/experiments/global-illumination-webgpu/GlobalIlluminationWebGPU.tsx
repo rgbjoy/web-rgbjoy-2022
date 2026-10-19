@@ -54,7 +54,6 @@ const SETTINGS = {
   ambient: 0.02,
   accumulate: true,
   denoise: true,
-  halfBounce: true,
   method: "Path traced" as keyof typeof METHODS,
   probeRays: 64,
   sampling: "Blue noise" as keyof typeof SAMPLING,
@@ -133,8 +132,6 @@ function applySettings(passes: GpuPasses) {
 
   const frame = passes.frame
   frame.method = METHODS[SETTINGS.method]
-  // The probes give their bounce per pixel already, noise-free and cheap.
-  frame.halfBounce = SETTINGS.halfBounce && SETTINGS.method === "Path traced"
   frame.localRefresh = SETTINGS.localRefresh
   frame.bounces = SETTINGS.bounces
   frame.sampling = SAMPLING[SETTINGS.sampling]
@@ -314,7 +311,6 @@ const GlobalIlluminationScene: FC<SceneProps> = memo(
         sampling.add(SETTINGS, "marchJitter").name("March jitter").onChange(sync),
         // Only the path tracer is noisy; the probes have nothing to smooth.
         sampling.add(SETTINGS, "denoise").name("Denoise").onChange(redraw),
-        sampling.add(SETTINGS, "halfBounce").name("Half-res bounce").onChange(sync),
       ]
       sampling.add(progress.current, "samples").name("Samples").disable().listen()
 

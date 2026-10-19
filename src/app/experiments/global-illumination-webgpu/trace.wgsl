@@ -22,10 +22,6 @@
 // — on the plus, where it was before it turned — and the denoiser after this
 // pass smooths what that leaves noisy (paths.wgsl's memory()).
 //
-// With the half-resolution bounce, this pass leaves the path tracer's bounce
-// alone: bounce.wgsl traces it at a quarter of the pixels, and upsample.wgsl
-// spreads it back over every pixel, edge by edge.
-//
 // Pixels run bottom-up, as gl_FragCoord did, so all the screen maths carries
 // over unchanged; the display pass turns the picture the right way up.
 
@@ -234,10 +230,10 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
       let light = probeLight(p, n) * occlusion(p, n);
       let weight = select(1.0, max(frame.weight, frame.probeSettling), frame.mode == MODE_REST);
       bounced = vec4f(mix(textureLoad(bounceHistory, pixel, 0).rgb, light, weight), 1.0);
-    } else if (frame.halfBounce == 0u) {
+    } else {
       let history = bounceHistoryAt(pixel, frame.cameraPosition, rd, t);
       let remembered = memory(p);
-      if (frame.mode == MODE_MOVING && history.a >= settledAt() && remembered.coast) {
+      if (frame.mode == MODE_MOVING && history.a >= SETTLED && remembered.coast) {
         // Settled already: carried over as it is, and costs nothing to trace.
         bounced = history;
       } else {

@@ -47,7 +47,6 @@ test('the frame uniforms land where WGSL lays out Frame', () => {
   frame.plusPreviousCenter.set(4, 5, 6)
   frame.smoothHistory = true
   frame.probesReady = true
-  frame.halfBounce = true
   frame.localRefresh = true
   const buffer = frame.pack()
   const f32 = new Float32Array(buffer)
@@ -70,7 +69,6 @@ test('the frame uniforms land where WGSL lays out Frame', () => {
   expect(u32[59]).toBe(1)
   expect(u32[60]).toBe(1)
   expect(u32[61]).toBe(1)
-  expect(u32[62]).toBe(1)
 })
 
 test('the probe update packs its turn, its ray count and its weight', () => {
@@ -99,7 +97,7 @@ test('the structs declare their fields in the order they are packed', () => {
     'cameraForward', 'marchJitter', 'previousPosition', 'probeSettling', 'previousRight',
     'volumeDensity', 'previousUp', 'airWeight', 'previousForward', 'animating', 'resolution',
     'jitter', 'mode', 'sampling', 'marchSteps', 'method', 'bounces', 'volumeSteps',
-    'plusPreviousTurn', 'plusPreviousCenter', 'smoothHistory', 'probesReady', 'halfBounce',
+    'plusPreviousTurn', 'plusPreviousCenter', 'smoothHistory', 'probesReady',
     'localRefresh',
   ])
   expect(fields(wgsl('probe.wgsl'), 'ProbeUpdate')).toEqual(['rotation', 'rays', 'weight'])
