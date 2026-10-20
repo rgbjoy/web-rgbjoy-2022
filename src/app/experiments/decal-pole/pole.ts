@@ -32,7 +32,7 @@ export const CAMERA = {
   FRICTION: 0.92,
   FOV: 60,
   NEAR: 0.1,
-  FAR: 200,
+  FAR: 400,
   POSITION: [0, 6, 5] as [number, number, number],
   /** Portrait viewports pull back so the pole still fits the frame. */
   PORTRAIT_POSITION: [0, 6, 6] as [number, number, number],
@@ -66,34 +66,20 @@ export const POLE = {
   SEED_TILT: -0.045,
 } as const
 
-/* Wood from everytexture.com (stock texture 00086), 1024px maps. */
-export const WOOD_TEXTURE_PATHS = {
-  map: "/decal-pole/wood-diffuse.jpg",
-  normalMap: "/decal-pole/wood-normal.jpg",
-  bumpMap: "/decal-pole/wood-bump.jpg",
-} as const
-
 export const FLYER_TEXTURE_PATH = "/decal-pole/lost-hamter.jpg"
 
-export const WOOD = {
-  ANISOTROPY: 8,
-  /** Derive the vertical repeat from the pole's proportions. */
-  AUTO_TILE: true,
-  TILE_X: 2,
-  TILE_Y: 2,
+/** Neon palette. Values above 1 are deliberate: they push past the bloom
+ *  threshold so the lines glow. */
+export const NEON = {
+  BACKGROUND: "#0a0014",
+  POLE: [0, 2.2, 3] as [number, number, number],
+  POLE_FILL: "#06000f",
+  GROUND: [2.4, 0.2, 2] as [number, number, number],
+  TREE: [0.3, 3, 1.2] as [number, number, number],
+  TREE_FILL: "#04381a",
+  /** Flyers stay under the bloom threshold so they read as paper, not light. */
+  FLYER: "#b0b0b0",
 } as const
-
-export const ENVIRONMENT = {
-  PRESET: "city",
-  BACKGROUND: true,
-  BLUR: 0.1,
-} as const
-
-type WoodTextures = {
-  map?: Texture
-  normalMap?: Texture
-  bumpMap?: Texture
-}
 
 /** A flyer sits flush against the pole only if it clears both ends. */
 function clampToPole(height: number, poleHeight: number): number {
@@ -171,41 +157,4 @@ export function decalScale(
   const aspect = textureWidth / Math.max(1, textureHeight)
   const sx = Math.min(POLE.MAX_DECAL_WIDTH, POLE.DECAL_SIZE * aspect)
   return { sx, sy: sx / aspect }
-}
-
-export function configureWoodTextures(wood: WoodTextures): void {
-  for (const texture of [wood.map, wood.normalMap, wood.bumpMap]) {
-    if (!texture) continue
-    texture.wrapS = THREE.RepeatWrapping
-    texture.wrapT = THREE.RepeatWrapping
-    texture.anisotropy = WOOD.ANISOTROPY
-  }
-}
-
-/**
- * How often the wood repeats around and up the pole. Auto-tiling keeps the
- * grain square by scaling the vertical repeat to the circumference; TILE_X and
- * TILE_Y then act as multipliers on that. With AUTO_TILE off they are the
- * repeat counts outright.
- */
-export function woodTextureRepeat(
-  radius: number,
-  height: number,
-): { uRepeat: number; vRepeat: number } {
-  if (!WOOD.AUTO_TILE) {
-    return { uRepeat: WOOD.TILE_X, vRepeat: WOOD.TILE_Y }
-  }
-
-  const circumference = 2 * Math.PI * radius
-  const autoVRepeat = Math.max(1, height / Math.max(1e-6, circumference))
-
-  return { uRepeat: WOOD.TILE_X, vRepeat: autoVRepeat * WOOD.TILE_Y }
-}
-
-export function applyWoodRepeat(wood: WoodTextures, uRepeat: number, vRepeat: number): void {
-  for (const texture of [wood.map, wood.normalMap, wood.bumpMap]) {
-    if (!texture) continue
-    texture.repeat.set(uRepeat, vRepeat)
-    texture.needsUpdate = true
-  }
 }

@@ -108,7 +108,7 @@ export default function Page() {
         }`}
         style={{ opacity: ready ? 1 : 0 }}
       >
-        <Canvas shadows>
+        <Canvas>
           <DecalPoleScene
             flyer={flyer}
             onReady={onReady}

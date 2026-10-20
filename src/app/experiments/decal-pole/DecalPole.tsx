@@ -1,23 +1,21 @@
-import { Decal, Environment, PerspectiveCamera, useTexture } from "@react-three/drei"
+import { Decal, PerspectiveCamera, useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import { Bloom, EffectComposer } from "@react-three/postprocessing"
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 import type { Mesh, Texture } from "three"
 
+import { Landscape } from "./Landscape"
 import {
-  applyWoodRepeat,
   CAMERA,
   configureDecalTexture,
-  configureWoodTextures,
   decalPositionFromCamera,
   decalPositionFromDrop,
   decalScale,
-  ENVIRONMENT,
   FLYER_TEXTURE_PATH,
+  NEON,
   POLE,
   randomTilt,
-  woodTextureRepeat,
-  WOOD_TEXTURE_PATHS,
   type DropPoint,
   type PoleDecal,
 } from "./pole"
@@ -49,15 +47,16 @@ export function DecalPoleScene({ flyer, onReady, onHoverChange }: SceneProps) {
         far={CAMERA.FAR}
         position={CAMERA.POSITION}
       />
-      <Environment
-        preset={ENVIRONMENT.PRESET}
-        background={ENVIRONMENT.BACKGROUND}
-        blur={ENVIRONMENT.BLUR}
-      />
+      <color attach="background" args={[NEON.BACKGROUND]} />
+      <fog attach="fog" args={[NEON.BACKGROUND, 60, 260]} />
+      <Landscape />
       <Suspense fallback={null}>
         <Pole flyer={flyer} onReady={onReady} onHoverChange={onHoverChange} />
       </Suspense>
       <CameraRig />
+      <EffectComposer multisampling={4}>
+        <Bloom intensity={1.4} luminanceThreshold={0.6} luminanceSmoothing={0.3} mipmapBlur />
+      </EffectComposer>
     </>
   )
 }
@@ -74,18 +73,11 @@ function Pole({ flyer, onReady, onHoverChange }: SceneProps) {
   const canvas = useThree((state) => state.renderer.domElement)
   const [decals, setDecals] = useState<PoleDecal[]>([])
 
-  const wood = useTexture(WOOD_TEXTURE_PATHS)
   const seedFlyer = useTexture(FLYER_TEXTURE_PATH, configureSeedFlyer)
 
-  // useTexture suspends, so reaching this effect means every map has decoded
-  // and the pole is on screen — that is what the fade-in waits for.
+  // useTexture suspends, so reaching this effect means the seed flyer has
+  // decoded and the pole is on screen — that is what the fade-in waits for.
   useEffect(() => onReady(), [onReady])
-
-  useEffect(() => {
-    configureWoodTextures(wood)
-    const { uRepeat, vRepeat } = woodTextureRepeat(POLE.RADIUS, POLE.HEIGHT)
-    applyWoodRepeat(wood, uRepeat, vRepeat)
-  }, [wood])
 
   // The seed flyer is the joke the page opens on, so it is stapled up at a
   // fixed spot rather than wherever the camera happens to start. It is not in
@@ -134,25 +126,21 @@ function Pole({ flyer, onReady, onHoverChange }: SceneProps) {
 
   return (
     <group scale={POLE.SCALE}>
+      {/* The glowing grid sits just outside the dark core the flyers stick to. */}
+      <mesh position={[0, POLE.HEIGHT / 2, 0]} raycast={() => null}>
+        <cylinderGeometry
+          args={[POLE.RADIUS * 1.003, POLE.RADIUS * 1.003, POLE.HEIGHT, 16, 40, true]}
+        />
+        <meshBasicMaterial color={NEON.POLE} wireframe toneMapped={false} />
+      </mesh>
       <mesh
         ref={meshRef}
-        castShadow
-        receiveShadow
         position={[0, POLE.HEIGHT / 2, 0]}
         onPointerEnter={() => onHoverChange(true)}
         onPointerLeave={() => onHoverChange(false)}
       >
         <cylinderGeometry args={[POLE.RADIUS, POLE.RADIUS, POLE.HEIGHT, 64, 1, true]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          metalness={0}
-          roughness={0.9}
-          side={THREE.DoubleSide}
-          map={wood.map}
-          normalMap={wood.normalMap}
-          bumpMap={wood.bumpMap}
-          bumpScale={0.2}
-        />
+        <meshBasicMaterial color={NEON.POLE_FILL} side={THREE.DoubleSide} />
         {flyers.map((decal, index) => {
           const image = decal.texture.image as { width?: number; height?: number } | undefined
           const { sx, sy } = decalScale(image?.width ?? 1, image?.height ?? 1)
@@ -173,6 +161,7 @@ function Pole({ flyer, onReady, onHoverChange }: SceneProps) {
               rotation={[0, decal.angle, decal.tilt]}
               scale={[sx, sy, 1]}
               map={decal.texture}
+              material-color={NEON.FLYER}
               material-transparent
               material-depthWrite={false}
               material-polygonOffset

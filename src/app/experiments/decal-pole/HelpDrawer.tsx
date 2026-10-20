@@ -44,7 +44,8 @@ export function HelpDrawer({ open, onClose }: HelpDrawerProps) {
           <h2>Built with</h2>
           <ul>
             <li>React Three Fiber — React renderer for Three.js</li>
-            <li>@react-three/drei — Decal projection and environment lighting</li>
+            <li>@react-three/drei — Decal projection</li>
+            <li>@react-three/postprocessing — Bloom for the neon glow</li>
           </ul>
         </div>
       </div>
