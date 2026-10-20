@@ -870,7 +870,7 @@ export default function Home() {
               a–z
             </button>
 
-            {/* Looks like a field, opens the same search palette as the menu and ⌘F. */}
+            {/* A text button that opens the same search palette as the menu and ⌘F. */}
             <button type="button" className={styles.searchField} onClick={openPalette}>
               <Search size={14} strokeWidth={1.75} aria-hidden />
               search

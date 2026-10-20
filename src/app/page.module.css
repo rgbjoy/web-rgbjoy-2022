@@ -19,7 +19,8 @@
 .page select,
 .page label,
 .page .main,
-.page .controls {
+.page .controls,
+.page .lockupStuck {
   pointer-events: auto;
 }
 
@@ -103,9 +104,9 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
   pointer-events: none;
 }
 
@@ -256,9 +257,9 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
   pointer-events: none;
 }
 
@@ -433,30 +434,26 @@
 .searchField {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   height: 28px;
-  min-width: 160px;
   margin-left: auto;
-  padding: 0 10px;
-  border: 1px solid var(--hairline);
-  border-radius: 999px;
-  background: var(--bg);
+  padding: 0 8px;
+  border: none;
+  background: none;
   cursor: pointer;
   font: inherit;
   font-size: 13px;
   color: var(--faint);
-  transition: color var(--rollover-fade), border-color var(--rollover-fade);
+  transition: color var(--rollover-fade);
 }
 
 .searchHint {
-  margin-left: auto;
   font-size: 11px;
 }
 
 @media (hover: hover) {
   .searchField:hover {
     color: var(--rollover-seed, var(--fg));
-    border-color: currentColor;
   }
 }
 
@@ -466,10 +463,6 @@
 }
 
 @media (max-width: 640px) {
-  .searchField {
-    min-width: 0;
-  }
-
   .searchHint {
     display: none;
   }
