@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
 
+import { STUDIO_SEO } from "../data/site"
 import { Estimator } from "./Estimator"
 
 export const metadata: Metadata = {
-  title: "Studio — Tom Fletcher",
-  description:
-    "RGBJOY is the studio of Tom Fletcher, a full-stack engineer and designer who builds with AI tools and without the slop: what you need, the gaps filled, ready for how people use the web next. Price your site at the bottom.",
+  ...STUDIO_SEO,
   alternates: { canonical: "/studio" },
 }
 

@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers"
 import { mediaUrl } from "./data/media"
 import { getPublicCatalog, getSeo, getInfo, getSettings } from "./server/content"
+import { getPageSeo } from "./server/page-seo"
 import { PortfolioProvider } from "./utilities/PortfolioProvider"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
@@ -68,6 +69,7 @@ const defaultMetadata: Metadata = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeo()
+  const page = await getPageSeo(seo)
   const info = await getInfo()
   const media = (await getSettings()).media
   const icon = media.find(image => image.kind === 'icon')
@@ -80,16 +82,19 @@ export async function generateMetadata(): Promise<Metadata> {
   const mediaOrigin = process.env.NODE_ENV === 'development' && host
     ? `${protocol}://${host}`
     : env.MEDIA_PUBLIC_URL
-  const images = social ? [{ url: new URL(mediaUrl(social.version, 'social-1200.png'), mediaOrigin).href, width: 1200, height: 630, alt: seo.title }] : undefined
+  const siteOrigin = process.env.NODE_ENV === 'development' && host ? `${protocol}://${host}` : SITE.url
+  const imageUrl = page.image ? new URL(page.image, siteOrigin).href
+    : social ? new URL(mediaUrl(social.version, 'social-1200.png'), mediaOrigin).href : undefined
+  const images = imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: page.title }] : undefined
   return {
-    ...defaultMetadata, ...seo,
+    ...defaultMetadata, title: page.title, description: page.description,
     authors: [{ name: info.author, url: SITE.url }], creator: info.author,
     icons: icon ? {
       icon: [{ url: mediaUrl(icon.version, 'icon-32.png'), sizes: '32x32', type: 'image/png' }, { url: mediaUrl(icon.version, 'icon-512.png'), sizes: '512x512', type: 'image/png' }],
       apple: [{ url: mediaUrl(icon.version, 'apple-180.png'), sizes: '180x180', type: 'image/png' }],
     } : { icon: '/default-favicon.ico', apple: '/default-icon.png' },
-    openGraph: { ...defaultMetadata.openGraph, ...seo, images },
-    twitter: { ...defaultMetadata.twitter, ...seo, card: social ? 'summary_large_image' : 'summary', images: images?.map(image => image.url) },
+    openGraph: { ...defaultMetadata.openGraph, ...page, images },
+    twitter: { ...defaultMetadata.twitter, title: page.title, description: page.description, card: images ? 'summary_large_image' : 'summary', images: images?.map(image => image.url) },
   }
 }
 

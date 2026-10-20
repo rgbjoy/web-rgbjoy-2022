@@ -20,3 +20,10 @@ export const SITE = {
     linkLabel: "contact me",
   },
 } as const
+
+/** Studio page title and description, shared by its metadata and link previews. */
+export const STUDIO_SEO = {
+  title: "Studio — Tom Fletcher",
+  description:
+    "RGBJOY is the studio of Tom Fletcher, a full-stack engineer and designer who builds with AI tools and without the slop: what you need, the gaps filled, ready for how people use the web next. Price your site at the bottom.",
+}
