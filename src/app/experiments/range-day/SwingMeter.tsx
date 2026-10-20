@@ -1,17 +1,22 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   FLAGS,
   MAX_BACKSWING,
   MAX_OVERSWING,
+  QUICK_FORWARD_MS,
   SWEET_SPOT,
   backswingForYards,
   powerColor,
   powerFromBackswing,
+  shankFactor,
+  strikeEffect,
   strikeFactor,
   swingPath,
+  tempoFactor,
+  type Club,
   type Swing,
 } from "./game";
 import type { SwingApi } from "./RangeScene";
@@ -26,22 +31,41 @@ type SwingStage = "ready" | "aiming" | "back" | "forward" | "done";
 /** Meter drawing, in SVG units. The swing starts near the top of the ring. */
 const SIZE = 200;
 const CENTER = SIZE / 2;
-const RING_RADIUS = 86;
+/** The power ring runs along the rim of the face, its stroke flush with the edge. */
+const RING_RADIUS = 94;
+const RING_STROKE = 5;
 const START_Y = 28;
 const TRACE_SCALE = (SIZE - START_Y * 2) / MAX_BACKSWING;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
+/** Distance lines all share this half-width, which still fits the ring at full power. */
+const DISTANCE_HALF_WIDTH = 44;
+
 /**
- * A line across the meter for each flag's carry, so you can see how far to
- * pull for 50, 100, 150… yards. Each spans the ring, inset from its edge.
+ * A line across the meter for each flag this club can reach, so you can see
+ * how far to pull for 50, 100, 150… yards.
  */
-const DISTANCE_LINES = FLAGS.map((flag) => {
-  const y = START_Y + backswingForYards(flag.yards) * TRACE_SCALE;
-  const halfWidth = Math.sqrt(RING_RADIUS ** 2 - (y - CENTER) ** 2) - 12;
-  return { yards: flag.yards, y, halfWidth };
-});
+function distanceLines(club: Club) {
+  const inRange = FLAGS.filter(
+    (flag) => flag.yards >= club.minCarry && flag.yards <= club.maxCarry,
+  );
+  return inRange.map((flag) => {
+    const y = START_Y + backswingForYards(flag.yards, club) * TRACE_SCALE;
+    return { yards: flag.yards, y };
+  });
+}
+
+/** Seconds spent going back and coming through; through is null until the turn. */
+type SwingTimes = { back: number; through: number | null };
+
+/** Through-swing colour: green while quick enough, then orange, then red. */
+function throughColor(seconds: number) {
+  const ms = seconds * 1000;
+  if (ms <= QUICK_FORWARD_MS) return "#69e36f";
+  return ms <= QUICK_FORWARD_MS * 2 ? "#ffb13b" : "#ff554d";
+}
 
 /** A new trace dot every few pixels of pointer travel. */
-const DOT_SPACING = 6;
+const DOT_SPACING = 8;
 /** Radians of aim per pixel dragged off the ball. */
 const AIM_PER_PIXEL = 0.005;
 /** The swing turns forward once you climb this far back from the bottom. */
@@ -107,13 +131,28 @@ function PowerRing({ power, strike }: { power: number; strike: number | null }) 
  */
 export function SwingMeter({
   swingRef,
+  club,
+  dimmed,
 }: {
   swingRef: React.RefObject<SwingApi | null>;
+  club: Club;
+  /** Faded while the ball is in play, until the next one is teed up. */
+  dimmed: boolean;
 }) {
+  const lines = useMemo(() => distanceLines(club), [club]);
   const [trace, setTrace] = useState<Dot[]>([]);
   const [power, setPower] = useState(0);
   /** The strike if you let go now; null until the forward swing starts. */
   const [strike, setStrike] = useState<number | null>(null);
+  /** True while letting go now would shank it. */
+  const [shanking, setShanking] = useState(false);
+  /** Share of carry the forward swing's speed keeps so far. */
+  const [tempo, setTempo] = useState(1);
+  /** When the backswing and forward swing began, in event time. */
+  const backStartRef = useRef(0);
+  const forwardStartRef = useRef(0);
+  const [times, setTimes] = useState<SwingTimes | null>(null);
+  const [swinging, setSwinging] = useState(false);
   const pointerIdRef = useRef<number | null>(null);
   const startRef = useRef<Point>({ x: 0, y: 0 });
   const bottomRef = useRef<Point>({ x: 0, y: 0 });
@@ -121,15 +160,41 @@ export function SwingMeter({
   const stageRef = useRef<SwingStage>("ready");
   const lastAimXRef = useRef(0);
 
+  /** The back and through times as they stand at `now`. */
+  const timesAt = useCallback((now: number): SwingTimes => {
+    const forwardStart = forwardStartRef.current;
+    if (stageRef.current === "back") {
+      return { back: (now - backStartRef.current) / 1000, through: null };
+    }
+    return {
+      back: (forwardStart - backStartRef.current) / 1000,
+      through: (now - forwardStart) / 1000,
+    };
+  }, []);
+
+  // Tick the timer every frame while a swing is under way.
+  useEffect(() => {
+    if (!swinging) return;
+    let frame = 0;
+    const tick = () => {
+      setTimes(timesAt(performance.now()));
+      frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [swinging, timesAt]);
+
   /** The swing as it stands when the forward stroke ends at `point`. */
-  const swingFrom = useCallback((point: Point): Swing => {
+  const swingFrom = useCallback((point: Point, time: number): Swing => {
     const bottom = bottomRef.current;
     return {
       power: powerFromBackswing(bottom.y),
       path: swingPath(bottom, point),
       strike: strikeFactor(bottom.y, point.y),
+      shank: shankFactor(point.x, club),
+      tempo: tempoFactor(time - forwardStartRef.current),
     };
-  }, []);
+  }, [club]);
 
   const end = useCallback(
     (target: HTMLElement, pointerId: number) => {
@@ -167,10 +232,14 @@ export function SwingMeter({
       bottomRef.current = { x: 0, y: 0 };
       lastDotRef.current = { x: 0, y: 0 };
       stageRef.current = "back";
+      backStartRef.current = event.timeStamp;
+      setSwinging(true);
       swing.begin();
       setTrace([{ x: 0, y: 0, forward: false }]);
       setPower(0);
       setStrike(null);
+      setShanking(false);
+      setTempo(1);
     },
     [swingRef],
   );
@@ -205,6 +274,7 @@ export function SwingMeter({
           bottomRef.current = point;
         } else if (bottom.y - point.y > TURN_THRESHOLD && powerFromBackswing(bottom.y) > 0) {
           stageRef.current = "forward";
+          forwardStartRef.current = event.timeStamp;
         }
       }
 
@@ -218,17 +288,21 @@ export function SwingMeter({
       setPower(powerFromBackswing(bottomRef.current.y));
       if (stageRef.current === "forward") {
         setStrike(strikeFactor(bottomRef.current.y, point.y));
+        setTempo(tempoFactor(event.timeStamp - forwardStartRef.current));
+        setShanking(shankFactor(point.x, club) !== 0);
       }
 
       // Shoving far past the start fires the swing as the thinnest strike.
       if (stageRef.current === "forward" && point.y <= -MAX_OVERSWING) {
-        const swing = swingFrom(point);
+        const swing = swingFrom(point, event.timeStamp);
+        setTimes(timesAt(event.timeStamp));
+        setSwinging(false);
         stageRef.current = "done";
         end(event.currentTarget, event.pointerId);
         swingRef.current?.hit(swing);
       }
     },
-    [end, swingFrom, swingRef],
+    [club, end, swingFrom, swingRef, timesAt],
   );
 
   const handlePointerUp = useCallback(
@@ -247,18 +321,24 @@ export function SwingMeter({
         y: event.clientY - startRef.current.y,
       };
       if (stageRef.current === "forward") {
-        const swing = swingFrom(point);
+        const swing = swingFrom(point, event.timeStamp);
+        setTimes(timesAt(event.timeStamp));
+        setSwinging(false);
         setStrike(swing.strike);
+        setTempo(swing.tempo);
         swingRef.current?.hit(swing);
       } else {
         swingRef.current?.cancel();
+        setSwinging(false);
+        setTimes(null);
         setTrace([]);
         setPower(0);
         setStrike(null);
+        setShanking(false);
       }
       stageRef.current = "done";
     },
-    [end, swingFrom, swingRef],
+    [end, swingFrom, swingRef, timesAt],
   );
 
   const handlePointerCancel = useCallback(
@@ -269,9 +349,12 @@ export function SwingMeter({
       stageRef.current = "done";
       if (wasAiming) return;
       swingRef.current?.cancel();
+      setSwinging(false);
+      setTimes(null);
       setTrace([]);
       setPower(0);
       setStrike(null);
+      setShanking(false);
     },
     [end, swingRef],
   );
@@ -293,23 +376,28 @@ export function SwingMeter({
       />
       <svg
         className={styles.swingMeter}
+        data-dimmed={dimmed}
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         aria-hidden="true"
       >
-        <circle cx={CENTER} cy={CENTER} r={RING_RADIUS + 10} className={styles.meterFace} />
+        <circle cx={CENTER} cy={CENTER} r={RING_RADIUS + RING_STROKE / 2} className={styles.meterFace} />
         <circle cx={CENTER} cy={CENTER} r={RING_RADIUS} className={styles.meterTrack} />
-        <PowerRing power={power} strike={strike} />
-        {DISTANCE_LINES.map((line) => (
+        {/* The ring shows carry, so a thinned driver or slow swing reads short. */}
+        <PowerRing
+          power={power}
+          strike={strike === null ? null : strikeEffect(strike, club).carry * tempo}
+        />
+        {lines.map((line) => (
           <g key={line.yards}>
             <line
-              x1={CENTER - line.halfWidth}
+              x1={CENTER - DISTANCE_HALF_WIDTH}
               y1={line.y}
-              x2={CENTER + line.halfWidth}
+              x2={CENTER + DISTANCE_HALF_WIDTH}
               y2={line.y}
               className={styles.meterDistance}
             />
             <text
-              x={CENTER + line.halfWidth}
+              x={CENTER + DISTANCE_HALF_WIDTH}
               y={line.y - 3}
               className={styles.meterLabel}
             >
@@ -324,12 +412,17 @@ export function SwingMeter({
           y2={SIZE - START_Y}
           className={styles.meterGuide}
         />
-        <circle
-          cx={CENTER}
-          cy={START_Y}
-          r={SWEET_SPOT * TRACE_SCALE}
-          className={styles.meterSweetSpot}
-        />
+        {/* Let go outside these lanes and you shank it. */}
+        {[-1, 1].map((side) => (
+          <line
+            key={side}
+            x1={CENTER + side * club.lane * TRACE_SCALE}
+            y1={START_Y}
+            x2={CENTER + side * club.lane * TRACE_SCALE}
+            y2={SIZE - START_Y}
+            className={shanking ? styles.meterLaneShank : styles.meterLane}
+          />
+        ))}
         {trace.map((dot, index) => {
           const { x, y } = toMeter(dot);
           return (
@@ -337,12 +430,44 @@ export function SwingMeter({
               key={index}
               cx={x}
               cy={y}
-              r={dot.forward ? 3 : 4}
+              r={dot.forward ? 2.5 : 3}
               className={dot.forward ? styles.meterDotForward : styles.meterDotBack}
             />
           );
         })}
-        <circle cx={CENTER} cy={START_Y} r={5} className={styles.meterStart} />
+        {/* Drawn over the trace so it stays visible; green while a release would be pure. */}
+        <circle
+          cx={CENTER}
+          cy={START_Y}
+          r={SWEET_SPOT * TRACE_SCALE}
+          className={strike === 1 ? styles.meterSweetSpotPure : styles.meterSweetSpot}
+        />
+        <circle cx={CENTER} cy={START_Y} r={4} className={styles.meterStart} />
+        {times ? (
+          <g>
+            <rect
+              x={CENTER - 64}
+              y={SIZE + 4}
+              width={128}
+              height={18}
+              className={styles.meterTimerBox}
+            />
+            <text x={CENTER - 58} y={SIZE + 16} className={styles.meterTimer}>
+              BACK {times.back.toFixed(2)}
+            </text>
+            {times.through !== null ? (
+              <text
+                x={CENTER + 58}
+                y={SIZE + 16}
+                className={styles.meterTimer}
+                style={{ fill: throughColor(times.through) }}
+                textAnchor="end"
+              >
+                THRU {times.through.toFixed(2)}
+              </text>
+            ) : null}
+          </g>
+        ) : null}
       </svg>
     </>
   );

@@ -3,7 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { hintForShot, type HudState, type ShotResult } from "./game";
+import { CLUBS, hintForShot, type HudState, type ShotResult } from "./game";
 import { RangeScene, type SwingApi } from "./RangeScene";
 import { SwingMeter } from "./SwingMeter";
 import styles from "./page.module.css";
@@ -39,17 +39,38 @@ const randomSeed = () => (Math.random() * 0xffffffff) >>> 0;
 /** Radians per arrow-key press; holding a key repeats it. */
 const KEY_AIM_STEP = (1.5 * Math.PI) / 180;
 
+/** The headline for a clean strike, from how close it finished to a flag. */
+function gradeShot(fromFlag: number) {
+  if (fromFlag <= 3) return "Perfect!";
+  if (fromFlag <= 8) return "Great shot";
+  if (fromFlag <= 15) return "Good shot";
+  return "Nice contact";
+}
+
+/** A headline for the shot, then the numbers behind it. */
 function describeResult(result: ShotResult) {
-  if (result.strike < 1) {
-    return `Chunked it · ${result.yards} yds`;
+  const carry = `${result.yards} yds`;
+  const toFlag = `${carry} · ${result.fromFlag} yds from the ${result.flagYards}`;
+  if (result.shank !== 0) {
+    return { title: `Shanked it ${result.shank > 0 ? "right" : "left"}`, detail: carry };
   }
-  if (result.strike > 1) {
-    return `Thinned it · ${result.yards} yds`;
+  if (result.tempo < 0.95) return { title: "Too slow", detail: carry };
+  if (result.slice !== 0) {
+    return { title: `${result.slice > 0 ? "Sliced" : "Hooked"} it`, detail: carry };
   }
-  if (result.fromFlag <= 3) {
-    return `Stuck it · ${result.fromFlag} yds from the ${result.flagYards}`;
-  }
-  return `${result.yards} yds · ${result.fromFlag} yds from the ${result.flagYards}`;
+  if (result.strike < 1) return { title: "Chunked it", detail: carry };
+  if (result.strike > 1) return { title: "Thinned it", detail: toFlag };
+  return { title: gradeShot(result.fromFlag), detail: toFlag };
+}
+
+function ResultBanner({ result }: { result: ShotResult }) {
+  const { title, detail } = describeResult(result);
+  return (
+    <div className={styles.result}>
+      <strong>{title}</strong>
+      <span>{detail}</span>
+    </div>
+  );
 }
 
 export default function Page() {
@@ -58,14 +79,23 @@ export default function Page() {
   const [seed, setSeed] = useState(randomSeed);
   const [showIntro, setShowIntro] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+  /** Phones only: the club list is a flyout above the menu button. */
+  const [showClubs, setShowClubs] = useState(false);
   const [playerData, setPlayerData] = useState(DEFAULT_PLAYER_DATA);
+  const [club, setClub] = useState(CLUBS[0]);
   const playerDataRef = useRef(DEFAULT_PLAYER_DATA);
   const windArrowRef = useRef<HTMLElement>(null);
   const swingRef = useRef<SwingApi>(null);
 
-  // Arrow keys (or A and D) nudge the aim; holding one repeats.
+  // Arrow keys (or A and D) nudge the aim; holding one repeats. Number keys
+  // pick a club.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      const picked = CLUBS[Number(event.key) - 1];
+      if (picked) {
+        setClub(picked);
+        return;
+      }
       const steps =
         event.key === "ArrowLeft" || event.key === "a"
           ? -1
@@ -145,7 +175,10 @@ export default function Page() {
   const startSession = useCallback(() => setShowIntro(false), []);
 
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      onDragStart={(event) => event.preventDefault()}
+    >
       <Canvas
         className={styles.canvas}
         dpr={1}
@@ -161,13 +194,55 @@ export default function Page() {
           key={run}
           seed={seed}
           followBall={playerData.followBall}
+          club={club}
           onHudChange={handleHudChange}
           windArrowRef={windArrowRef}
           swingRef={swingRef}
         />
       </Canvas>
 
-      <SwingMeter swingRef={swingRef} />
+      <SwingMeter
+        swingRef={swingRef}
+        club={club}
+        dimmed={hud.phase !== "idle" && hud.phase !== "swinging"}
+      />
+
+      <button
+        className={styles.clubButton}
+        type="button"
+        aria-expanded={showClubs}
+        aria-controls="range-day-clubs"
+        onClick={() => {
+          setShowClubs((open) => !open);
+          setShowMenu(false);
+        }}
+      >
+        {club.name}
+      </button>
+      <div
+        id="range-day-clubs"
+        className={styles.clubs}
+        data-open={showClubs}
+        role="radiogroup"
+        aria-label="Club"
+      >
+        {CLUBS.map((option, index) => (
+          <button
+            key={option.id}
+            type="button"
+            role="radio"
+            aria-checked={option === club}
+            title={`${option.name} · ${option.minCarry}–${option.maxCarry} yds · key ${index + 1}`}
+            onClick={() => {
+              setClub(option);
+              setShowClubs(false);
+            }}
+          >
+            <strong>{option.name}</strong>
+            <span>{option.maxCarry}</span>
+          </button>
+        ))}
+      </div>
 
       <header className={styles.hud} aria-live="polite">
         <div className={styles.hudActions}>
@@ -187,7 +262,10 @@ export default function Page() {
               type="button"
               aria-expanded={showMenu}
               aria-controls="range-day-menu"
-              onClick={() => setShowMenu((open) => !open)}
+              onClick={() => {
+                setShowMenu((open) => !open);
+                setShowClubs(false);
+              }}
             >
               Menu
             </button>
@@ -266,7 +344,7 @@ export default function Page() {
       ) : null}
 
       {hud.result ? (
-        <div className={styles.result}>{describeResult(hud.result)}</div>
+        <ResultBanner result={hud.result} />
       ) : null}
 
       {showIntro ? (
@@ -277,34 +355,43 @@ export default function Page() {
           aria-labelledby="range-day-intro-title"
         >
           <div className={styles.introCard}>
-            <span className={styles.introKicker}>A chill driving range</span>
-            <h2 id="range-day-intro-title">Read the wind. Find the flag.</h2>
-            <p>
-              Drag to aim. Press on the ball, pull down, then push up and let
-              go where you started.
-            </p>
-            <details className={styles.introMore}>
-              <summary>Read more</summary>
+            <div className={styles.introMain}>
+              <span className={styles.introKicker}>A chill driving range</span>
+              <h2 id="range-day-intro-title">Read the wind. Find the flag.</h2>
               <p>
-                Pull further for more power. Stop short of where you started
-                and you chunk it; push past and you thin it long. Lean the
-                swing to fade or draw. Flags sit every 50 yards out to 250.
+                Pick a club, read the wind and drop it next to a flag. They
+                sit every 50 yards out to 250.
               </p>
-            </details>
-            <div className={styles.introTips} aria-label="How to play">
-              <span>
-                <b>01</b> Aim
-              </span>
-              <span>
-                <b>02</b> Pull back
-              </span>
-              <span>
-                <b>03</b> Swing through
-              </span>
             </div>
-            <button type="button" onClick={startSession}>
-              Grab a bucket
-            </button>
+            <div className={styles.introStart}>
+              <button type="button" onClick={startSession}>
+                Grab a bucket
+              </button>
+            </div>
+            <div className={styles.introSide}>
+              <ol className={styles.introSteps} aria-label="How to play">
+                <li>
+                  <b>01</b>
+                  <strong>Aim</strong>
+                  <span>Drag off the ball or use ← →. Keys 1–5 pick a club.</span>
+                </li>
+                <li>
+                  <b>02</b>
+                  <strong>Pull back</strong>
+                  <span>Press on the ball and pull down. Further is more power.</span>
+                </li>
+                <li>
+                  <b>03</b>
+                  <strong>Swing through</strong>
+                  <span>Push up quickly and let go on the white dot.</span>
+                </li>
+              </ol>
+              <p className={styles.introFaults}>
+                Stop short and you chunk it; push past and you thin it. Lean
+                to fade or draw, too far and you slice or hook. Let go outside
+                the lanes and you shank it, and a slow swing loses power.
+              </p>
+            </div>
           </div>
         </section>
       ) : null}

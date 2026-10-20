@@ -27,6 +27,8 @@ import {
   FLAGS,
   GREEN_RADIUS,
   MAT_TOP_Y,
+  SHANK_ANGLE,
+  SHANK_POWER_LOSS,
   TEE_HEIGHT,
   carryDistance,
   hintForShot,
@@ -35,9 +37,13 @@ import {
   resultForRest,
   rollForShot,
   solveLaunchDistance,
+  sliceFactor,
+  strikeEffect,
   velocityOnShot,
   windForShot,
   windOffset,
+  type Club,
+  type Contact,
   type Flag,
   type GamePhase,
   type HudState,
@@ -47,6 +53,7 @@ import {
   type Swing,
 } from "./game";
 import { GolfBallModel } from "./GolfBall";
+import { ShotTrail, type ShotTrailHandle } from "./ShotTrail";
 import { Fairway } from "./Fairway";
 import { TreeLine } from "./Trees";
 import { YardageSign } from "./YardageSign";
@@ -69,6 +76,10 @@ const REST_TIME = 1.8;
 /** How much the swing path pushes the start line, and how much it curves. */
 const PATH_START_LINE = 0.4;
 const PATH_CURVE = 0.3;
+/** Extra bend, per unit of carry, for the worst slice or hook. */
+const SLICE_CURVE = 0.12;
+/** Share of carry the worst slice or hook loses. */
+const SLICE_CARRY_LOSS = 0.2;
 /** World-space reach around the ball that counts as pressing on it. */
 const BALL_HIT_RADIUS = 0.35;
 /** ...but never smaller than this on screen, so it stays easy to tap. */
@@ -84,6 +95,8 @@ type RangeSceneProps = {
   seed: number;
   /** Chase the ball down the range, or stay at the tee and watch it. */
   followBall: boolean;
+  /** The club in hand; read when the ball is struck. */
+  club: Club;
   onHudChange: (next: HudState) => void;
   windArrowRef: React.RefObject<HTMLElement | null>;
   /** Filled by the scene so the page's swing meter can drive it. */
@@ -117,6 +130,7 @@ const tempTracked = new Vector3();
 export function RangeScene({
   seed,
   followBall,
+  club,
   onHudChange,
   windArrowRef,
   swingRef,
@@ -125,6 +139,7 @@ export function RangeScene({
   const ballRef = useRef<Group>(null);
   const spinRef = useRef<Group>(null);
   const burstRef = useRef<LandingBurstHandle>(null);
+  const trailRef = useRef<ShotTrailHandle>(null);
   const phaseRef = useRef<GamePhase>("idle");
   const hoveredRef = useRef(false);
   const phaseStartedAtRef = useRef(0);
@@ -134,7 +149,7 @@ export function RangeScene({
   const lastYardsRef = useRef(0);
   const longestYardsRef = useRef(0);
   const resultRef = useRef<ShotResult | undefined>(undefined);
-  const strikeRef = useRef(1);
+  const contactRef = useRef<Contact>({ strike: 1, shank: 0, slice: 0, tempo: 1 });
   // Aim, in radians off straight down the range; positive turns right.
   const aimYawRef = useRef(0);
   const aimDirectionRef = useRef(DOWNRANGE.clone());
@@ -151,6 +166,10 @@ export function RangeScene({
   useEffect(() => {
     followBallRef.current = followBall;
   }, [followBall]);
+  const clubRef = useRef(club);
+  useEffect(() => {
+    clubRef.current = club;
+  }, [club]);
   const windAngleRef = useRef(0);
   const windSpeedRef = useRef(0);
   const windStrengthRef = useRef(0);
@@ -207,15 +226,28 @@ export function RangeScene({
 
     // An open or closed swing path starts the ball off the aim line, then
     // curves it further the same way: a fade to the right, a draw to the left.
+    // A shank kicks it further off toward the side you went off the lanes.
     tempDirection
       .copy(aimDirectionRef.current)
-      .applyAxisAngle(WORLD_UP, -swing.path * PATH_START_LINE);
+      .applyAxisAngle(
+        WORLD_UP,
+        -swing.path * PATH_START_LINE - swing.shank * SHANK_ANGLE,
+      );
     const start = ball.position.clone();
-    // A chunked or thinned strike scales the carry you pulled back for.
-    const carry = carryDistance(swing.power) * swing.strike;
-    const power = Math.min(1, swing.power * swing.strike);
+    // A chunked or thinned strike scales the carry you pulled back for, and a
+    // shank, slice, hook or slow swing cuts it.
+    const club = clubRef.current;
+    const effect = strikeEffect(swing.strike, club);
+    const slice = sliceFactor(swing.path, club);
+    const strike =
+      effect.carry *
+      swing.tempo *
+      (1 - Math.abs(swing.shank) * SHANK_POWER_LOSS) *
+      (1 - Math.abs(slice) * SLICE_CARRY_LOSS);
+    const carry = carryDistance(swing.power, club) * strike;
+    const power = Math.min(1, swing.power * strike);
     const curve = new Vector3(-tempDirection.z, 0, tempDirection.x)
-      .multiplyScalar(swing.path * PATH_CURVE * carry);
+      .multiplyScalar((swing.path * PATH_CURVE + slice * SLICE_CURVE) * carry);
     windOffset(
       windDirectionRef.current,
       windStrengthRef.current,
@@ -234,16 +266,18 @@ export function RangeScene({
       .setY(BALL_RADIUS);
     const end = launchEnd.clone().add(tempWindOffset);
 
+    // Higher shots hang longer, as a real ball would under gravity.
+    const arcHeight = carry * club.launch * effect.launch;
     return {
+      club,
       direction: tempDirection.clone(),
       power,
       start,
       launchEnd,
       wind: tempWindOffset.clone(),
       end,
-      // The caps only bite on mishit dribbles, keeping them low and quick.
-      duration: Math.min(MathUtils.lerp(1.4, 3.6, power), 0.5 + carry * 0.12),
-      arcHeight: Math.min(MathUtils.lerp(2, 16, power), carry * 0.4),
+      duration: Math.max(0.5, 0.9 * Math.sqrt(arcHeight)),
+      arcHeight,
       elapsed: 0,
     };
   }, []);
@@ -294,7 +328,12 @@ export function RangeScene({
 
         viewDirectionRef.current.copy(shot.direction);
         shotRef.current = shot;
-        strikeRef.current = swing.strike;
+        contactRef.current = {
+          strike: swing.strike,
+          shank: swing.shank,
+          slice: sliceFactor(swing.path, shot.club),
+          tempo: swing.tempo,
+        };
         setPhase("flying");
       },
       aim(radians) {
@@ -312,6 +351,7 @@ export function RangeScene({
   const teeUpNextBall = useCallback(
     (ball: Group, elapsed: number) => {
       ball.position.copy(TEE_POSITION);
+      trailRef.current?.clear();
       const aim = aimDirectionRef.current;
       smoothedYawRef.current = Math.atan2(aim.x, aim.z);
       chaseRef.current = 0;
@@ -338,6 +378,7 @@ export function RangeScene({
       shot.elapsed += delta;
       const progress = Math.min(1, shot.elapsed / shot.duration);
       pointOnShot(shot, progress, ball.position);
+      trailRef.current?.draw(shot, progress);
       spin.rotation.x -= delta * 24;
 
       // Face where the ball is actually going; with a crosswind that bends
@@ -364,7 +405,7 @@ export function RangeScene({
 
       if (progress >= 1) {
         rollRef.current = null;
-        resultRef.current = resultForRest(ball.position, strikeRef.current);
+        resultRef.current = resultForRest(ball.position, contactRef.current);
         lastYardsRef.current = resultRef.current.yards;
         longestYardsRef.current = Math.max(
           longestYardsRef.current,
@@ -460,6 +501,7 @@ export function RangeScene({
         <FlagPin key={flag.yards} flag={flag} windDirectionRef={windDirectionRef} />
       ))}
       <LandingBurst ref={burstRef} />
+      <ShotTrail ref={trailRef} />
       <Ball
         ballRef={ballRef}
         spinRef={spinRef}

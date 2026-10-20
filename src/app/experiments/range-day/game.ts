@@ -10,9 +10,14 @@ export type Swing = {
   path: number
   /** How cleanly it was struck: 1 is pure, under 1 chunked, over 1 thinned. */
   strike: number
+  /** How far past the lanes you let go, -1 to 1; 0 inside, positive is right. */
+  shank: number
+  /** Share of carry kept for the speed of the forward swing; see tempoFactor. */
+  tempo: number
 }
 
 export type Shot = {
+  club: Club
   direction: Vector3
   power: number
   start: Vector3
@@ -34,12 +39,22 @@ export type Roll = {
   elapsed: number
 }
 
-export type ShotResult = {
+/** How the club met the ball, kept for the result line. */
+export type Contact = {
+  /** The swing's strike factor; see strikeFactor. */
+  strike: number
+  /** The swing's shank; see shankFactor. */
+  shank: number
+  /** The shot's slice (positive) or hook (negative); see sliceFactor. */
+  slice: number
+  /** The swing's tempo; see tempoFactor. */
+  tempo: number
+}
+
+export type ShotResult = Contact & {
   yards: number
   flagYards: number
   fromFlag: number
-  /** The swing's strike factor; see strikeFactor. */
-  strike: number
 }
 
 export type HudState = {
@@ -74,8 +89,27 @@ export const MAX_SWING_PATH = 0.6
 
 /** World units are two yards, so the range fits a small, fogged world. */
 export const YARDS_PER_UNIT = 2
-export const MIN_CARRY = 8
-export const MAX_CARRY = 135
+/**
+ * The bag. `minCarry` is the lightest swing and `maxCarry` a pure full swing,
+ * in yards; each club's range overlaps its neighbours so every distance has
+ * a club or two that reach it comfortably. `lane` is how far either side of
+the start, in pixels, you can let go without shanking it: wide for a
+forgiving wedge, narrow for the driver. `thinCarry` and `thinLaunch` say
+what a thinned strike does: irons run long, the driver goes low and short.
+`spin` scales how hard a slice or hook bends: most for the driver.
+`launch` is the peak
+ * height as a share of carry, so a wedge climbs steeply and a driver stays
+ * low and long. `roll` scales how far it runs out after landing.
+ */
+export const CLUBS = [
+  { id: "driver", name: "Driver", minCarry: 160, maxCarry: 270, lane: 11, thinCarry: -1, thinLaunch: -2, spin: 1, launch: 0.12, roll: 1 },
+  { id: "5i", name: "5 Iron", minCarry: 120, maxCarry: 200, lane: 14, thinCarry: 1, thinLaunch: 0, spin: 0.75, launch: 0.17, roll: 0.65 },
+  { id: "7i", name: "7 Iron", minCarry: 95, maxCarry: 165, lane: 17, thinCarry: 1, thinLaunch: 0, spin: 0.55, launch: 0.21, roll: 0.45 },
+  { id: "9i", name: "9 Iron", minCarry: 70, maxCarry: 135, lane: 20, thinCarry: 1, thinLaunch: 0, spin: 0.4, launch: 0.26, roll: 0.3 },
+  { id: "pw", name: "Wedge", minCarry: 20, maxCarry: 100, lane: 24, thinCarry: 1, thinLaunch: 0, spin: 0.25, launch: 0.34, roll: 0.15 },
+]
+
+export type Club = (typeof CLUBS)[number]
 
 export const BALL_RADIUS = 0.11
 export const MAT_TOP_Y = 0.04
@@ -143,6 +177,66 @@ export function strikeFactor(bottomY: number, endY: number) {
 }
 
 /**
+ * How a strike scales this club's carry and peak height. A chunk cuts carry
+ * for every club; a thin follows the club's `thinCarry` and `thinLaunch`.
+ */
+export function strikeEffect(strike: number, club: Club) {
+  if (strike <= 1) return { carry: strike, launch: 1 }
+  const thin = strike - 1
+  return { carry: 1 + thin * club.thinCarry, launch: 1 + thin * club.thinLaunch }
+}
+
+/** A forward swing quicker than this keeps all its power... */
+export const QUICK_FORWARD_MS = 350
+/** ...and one this slow or slower keeps only MIN_TEMPO of it. */
+const SLOW_FORWARD_MS = 1200
+const MIN_TEMPO = 0.4
+
+/**
+ * Share of carry kept for how long the forward swing took. A real swing
+ * comes through fast, so easing slowly onto the start dot to make a perfect
+ * strike just pushes the ball.
+ */
+export function tempoFactor(forwardMs: number) {
+  const slowness = clamp01(
+    (forwardMs - QUICK_FORWARD_MS) / (SLOW_FORWARD_MS - QUICK_FORWARD_MS),
+  )
+  return MathUtils.lerp(1, MIN_TEMPO, slowness)
+}
+
+/** Lean past this, in radians, and a fade becomes a slice, a draw a hook. */
+const SHAPE_LEAN = 0.25
+
+/**
+ * How hard the swing slices (positive) or hooks (negative) this club, from
+ * the lean of the forward stroke. Under SHAPE_LEAN it is 0, a plain fade or
+ * draw; it grows to ±club.spin at the steepest lean.
+ */
+export function sliceFactor(path: number, club: Club) {
+  const past = clamp01(
+    (Math.abs(path) - SHAPE_LEAN) / (MAX_SWING_PATH - SHAPE_LEAN),
+  )
+  return Math.sign(path) * past * club.spin
+}
+
+/** Letting go this many pixels past a lane is the worst shank. */
+const SHANK_RANGE = 20
+/** The worst shank loses this share of its carry... */
+export const SHANK_POWER_LOSS = 0.6
+/** ...and flies this many radians further off line. */
+export const SHANK_ANGLE = 0.6
+
+/**
+ * How badly you shanked it, from where you let go sideways of where you
+ * started. Inside the club's lanes it is 0; past them it grows to ±1, signed
+ * by the side you went off.
+ */
+export function shankFactor(endX: number, club: Club) {
+  const past = clamp01((Math.abs(endX) - club.lane) / SHANK_RANGE)
+  return Math.sign(endX) * past
+}
+
+/**
  * Lean of the forward stroke from the bottom of the backswing to `point`,
  * both measured from where the swing started (y grows downward).
  */
@@ -156,14 +250,15 @@ export function swingPath(
   return Math.max(-MAX_SWING_PATH, Math.min(MAX_SWING_PATH, lean))
 }
 
-export function carryDistance(power: number) {
-  return MathUtils.lerp(MIN_CARRY, MAX_CARRY, clamp01(power))
+export function carryDistance(power: number, club: Club) {
+  const yards = MathUtils.lerp(club.minCarry, club.maxCarry, clamp01(power))
+  return yards / YARDS_PER_UNIT
 }
 
 /** How far down to pull, in pixels, to carry a given number of yards. */
-export function backswingForYards(yards: number) {
+export function backswingForYards(yards: number, club: Club) {
   const power = clamp01(
-    (yards / YARDS_PER_UNIT - MIN_CARRY) / (MAX_CARRY - MIN_CARRY),
+    (yards - club.minCarry) / (club.maxCarry - club.minCarry),
   )
   return BACKSWING_DEAD_ZONE + power * (MAX_BACKSWING - BACKSWING_DEAD_ZONE)
 }
@@ -311,7 +406,10 @@ export function rollForShot(shot: Shot, random = Math.random): Roll {
     .normalize()
     .applyAxisAngle(UP, (random() - 0.5) * 0.16)
   const distance =
-    carry * MathUtils.lerp(0.18, 0.08, shot.power) * MathUtils.lerp(0.9, 1.1, random())
+    carry *
+    MathUtils.lerp(0.18, 0.08, shot.power) *
+    shot.club.roll *
+    MathUtils.lerp(0.9, 1.1, random())
   const firstHop =
     carry * MathUtils.lerp(0.005, 0.008, shot.power) * MathUtils.lerp(0.9, 1.1, random())
   const restitution = MathUtils.lerp(0.45, 0.35, shot.power) + (random() - 0.5) * 0.06
@@ -367,12 +465,12 @@ export function nearestFlag(point: Vector3) {
   return { flag, distance }
 }
 
-export function resultForRest(point: Vector3, strike = 1): ShotResult {
+export function resultForRest(point: Vector3, contact: Contact): ShotResult {
   const { flag, distance } = nearestFlag(point)
   return {
+    ...contact,
     yards: toYards(Math.hypot(point.x, point.z)),
     flagYards: flag.yards,
     fromFlag: toYards(distance),
-    strike,
   }
 }
