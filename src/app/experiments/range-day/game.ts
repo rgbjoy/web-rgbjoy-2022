@@ -276,11 +276,13 @@ export function velocityOnShot(
   return target
 }
 
-/** Hops take up this share of the roll; the rest is rolling. */
-const HOP_SHARE = 0.6
+/** Pull on the ball between hops; a little stronger than in flight so it settles quickly. */
+const BOUNCE_GRAVITY = 32
 /** Hops lower than this would not show, so the ball just rolls. */
-const MIN_HOP = 0.04
-const MAX_HOPS = 5
+const MIN_HOP = 0.03
+const MAX_HOPS = 4
+/** Rolling time after the last hop. */
+const ROLL_OUT_SECONDS = 0.4
 const UP = new Vector3(0, 1, 0)
 
 /** Each hop is a share of the one before, until it is too small to see. */
@@ -290,6 +292,11 @@ export function hopHeights(first: number, restitution: number) {
     hops.push(hop)
   }
   return hops
+}
+
+/** Seconds a hop of this height spends in the air. */
+function hopSeconds(height: number) {
+  return 2 * Math.sqrt((2 * height) / BOUNCE_GRAVITY)
 }
 
 /**
@@ -302,32 +309,32 @@ export function rollForShot(shot: Shot, random = Math.random): Roll {
   const carry = shot.start.distanceTo(shot.end)
   const direction = velocityOnShot(shot, 1)
     .normalize()
-    .applyAxisAngle(UP, (random() - 0.5) * 0.3)
+    .applyAxisAngle(UP, (random() - 0.5) * 0.16)
   const distance =
-    carry * MathUtils.lerp(0.18, 0.08, shot.power) * MathUtils.lerp(0.8, 1.2, random())
+    carry * MathUtils.lerp(0.18, 0.08, shot.power) * MathUtils.lerp(0.9, 1.1, random())
   const firstHop =
-    carry * MathUtils.lerp(0.018, 0.03, shot.power) * MathUtils.lerp(0.8, 1.2, random())
-  const restitution = MathUtils.lerp(0.5, 0.35, shot.power) + (random() - 0.5) * 0.12
+    carry * MathUtils.lerp(0.005, 0.008, shot.power) * MathUtils.lerp(0.9, 1.1, random())
+  const restitution = MathUtils.lerp(0.45, 0.35, shot.power) + (random() - 0.5) * 0.06
+  const hops = hopHeights(firstHop, restitution)
+  const hopsTime = hops.reduce((sum, hop) => sum + hopSeconds(hop), 0)
 
   return {
     from: shot.end.clone(),
     to: shot.end.clone().addScaledVector(direction, distance),
-    hops: hopHeights(firstHop, restitution),
-    duration: 0.7 + distance * 0.06,
+    hops,
+    duration: hopsTime + ROLL_OUT_SECONDS + distance * 0.02,
     elapsed: 0,
   }
 }
 
 /**
- * Height above the ground `t` (0–1) of the way through the hops. Each hop is a
- * parabola lasting in proportion to the square root of its height, like a
- * real bounce, so they quicken as they shrink.
+ * Height above the ground `seconds` after landing. Each hop is a parabola under
+ * the same gravity, like a real bounce, so they quicken as they shrink.
  */
-function hopHeight(hops: number[], t: number) {
-  const total = hops.reduce((sum, hop) => sum + Math.sqrt(hop), 0)
-  let time = t * total
+function hopHeight(hops: number[], seconds: number) {
+  let time = seconds
   for (const hop of hops) {
-    const span = Math.sqrt(hop)
+    const span = hopSeconds(hop)
     if (time < span) {
       const u = time / span
       return 4 * hop * u * (1 - u)
@@ -341,7 +348,7 @@ function hopHeight(hops: number[], t: number) {
 export function pointOnRoll(roll: Roll, progress: number, target = new Vector3()) {
   const t = clamp01(progress)
   target.lerpVectors(roll.from, roll.to, 1 - Math.pow(1 - t, 3))
-  target.y = BALL_RADIUS + hopHeight(roll.hops, t / HOP_SHARE)
+  target.y = BALL_RADIUS + hopHeight(roll.hops, t * roll.duration)
   return target
 }
 

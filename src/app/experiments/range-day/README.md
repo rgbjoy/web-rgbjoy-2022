@@ -46,6 +46,7 @@ green disc. Grass blades are parked for now.
 
 One world unit is two yards (`YARDS_PER_UNIT`). Carry runs 16–270 yards. Wind
 drift grows with carry, so a full drive in a mid wind moves about 15 yards.
-After landing the ball takes a few shrinking hops (`rollForShot`). Low, soft
-shots skip more and roll further; high ones bounce big, die quickly and stop
+After landing the ball takes a few low, shrinking hops (`rollForShot`), all
+under one steady gravity so they slow down and settle smoothly. Low, soft shots
+skip more and roll further; high ones bounce higher, die quickly and stop
 sooner. A little randomness varies the height, the roll and a kick off line.

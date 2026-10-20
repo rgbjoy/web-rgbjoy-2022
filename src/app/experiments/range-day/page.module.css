@@ -169,7 +169,7 @@
 .windDisplay {
   position: absolute;
   z-index: 2;
-  left: 50%;
+  left: max(22px, env(safe-area-inset-left));
   bottom: max(22px, env(safe-area-inset-bottom));
   display: grid;
   min-width: 108px;
@@ -179,7 +179,6 @@
   border-radius: 20px;
   color: #17372d;
   text-align: center;
-  transform: translateX(-50%);
   pointer-events: none;
 }
 
@@ -555,6 +554,7 @@
   }
 
   .windDisplay {
+    left: max(14px, env(safe-area-inset-left));
     bottom: max(14px, env(safe-area-inset-bottom));
     min-width: 94px;
     padding: 8px 12px 10px;
