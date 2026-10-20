@@ -205,14 +205,14 @@ export const EXPERIMENTS: Experiment[] = [
     ],
   },
   {
-    href: "/experiments/frog-hop",
-    title: "Frog Ace",
+    href: "/experiments/range-day",
+    title: "Range Day",
     description:
-      "Read the wind, pull back, and spring a tiny frog across a branching lily-pad course.",
+      "A chill driving range. Read the wind, pull back, and send a golf ball toward flags out to 250 yards down a striped fairway.",
     group: "Play",
     status: "wip",
-    tech: ["Three.js", "R3F", "GLSL", "FBX"],
-    keywords: ["frog", "game", "lily pad", "three", "aim", "jump", "wind", "golf"],
+    tech: ["Three.js", "R3F", "GLSL", "glTF"],
+    keywords: ["golf", "driving range", "game", "grass", "three", "aim", "wind", "flag"],
   },
   {
     href: "/experiments/aurora",

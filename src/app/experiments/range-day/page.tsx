@@ -3,55 +3,83 @@
 import { Canvas } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { FIRST_HINT } from "./course";
-import { FrogHopScene } from "./FrogHopScene";
-import { type HudState } from "./game";
+import { hintForShot, type HudState, type ShotResult } from "./game";
+import { RangeScene, type SwingApi } from "./RangeScene";
+import { SwingMeter } from "./SwingMeter";
 import styles from "./page.module.css";
 
-// The first tutorial mark is always dead calm, so the run always opens becalmed.
+// The first shot is always calm.
 const INITIAL_HUD: HudState = {
   phase: "idle",
-  streak: 0,
-  bestStreak: 0,
-  level: 0,
-  targetId: "mark-a",
+  lastYards: 0,
+  longestYards: 0,
   windAngle: 0,
   windSpeed: 0,
-  hint: FIRST_HINT,
+  hint: hintForShot(0),
 };
 
-const DEFAULT_HINT = "Read the wind · pull back · release";
-const PLAYER_DATA_KEY = "frog-ace-player-data";
+const DEFAULT_HINT = "Aim ← → · pull back · swing through";
+const PLAYER_DATA_KEY = "range-day-player-data";
 
 type PlayerData = {
   version: 1;
   showInstructions: boolean;
-  autoHiddenInstructions: boolean;
-  highestLevel: number;
+  followBall: boolean;
+  longestYards: number;
 };
 
 const DEFAULT_PLAYER_DATA: PlayerData = {
   version: 1,
   showInstructions: true,
-  autoHiddenInstructions: false,
-  highestLevel: 0,
+  followBall: true,
+  longestYards: 0,
 };
 
 const randomSeed = () => (Math.random() * 0xffffffff) >>> 0;
+/** Radians per arrow-key press; holding a key repeats it. */
+const KEY_AIM_STEP = (1.5 * Math.PI) / 180;
+
+function describeResult(result: ShotResult) {
+  if (result.strike < 1) {
+    return `Chunked it · ${result.yards} yds`;
+  }
+  if (result.strike > 1) {
+    return `Thinned it · ${result.yards} yds`;
+  }
+  if (result.fromFlag <= 3) {
+    return `Stuck it · ${result.fromFlag} yds from the ${result.flagYards}`;
+  }
+  return `${result.yards} yds · ${result.fromFlag} yds from the ${result.flagYards}`;
+}
 
 export default function Page() {
   const [hud, setHud] = useState(INITIAL_HUD);
   const [run, setRun] = useState(0);
-  // Seeded once, lazily, at mount. Seeding on "Start round" instead meant the
-  // pond you were looking at through the intro was thrown away and rebuilt the
-  // instant the modal closed — the backdrop is only lightly blurred, so you
-  // watched the world pop.
   const [seed, setSeed] = useState(randomSeed);
   const [showIntro, setShowIntro] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [playerData, setPlayerData] = useState(DEFAULT_PLAYER_DATA);
   const playerDataRef = useRef(DEFAULT_PLAYER_DATA);
   const windArrowRef = useRef<HTMLElement>(null);
+  const swingRef = useRef<SwingApi>(null);
+
+  // Arrow keys (or A and D) nudge the aim; holding one repeats.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const steps =
+        event.key === "ArrowLeft" || event.key === "a"
+          ? -1
+          : event.key === "ArrowRight" || event.key === "d"
+            ? 1
+            : 0;
+      if (steps === 0) return;
+      event.preventDefault();
+      swingRef.current?.aim(steps * KEY_AIM_STEP);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const savePlayerData = useCallback((next: PlayerData) => {
     playerDataRef.current = next;
@@ -72,20 +100,11 @@ export default function Page() {
         ) as Partial<PlayerData> | null;
         if (!saved) return;
 
-        const highestLevel = Math.max(0, Number(saved.highestLevel) || 0);
-        const needsLevelFiveDismissal =
-          highestLevel >= 5 && saved.autoHiddenInstructions !== true;
-        const autoHiddenInstructions =
-          saved.autoHiddenInstructions === true || needsLevelFiveDismissal;
         const next: PlayerData = {
           version: 1,
-          highestLevel,
-          autoHiddenInstructions,
-          showInstructions: needsLevelFiveDismissal
-            ? false
-            : typeof saved.showInstructions === "boolean"
-              ? saved.showInstructions
-              : !autoHiddenInstructions,
+          showInstructions: saved.showInstructions !== false,
+          followBall: saved.followBall !== false,
+          longestYards: Math.max(0, Number(saved.longestYards) || 0),
         };
         playerDataRef.current = next;
         setPlayerData(next);
@@ -102,76 +121,64 @@ export default function Page() {
       setHud(next);
 
       const current = playerDataRef.current;
-      const highestLevel = Math.max(current.highestLevel, next.level);
-      const shouldAutoHide =
-        next.level >= 5 && !current.autoHiddenInstructions;
-      if (highestLevel === current.highestLevel && !shouldAutoHide) return;
-
-      savePlayerData({
-        ...current,
-        highestLevel,
-        showInstructions: shouldAutoHide
-          ? false
-          : current.showInstructions,
-        autoHiddenInstructions:
-          current.autoHiddenInstructions || shouldAutoHide,
-      });
+      if (next.longestYards <= current.longestYards) return;
+      savePlayerData({ ...current, longestYards: next.longestYards });
     },
     [savePlayerData],
   );
 
-  const toggleInstructions = useCallback(() => {
-    const current = playerDataRef.current;
-    savePlayerData({
-      ...current,
-      showInstructions: !current.showInstructions,
-    });
-  }, [savePlayerData]);
+  const toggleSetting = useCallback(
+    (key: "showInstructions" | "followBall") => {
+      const current = playerDataRef.current;
+      savePlayerData({ ...current, [key]: !current[key] });
+    },
+    [savePlayerData],
+  );
 
-  // Restart is the one place a fresh world is expected, so it remounts.
-  const reseed = useCallback(() => {
+  const restart = useCallback(() => {
     setHud(INITIAL_HUD);
     setSeed(randomSeed());
     setRun((value) => value + 1);
     setShowMenu(false);
   }, []);
 
-  const startRound = useCallback(() => setShowIntro(false), []);
+  const startSession = useCallback(() => setShowIntro(false), []);
 
   return (
     <main className={styles.main}>
       <Canvas
         className={styles.canvas}
         dpr={1}
-        shadows="basic"
-        camera={{ position: [0, 6.2, 20], fov: 46, near: 0.1, far: 90 }}
+        shadows="percentage"
+        camera={{ position: [0, 1.05, 2.6], fov: 46, near: 0.05, far: 260 }}
         gl={{
           antialias: false,
           alpha: false,
           powerPreference: "high-performance",
         }}
       >
-        <FrogHopScene
+        <RangeScene
           key={run}
           seed={seed}
+          followBall={playerData.followBall}
           onHudChange={handleHudChange}
           windArrowRef={windArrowRef}
+          swingRef={swingRef}
         />
       </Canvas>
 
+      <SwingMeter swingRef={swingRef} />
+
       <header className={styles.hud} aria-live="polite">
-        <div className={styles.brand}>
-          <h1>FrogAce</h1>
-        </div>
         <div className={styles.hudActions}>
           <div className={styles.stats}>
             <div>
-              <span>Streak</span>
-              <strong>{String(hud.streak).padStart(2, "0")}</strong>
+              <span>Last</span>
+              <strong>{hud.lastYards}</strong>
             </div>
             <div>
-              <span>Best</span>
-              <strong>{String(hud.bestStreak).padStart(2, "0")}</strong>
+              <span>Longest</span>
+              <strong>{Math.max(hud.longestYards, playerData.longestYards)}</strong>
             </div>
           </div>
           <div className={styles.menuWrap}>
@@ -179,25 +186,35 @@ export default function Page() {
               className={styles.menuButton}
               type="button"
               aria-expanded={showMenu}
-              aria-controls="frog-ace-menu"
+              aria-controls="range-day-menu"
               onClick={() => setShowMenu((open) => !open)}
             >
               Menu
             </button>
             {showMenu ? (
-              <div id="frog-ace-menu" className={styles.menuPanel}>
+              <div id="range-day-menu" className={styles.menuPanel}>
                 <button
                   className={styles.toggleRow}
                   type="button"
                   role="switch"
                   aria-checked={playerData.showInstructions}
-                  onClick={toggleInstructions}
+                  onClick={() => toggleSetting("showInstructions")}
                 >
                   <span>Instructions</span>
                   <i aria-hidden="true" />
                 </button>
-                <button type="button" onClick={reseed}>
-                  Restart round
+                <button
+                  className={styles.toggleRow}
+                  type="button"
+                  role="switch"
+                  aria-checked={playerData.followBall}
+                  onClick={() => toggleSetting("followBall")}
+                >
+                  <span>Follow ball</span>
+                  <i aria-hidden="true" />
+                </button>
+                <button type="button" onClick={restart}>
+                  New bucket
                 </button>
               </div>
             ) : null}
@@ -248,34 +265,45 @@ export default function Page() {
         </div>
       ) : null}
 
+      {hud.result ? (
+        <div className={styles.result}>{describeResult(hud.result)}</div>
+      ) : null}
+
       {showIntro ? (
         <section
           className={styles.intro}
           role="dialog"
           aria-modal="true"
-          aria-labelledby="frog-ace-intro-title"
+          aria-labelledby="range-day-intro-title"
         >
           <div className={styles.introCard}>
-            <span className={styles.introKicker}>A frog-sized golf game</span>
-            <h2 id="frog-ace-intro-title">Read the wind. Ace the lilies.</h2>
+            <span className={styles.introKicker}>A chill driving range</span>
+            <h2 id="range-day-intro-title">Read the wind. Find the flag.</h2>
             <p>
-              Pull back from the frog to set direction and power, then release.
-              Warm up on the dock — you get a landing marker there — then head
-              out into an endless pond. See how far you can get.
+              Drag to aim. Press on the ball, pull down, then push up and let
+              go where you started.
             </p>
+            <details className={styles.introMore}>
+              <summary>Read more</summary>
+              <p>
+                Pull further for more power. Stop short of where you started
+                and you chunk it; push past and you thin it long. Lean the
+                swing to fade or draw. Flags sit every 50 yards out to 250.
+              </p>
+            </details>
             <div className={styles.introTips} aria-label="How to play">
               <span>
-                <b>01</b> Aim on dock
+                <b>01</b> Aim
               </span>
               <span>
-                <b>02</b> Learn the wind
+                <b>02</b> Pull back
               </span>
               <span>
-                <b>03</b> Go as far as you can
+                <b>03</b> Swing through
               </span>
             </div>
-            <button type="button" onClick={startRound}>
-              Start round
+            <button type="button" onClick={startSession}>
+              Grab a bucket
             </button>
           </div>
         </section>

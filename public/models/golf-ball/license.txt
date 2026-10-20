@@ -1,0 +1,8 @@
+Model Information:
+* title:	Golf Ball
+* source:	https://sketchfab.com/3d-models/golf-ball-0f6ecd40b2ba42deb2f2946f3fcd4dde
+* author:	ree27703 (https://sketchfab.com/ree27703)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

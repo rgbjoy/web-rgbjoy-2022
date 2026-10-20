@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #92cfd0;
+  background: #cfe5e2;
   color: #17372d;
 }
 
@@ -10,11 +10,6 @@
   width: 100%;
   height: 100%;
   touch-action: none;
-  cursor: grab;
-}
-
-.canvas:active {
-  cursor: grabbing;
 }
 
 .hud {
@@ -41,23 +36,9 @@
   backdrop-filter: blur(12px);
 }
 
-.brand {
-  justify-self: start;
-  /* Clears the shared back link pinned above it. */
-  margin-top: 52px;
-  padding: 6px 0;
-}
-
-.brand h1 {
-  color: #eefff5;
-  font-size: clamp(42px, 5vw, 72px);
-  font-weight: 800;
-  line-height: 0.82;
-  letter-spacing: -0.07em;
-}
-
 .hudActions {
   position: relative;
+  margin-left: auto;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -271,6 +252,24 @@
   flex: 1;
 }
 
+.result {
+  position: absolute;
+  z-index: 2;
+  top: 74px;
+  left: 50%;
+  padding: 10px 16px;
+  border: 1px solid rgb(255 255 255 / 42%);
+  border-radius: 999px;
+  background: rgb(238 255 245 / 78%);
+  box-shadow: 0 16px 48px rgb(31 90 79 / 14%);
+  backdrop-filter: blur(12px);
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
 .calm {
   font-size: 24px;
   line-height: 1;
@@ -366,6 +365,29 @@
   line-height: 1.55;
 }
 
+/* The rest of the instructions, behind a "Read more" toggle. */
+.introMore summary {
+  display: inline-block;
+  margin-top: 10px;
+  color: #d65d3b;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.introMore summary::-webkit-details-marker {
+  display: none;
+}
+
+.introMore[open] summary {
+  display: none;
+}
+
+.introCard .introMore p {
+  margin-top: 10px;
+}
+
 .introTips {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -413,20 +435,105 @@
   transform: translateY(-1px);
 }
 
+/* Covers the scene; a swing starts only when you press on the ball. */
+.swingPad {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  touch-action: none;
+}
+
+.swingMeter {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: max(22px, env(safe-area-inset-left));
+  width: 200px;
+  height: 200px;
+  overflow: visible;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.meterFace {
+  fill: rgb(18 40 34 / 58%);
+}
+
+.meterTrack {
+  fill: none;
+  stroke: rgb(255 255 255 / 18%);
+  stroke-width: 3.5;
+}
+
+.meterPower {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+/* The power you pulled for, faint once the forward swing is under way. */
+.meterPowerTarget {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  opacity: 0.3;
+}
+
+/* Thinned: power past what you pulled for. */
+.meterOverPower {
+  fill: none;
+  stroke: #c08bff;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.meterDistance {
+  stroke: rgb(255 255 255 / 28%);
+  stroke-width: 1;
+}
+
+.meterLabel {
+  fill: rgb(255 255 255 / 62%);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-anchor: end;
+}
+
+.meterGuide {
+  stroke: rgb(255 255 255 / 45%);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+
+/* Backswing dots are cool and the forward swing warm, drawn smaller on top. */
+.meterDotBack {
+  fill: #5cc8ff;
+  stroke: rgb(0 0 0 / 25%);
+  stroke-width: 1;
+}
+
+.meterDotForward {
+  fill: #ff4b3e;
+  stroke: rgb(0 0 0 / 25%);
+  stroke-width: 1;
+}
+
+.meterStart {
+  fill: #ffffff;
+}
+
+/* Let go inside this band for a pure strike. */
+.meterSweetSpot {
+  fill: rgb(255 255 255 / 18%);
+}
+
 @media (max-width: 700px) {
   .hud {
     top: 14px;
     left: 14px;
     right: 14px;
     gap: 9px;
-  }
-
-  .brand {
-    padding: 4px 0;
-  }
-
-  .brand h1 {
-    font-size: 34px;
   }
 
   .hudActions {
@@ -473,6 +580,17 @@
     gap: 9px;
     padding: 10px 13px;
     font-size: 11px;
+  }
+
+  .result {
+    top: 136px;
+    font-size: 12px;
+  }
+
+  .swingMeter {
+    left: max(10px, env(safe-area-inset-left));
+    width: 150px;
+    height: 150px;
   }
 
   .calm {
