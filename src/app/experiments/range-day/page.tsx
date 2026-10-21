@@ -63,6 +63,30 @@ function describeResult(result: ShotResult) {
   return { title: gradeShot(result.fromFlag), detail: toFlag };
 }
 
+/** Frames per second, counted over each half second. */
+function FpsCounter() {
+  const [fps, setFps] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    let frames = 0;
+    let since = performance.now();
+    const tick = (now: number) => {
+      frames += 1;
+      if (now - since >= 500) {
+        setFps(Math.round((frames * 1000) / (now - since)));
+        frames = 0;
+        since = now;
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  return <div className={styles.fps}>{fps} FPS</div>;
+}
+
 function ResultBanner({ result }: { result: ShotResult }) {
   const { title, detail } = describeResult(result);
   return (
@@ -81,6 +105,8 @@ export default function Page() {
   const [showMenu, setShowMenu] = useState(false);
   /** Phones only: the club list is a flyout above the menu button. */
   const [showClubs, setShowClubs] = useState(false);
+  /** Debug: F toggles a frames-per-second readout. */
+  const [showFps, setShowFps] = useState(false);
   const [playerData, setPlayerData] = useState(DEFAULT_PLAYER_DATA);
   const [club, setClub] = useState(CLUBS[0]);
   const playerDataRef = useRef(DEFAULT_PLAYER_DATA);
@@ -91,6 +117,10 @@ export default function Page() {
   // pick a club.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "f") {
+        setShowFps((shown) => !shown);
+        return;
+      }
       const picked = CLUBS[Number(event.key) - 1];
       if (picked) {
         setClub(picked);
@@ -200,6 +230,8 @@ export default function Page() {
           swingRef={swingRef}
         />
       </Canvas>
+
+      {showFps ? <FpsCounter /> : null}
 
       <SwingMeter
         swingRef={swingRef}

@@ -1,26 +1,35 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { CanvasTexture, Color, RepeatWrapping, SRGBColorSpace } from "three";
+import {
+  CanvasTexture,
+  Color,
+  PlaneGeometry,
+  RepeatWrapping,
+  SRGBColorSpace,
+} from "three";
 
-import { FLAGS, GREEN_RADIUS } from "./game";
+import { FLAGS, GREEN_RADIUS, type Terrain } from "./game";
 
 /** A multiple of STRIPE_PERIOD, so the mowing lanes tile evenly. */
 const FIELD_SIZE = 608;
 const STRIPE_PERIOD = 8;
 const STRIPE_LIGHT = "#7cb956";
 const STRIPE_DARK = "#69a648";
+/** Grid cells across the field; plenty for swells tens of units long. */
+const FIELD_SEGMENTS = 160;
 
 /** The range floor: striped, carpet-grained fairway with a green per flag. */
-export function Fairway() {
+export function Fairway({ terrain }: { terrain: Terrain }) {
   const turf = useMemo(() => createTurfTexture(), []);
+  const ground = useMemo(() => createGround(terrain), [terrain]);
 
   useEffect(() => () => turf.dispose(), [turf]);
+  useEffect(() => () => ground.dispose(), [ground]);
 
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[FIELD_SIZE, FIELD_SIZE]} />
+      <mesh geometry={ground} receiveShadow>
         <meshStandardMaterial map={turf} roughness={1} />
       </mesh>
       {FLAGS.map((flag) => (
@@ -41,6 +50,18 @@ export function Fairway() {
       ))}
     </group>
   );
+}
+
+/** The field as a grid laid flat, each vertex raised to the terrain. */
+function createGround(terrain: Terrain) {
+  const geometry = new PlaneGeometry(FIELD_SIZE, FIELD_SIZE, FIELD_SEGMENTS, FIELD_SEGMENTS);
+  geometry.rotateX(-Math.PI / 2);
+  const positions = geometry.attributes.position;
+  for (let index = 0; index < positions.count; index += 1) {
+    positions.setY(index, terrain(positions.getX(index), positions.getZ(index)));
+  }
+  geometry.computeVertexNormals();
+  return geometry;
 }
 
 /** Texels across one lane; more makes the grain finer. */

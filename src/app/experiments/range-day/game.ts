@@ -111,7 +111,7 @@ export const CLUBS = [
 
 export type Club = (typeof CLUBS)[number]
 
-export const BALL_RADIUS = 0.11
+export const BALL_RADIUS = 0.11 / 1.5
 export const MAT_TOP_Y = 0.04
 export const TEE_HEIGHT = 0.07
 export const BALL_TEE_Y = MAT_TOP_Y + TEE_HEIGHT + BALL_RADIUS
@@ -371,6 +371,54 @@ export function velocityOnShot(
   return target
 }
 
+/** Ground height at a point on the range, in world units. */
+export type Terrain = (x: number, z: number) => number
+
+/** Long, low swells summed into the ground; their peaks stay this high. */
+const TERRAIN_HEIGHT = 1
+const SWELLS = 4
+const MIN_SWELL_LENGTH = 30
+const MAX_SWELL_LENGTH = 90
+/** The tee and greens stay flat out to these radii, then ease into the swells. */
+const TEE_FLAT = 8
+const GREEN_FLAT = GREEN_RADIUS + 1
+const FLAT_BLEND = 10
+
+/**
+ * Gentle rolling ground for one play, seeded so a new bucket gets new
+ * terrain. A few long sine swells at random angles, flattened at the tee
+ * and around each green so the targets and the stance stay level.
+ */
+export function makeTerrain(seed: number): Terrain {
+  const random = (salt: string) => hash(`${seed}-terrain-${salt}`) / 0xffffffff
+  const swells = Array.from({ length: SWELLS }, (_, index) => {
+    const angle = random(`angle${index}`) * Math.PI * 2
+    const length = MathUtils.lerp(MIN_SWELL_LENGTH, MAX_SWELL_LENGTH, random(`length${index}`))
+    return {
+      dx: Math.cos(angle) * ((Math.PI * 2) / length),
+      dz: Math.sin(angle) * ((Math.PI * 2) / length),
+      phase: random(`phase${index}`) * Math.PI * 2,
+    }
+  })
+
+  return (x, z) => {
+    let height = 0
+    for (const swell of swells) {
+      height += Math.sin(x * swell.dx + z * swell.dz + swell.phase)
+    }
+    let flat = flatness(Math.hypot(x, z), TEE_FLAT)
+    for (const flag of FLAGS) {
+      flat = Math.min(flat, flatness(Math.hypot(x - flag.x, z - flag.z), GREEN_FLAT))
+    }
+    return (height / SWELLS) * TERRAIN_HEIGHT * flat
+  }
+}
+
+/** 0 inside `radius`, easing up to 1 over FLAT_BLEND beyond it. */
+function flatness(distance: number, radius: number) {
+  return MathUtils.smoothstep(distance, radius, radius + FLAT_BLEND)
+}
+
 /** Pull on the ball between hops; a little stronger than in flight so it settles quickly. */
 const BOUNCE_GRAVITY = 32
 /** Hops lower than this would not show, so the ball just rolls. */
@@ -443,10 +491,16 @@ function hopHeight(hops: number[], seconds: number) {
 }
 
 /** A few shrinking hops, then an ease-out roll to a stop. */
-export function pointOnRoll(roll: Roll, progress: number, target = new Vector3()) {
+export function pointOnRoll(
+  roll: Roll,
+  progress: number,
+  terrain: Terrain,
+  target = new Vector3(),
+) {
   const t = clamp01(progress)
   target.lerpVectors(roll.from, roll.to, 1 - Math.pow(1 - t, 3))
-  target.y = BALL_RADIUS + hopHeight(roll.hops, t * roll.duration)
+  target.y =
+    terrain(target.x, target.z) + BALL_RADIUS + hopHeight(roll.hops, t * roll.duration)
   return target
 }
 

@@ -10,6 +10,8 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+import type { Terrain } from "./game";
+
 const TRUNK_HEIGHT = 2;
 /** Stacked cones for the foliage, widest at the bottom: [radius, height, y]. */
 const TIERS: [number, number, number][] = [
@@ -56,7 +58,7 @@ function foliageGeometry() {
 }
 
 /** Low-poly pines around the range: tiered, faceted, each a slightly different green. */
-export function TreeLine() {
+export function TreeLine({ terrain }: { terrain: Terrain }) {
   const foliageRef = useRef<InstancedMesh>(null);
   const trunkRef = useRef<InstancedMesh>(null);
   const trees = useMemo(() => treeSpots(), []);
@@ -82,7 +84,7 @@ export function TreeLine() {
     const dummy = new Object3D();
     const color = new Color();
     trees.forEach((tree, index) => {
-      dummy.position.set(tree.x, 0, tree.z);
+      dummy.position.set(tree.x, terrain(tree.x, tree.z), tree.z);
       dummy.rotation.y = tree.turn;
       dummy.scale.setScalar(tree.scale);
       dummy.updateMatrix();
@@ -95,7 +97,7 @@ export function TreeLine() {
       mesh.computeBoundingSphere();
     }
     if (leaves.instanceColor) leaves.instanceColor.needsUpdate = true;
-  }, [trees]);
+  }, [terrain, trees]);
 
   return (
     <>

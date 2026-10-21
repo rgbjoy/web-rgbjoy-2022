@@ -8,6 +8,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from "react";
 import {
@@ -32,6 +33,7 @@ import {
   TEE_HEIGHT,
   carryDistance,
   hintForShot,
+  makeTerrain,
   pointOnRoll,
   pointOnShot,
   resultForRest,
@@ -51,6 +53,7 @@ import {
   type Shot,
   type ShotResult,
   type Swing,
+  type Terrain,
 } from "./game";
 import { GolfBallModel } from "./GolfBall";
 import { ShotTrail, type ShotTrailHandle } from "./ShotTrail";
@@ -135,6 +138,8 @@ export function RangeScene({
   windArrowRef,
   swingRef,
 }: RangeSceneProps) {
+  // New ground each play: the seed changes with every bucket.
+  const terrain = useMemo<Terrain>(() => makeTerrain(seed), [seed]);
   const { camera, gl } = useThree();
   const ballRef = useRef<Group>(null);
   const spinRef = useRef<Group>(null);
@@ -260,11 +265,12 @@ export function RangeScene({
       tempWindOffset,
       carry,
     );
-    const launchEnd = start
-      .clone()
-      .addScaledVector(tempDirection, launchDistance)
-      .setY(BALL_RADIUS);
+    const launchEnd = start.clone().addScaledVector(tempDirection, launchDistance);
     const end = launchEnd.clone().add(tempWindOffset);
+    // Come down onto the ground wherever it lands.
+    const landingY = terrain(end.x, end.z) + BALL_RADIUS;
+    launchEnd.setY(landingY);
+    end.setY(landingY);
 
     // Higher shots hang longer, as a real ball would under gravity.
     const arcHeight = carry * club.launch * effect.launch;
@@ -280,7 +286,7 @@ export function RangeScene({
       arcHeight,
       elapsed: 0,
     };
-  }, []);
+  }, [terrain]);
 
   useImperativeHandle(
     swingRef,
@@ -399,7 +405,7 @@ export function RangeScene({
       roll.elapsed += delta;
       const progress = Math.min(1, roll.elapsed / roll.duration);
       tempPrevious.copy(ball.position);
-      pointOnRoll(roll, progress, ball.position);
+      pointOnRoll(roll, progress, terrain, ball.position);
       tempPrevious.y = ball.position.y;
       spin.rotation.x -= tempPrevious.distanceTo(ball.position) / BALL_RADIUS;
 
@@ -457,7 +463,7 @@ export function RangeScene({
     const chase = chaseRef.current;
     // Track a hopping ball along the ground so the camera doesn't bounce too.
     const tracked = tempTracked.copy(ball.position);
-    if (phase === "rolling") tracked.y = BALL_RADIUS;
+    if (phase === "rolling") tracked.y = terrain(tracked.x, tracked.z) + BALL_RADIUS;
     // Without follow, the camera stays behind the tee and turns to watch.
     const anchor = follow ? tracked : TEE_POSITION;
 
@@ -494,9 +500,9 @@ export function RangeScene({
       <ambientLight intensity={1.35} />
       <SunLight ballRef={ballRef} />
 
-      <Fairway />
+      <Fairway terrain={terrain} />
       <TeeMat />
-      <TreeLine />
+      <TreeLine terrain={terrain} />
       {FLAGS.map((flag) => (
         <FlagPin key={flag.yards} flag={flag} windDirectionRef={windDirectionRef} />
       ))}
@@ -773,7 +779,11 @@ const LandingBurst = forwardRef<LandingBurstHandle>(
         const group = groupRef.current;
         if (!group) return;
 
-        group.position.set(position.x, GROUND_RING_Y, position.z);
+        group.position.set(
+          position.x,
+          position.y - BALL_RADIUS + GROUND_RING_Y,
+          position.z,
+        );
         group.visible = true;
         progressRef.current = 0;
       },
@@ -799,7 +809,13 @@ const LandingBurst = forwardRef<LandingBurstHandle>(
       <group ref={groupRef} visible={false} rotation={[-Math.PI / 2, 0, 0]}>
         <mesh ref={meshRef}>
           <ringGeometry args={[0.5, 0.66, 32]} />
-          <meshBasicMaterial color={BURST_COLOR} transparent depthWrite={false} />
+          {/* Drawn over the ground so a slope can't swallow half the ring. */}
+          <meshBasicMaterial
+            color={BURST_COLOR}
+            transparent
+            depthWrite={false}
+            depthTest={false}
+          />
         </mesh>
       </group>
     );

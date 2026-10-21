@@ -516,6 +516,21 @@
   opacity: 0.6;
 }
 
+/* Debug readout, toggled with F. */
+.fps {
+  position: absolute;
+  z-index: 4;
+  top: 74px;
+  left: max(22px, env(safe-area-inset-left));
+  padding: 4px 7px;
+  background: #17372d;
+  color: #69e36f;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
 /* Phones only; see the media query. */
 .clubButton {
   display: none;

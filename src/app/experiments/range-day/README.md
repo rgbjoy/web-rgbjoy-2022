@@ -67,6 +67,16 @@ a light and a dark mowing lane, each speckled with fine grain so it reads
 like carpet up close and clean stripes far away. Each flag gets a lighter
 green disc. Grass blades are parked for now.
 
+## Terrain
+
+`makeTerrain(seed)` returns a height function for the play: four long, low
+sine swells at random angles, peaking about a unit (two yards) high. The
+seed changes with each bucket, so the ground is new each play and steady
+within it. It is flat at the tee and around each green, easing into the
+swells over ten units, so the stance and targets stay level. `Fairway.tsx`
+raises a 160×160 grid to it, the trees stand on it, the ball lands on it and
+rolls along it.
+
 ## Scale
 
 One world unit is two yards (`YARDS_PER_UNIT`). Each club carries from its `minCarry` to its `maxCarry`: 160–270 yards with the driver down to 20–100 with the wedge. Wind
