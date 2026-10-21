@@ -86,7 +86,9 @@ void main() {
   );
 
   // Brightest near the corner, gone before it reaches the content.
-  light *= smoothstep(2.3, 0.6, r) * 0.8;
+  light *= smoothstep(2.3, 0.6, r);
+  // Rolled off rather than clipped, so overlapping swells glow brighter without blowing out to white.
+  light = 0.85 * (1.0 - exp(-light));
   // Film grain, fresh every frame: stronger in the light, and a faint speckle in the dark between rays.
   float noise = grain(gl_FragCoord.xy, t);
   light = max(light + noise * 0.07 * (0.35 + light), 0.0);

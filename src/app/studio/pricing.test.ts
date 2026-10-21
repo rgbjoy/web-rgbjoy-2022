@@ -25,7 +25,7 @@ test("size, design and features each add a line and their weeks", () => {
   const result = estimate(pick({ type: "business", size: "medium", design: "brand", features: ["blog"] }))
   expect(result.lines.map((line) => line.label)).toEqual([
     "Small business site",
-    "6 to 12 pages",
+    "5 to 8 layouts",
     "Design it around my brand",
     "Blog or news",
   ])

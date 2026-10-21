@@ -15,7 +15,7 @@ export type SiteType = {
   price: Range
   weeks: Range
   /** What its size is counted in; a one-pager has no size to ask about. */
-  unit: "pages" | "screens" | null
+  unit: "layouts" | "screens" | null
 }
 
 export const SITE_TYPES: readonly SiteType[] = [
@@ -33,7 +33,7 @@ export const SITE_TYPES: readonly SiteType[] = [
     description: "A handful of pages built around your services and how customers find you.",
     price: [4000, 7000],
     weeks: [3, 5],
-    unit: "pages",
+    unit: "layouts",
   },
   {
     id: "cms",
@@ -41,7 +41,7 @@ export const SITE_TYPES: readonly SiteType[] = [
     description: "Pages, news, team, menus — all yours to change, in an editor shaped around your content.",
     price: [7000, 12000],
     weeks: [5, 8],
-    unit: "pages",
+    unit: "layouts",
   },
   {
     id: "store",
@@ -49,7 +49,7 @@ export const SITE_TYPES: readonly SiteType[] = [
     description: "Products, cart and checkout, with payments, shipping and tax set up properly.",
     price: [9000, 18000],
     weeks: [6, 10],
-    unit: "pages",
+    unit: "layouts",
   },
   {
     id: "app",
@@ -64,10 +64,11 @@ export const SITE_TYPES: readonly SiteType[] = [
 export type Option = { id: string; label: string; price: Range; weeks: Range }
 
 export const SIZES: readonly Option[] = [
-  { id: "small", label: "Up to 5", price: [0, 0], weeks: [0, 0] },
-  { id: "medium", label: "6 to 12", price: [1500, 3000], weeks: [1, 1] },
-  { id: "large", label: "13 to 25", price: [3000, 6000], weeks: [1, 2] },
-  { id: "huge", label: "More than 25", price: [6000, 12000], weeks: [2, 4] },
+  // Counted in distinct layouts, not pages: fifty blog posts share one layout.
+  { id: "small", label: "Up to 4", price: [0, 0], weeks: [0, 0] },
+  { id: "medium", label: "5 to 8", price: [1500, 3000], weeks: [1, 1] },
+  { id: "large", label: "9 to 15", price: [3000, 6000], weeks: [1, 2] },
+  { id: "huge", label: "More than 15", price: [6000, 12000], weeks: [2, 4] },
 ]
 
 export const DESIGNS: readonly (Option & { description: string })[] = [
@@ -106,7 +107,6 @@ export const FEATURES: readonly Feature[] = [
   { id: "payments", label: "Take payments", price: [3000, 7000], weeks: [1, 2], includedIn: ["store"] },
   { id: "accounts", label: "Member logins and accounts", price: [3000, 7000], weeks: [1, 2], includedIn: ["app"] },
   { id: "search", label: "Site search", price: [600, 1500], weeks: [0, 1] },
-  { id: "languages", label: "More than one language", price: [2000, 5000], weeks: [1, 2] },
   { id: "integrations", label: "Hook up your tools (CRM, newsletter, calendar)", price: [800, 2500], weeks: [0, 1] },
   { id: "migration", label: "Move content from your old site", price: [1000, 3000], weeks: [0, 1] },
   { id: "motion", label: "Motion, interaction or 3D", price: [4000, 12000], weeks: [1, 2] },

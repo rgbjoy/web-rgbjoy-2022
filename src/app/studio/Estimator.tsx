@@ -5,7 +5,6 @@ import Image from "next/image"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { SITE } from "../data/site"
-import { AskAboutWork } from "../utilities/AskAboutWork/AskAboutWork"
 import { ContactDialog } from "../utilities/contact/ContactDialog"
 import { useReducedMotion } from "../utilities/settings/useSettings"
 import {
@@ -40,6 +39,13 @@ const PORTRAIT = {
   alt: "Tom Fletcher",
   width: 452,
   height: 365,
+}
+
+/** What the size question counts, since page count is the wrong measure. */
+const SIZE_HINTS = {
+  layouts:
+    "Count the different kinds of page, not the pages. A home page, a services page and a contact page are three layouts. Fifty blog posts or a dozen team bios share one layout each.",
+  screens: "Each different screen someone moves through, like sign in, a dashboard, a list, a detail view and settings.",
 }
 
 const pad2 = (n: number) => String(n).padStart(2, "0")
@@ -179,7 +185,6 @@ export function Estimator() {
   const [confirmed, setConfirmed] = useState<ReadonlySet<Step>>(() => new Set())
   const [editing, setEditing] = useState<Step | null>(null)
   const [contactOpen, setContactOpen] = useState(false)
-  const [promptOpen, setPromptOpen] = useState(false)
   /** Whether the summary is on screen or scrolled past, so the pinned total pointing down at it can step aside. */
   const [summaryReached, setSummaryReached] = useState(false)
   /** Narrow screens only: the pinned total enlarged in place, so the breakdown can be read without leaving the question in hand. */
@@ -308,7 +313,8 @@ export function Estimator() {
         }
       case "size":
         return {
-          title: `how many ${type?.unit ?? "pages"}?`,
+          title: `how many ${type?.unit ?? "layouts"}?`,
+          hint: SIZE_HINTS[type?.unit ?? "layouts"],
           answer: `${SIZES.find((size) => size.id === selection.size)?.label ?? ""} ${type?.unit ?? ""}`,
           body: (
             <div className={styles.chips}>
@@ -440,7 +446,7 @@ export function Estimator() {
         </li>
       </ul>
       {counted.has("care") && (
-        <p className={`${styles.line} ${styles.care} ${confirmed.has("care") ? "" : styles.linePending}`}>
+        <p className={`${styles.line} ${confirmed.has("care") ? "" : styles.linePending}`}>
           <span>hosting &amp; care · {plan.label}</span>
           <span className={styles.lineValue}>{plan.monthly ? `${formatPrice(plan.monthly)}/mo` : "—"}</span>
         </p>
@@ -479,19 +485,11 @@ export function Estimator() {
             </p>
             <p>
               More people now ask an assistant about a business instead of clicking through its menu. I build sites
-              that read well to both.{" "}
-              {/* A real link to the prompt without JavaScript; with it, the same copy-a-prompt popup as the homepage. */}
-              <a
-                href="/prompt.md"
-                onClick={(event) => {
-                  event.preventDefault()
-                  setPromptOpen(true)
-                }}
-              >
-                This one does.
-              </a>
+              that read well to both.
             </p>
-            <p className={styles.proseClose}>The speed comes from the tools. The judgment and the care come from me.</p>
+            <p className={styles.proseClose}>
+              <mark>The speed comes from the tools. The judgment and the care come from me.</mark>
+            </p>
           </div>
           <figure className={styles.portrait}>
             <Image
@@ -541,11 +539,13 @@ export function Estimator() {
       </section>
 
       <section ref={estimateRef} className={styles.section} aria-labelledby="estimate">
-        <SectionHeading id="estimate" index={4}>
-          estimate
-        </SectionHeading>
+        {/* Not a numbered section like the three above: the page's ask, in the display face. */}
+        <h2 id="estimate" className={styles.estimateTitle}>
+          Get an estimate
+        </h2>
         <p className={styles.intro}>
-          Pick what you need and you&rsquo;ll have an honest range in a minute, then send it over with a note.
+          Pick what you need and you&rsquo;ll have an honest range in a minute, then send it over with a note. Or
+          just email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
         </p>
 
         <div className={styles.columns}>
@@ -577,7 +577,7 @@ export function Estimator() {
 
           <aside id="summary" ref={summaryRef} className={styles.summary} aria-label="Your estimate">
             <p className={styles.summaryLabel}>
-              {complete ? "estimated build" : `so far · ${settled} of ${steps.length} confirmed`}
+              {complete ? "estimated build" : `${settled} of ${steps.length} confirmed`}
             </p>
             <p className={styles.total} aria-live="polite">
               {priced ? formatRange(result.price) : "—"}
@@ -589,11 +589,15 @@ export function Estimator() {
             {detailLines}
 
             <p className={styles.note}>
-              A starting range, not a quote. After a short call I&rsquo;ll send a fixed price in writing, and the
-              number we agree on is the number you pay.
+              A starting range, not a quote. After a short call, you get a fixed price in writing.
             </p>
 
-            <button type="button" className={styles.cta} disabled={!complete} onClick={() => setContactOpen(true)}>
+            <button
+              type="button"
+              className={`${styles.cta} ${complete ? styles.ctaReady : ""}`}
+              disabled={!complete}
+              onClick={() => setContactOpen(true)}
+            >
               send this to tom
             </button>
             {!complete && <p className={styles.ctaHint}>Confirm every step to send it.</p>}
@@ -601,16 +605,6 @@ export function Estimator() {
         </div>
       </section>
 
-      <footer className={styles.closing}>
-        <p className={styles.closingLead}>Ready when you are.</p>
-        <p className={styles.closingText}>
-          Send me your estimate and a few lines about the project, or email{" "}
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
-        </p>
-        <button type="button" className={styles.cta} onClick={() => setContactOpen(true)}>
-          send this to tom
-        </button>
-      </footer>
 
       {/* Narrow screens put the summary below every question; this keeps the total in view on the way down,
           and enlarges in place so the breakdown can be checked without losing the question in hand. */}
@@ -641,7 +635,7 @@ export function Estimator() {
           <div className={styles.peekInner}>
             <div className={styles.peekScroll}>
               <p className={styles.summaryLabel}>
-                {complete ? "estimated build" : `so far · ${settled} of ${steps.length} confirmed`}
+                {complete ? "estimated build" : `${settled} of ${steps.length} confirmed`}
               </p>
               {priced ? detailLines : <p className={styles.weeks}>Pick what we&rsquo;re building to start.</p>}
               <div className={styles.peekActions}>
@@ -666,8 +660,6 @@ export function Estimator() {
           </div>
         </div>
       </div>
-
-      <AskAboutWork open={promptOpen} onOpenChange={setPromptOpen} />
 
       <ContactDialog
         open={contactOpen}
