@@ -10,8 +10,9 @@
   outline: none;
 }
 
+/* A pill with the close button in its own circle beside it, matching the homepage's availability pill. */
 .bar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
 }
@@ -24,20 +25,20 @@
   border: 1px solid var(--hairline);
   border-radius: 999px;
   background: var(--bg);
+  box-shadow: 0 8px 24px #0003;
   color: var(--fg);
   font: inherit;
+  font-size: 12px;
+  line-height: 1;
   cursor: pointer;
-  transition: border-color var(--transition), opacity var(--transition);
+  transition: background-color var(--rollover-fade);
 }
 
 .copy {
-  gap: 12px;
-  min-height: 40px;
+  gap: 9px;
   min-width: 0;
-  padding: 9px 16px;
-  font-size: 13px;
-  line-height: 1.4;
-  box-shadow: 0 3px 12px rgb(0 0 0 / 8%);
+  padding: 11px 14px;
+  white-space: nowrap;
 }
 
 .copy svg {
@@ -49,11 +50,9 @@
 }
 
 .close {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .preview {
@@ -105,14 +104,13 @@
   visibility: visible;
 }
 
-.content:has(:focus-visible) .close,
-.content[data-manual="true"] .close {
-  opacity: 1;
-  pointer-events: auto;
+.copy:focus-visible,
+.close:focus-visible {
+  background: color-mix(in srgb, var(--fg) 18%, var(--bg));
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
 }
 
-.copy:focus-visible,
-.close:focus-visible,
 .promptText:focus-visible {
   outline: 1px solid var(--fg);
   outline-offset: 3px;
@@ -124,31 +122,19 @@
     visibility: visible;
   }
 
-  .content:hover .close {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .copy:hover,
   .close:hover {
-    border-color: var(--fg);
+    background: color-mix(in srgb, var(--fg) 18%, var(--bg));
   }
 }
 
 @media (max-width: 640px) {
-  .content {
-    bottom: max(16px, env(safe-area-inset-bottom));
+  .copy {
+    font-size: 11px;
   }
 }
 
 @media (hover: none) {
-  .close {
-    width: 40px;
-    height: 40px;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .preview {
     opacity: 1;
     visibility: visible;

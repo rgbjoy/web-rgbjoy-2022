@@ -9,9 +9,12 @@ import styles from "./AskAboutWork.module.css"
 export function AskAboutWork({
   open,
   onOpenChange,
+  onDismiss,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** The close button was pressed, as opposed to a click elsewhere closing it. */
+  onDismiss?: () => void
 }) {
   const [copyState, setCopyState] = useState<"idle" | "copying" | "copied" | "manual">("idle")
   const promptRef = useRef<HTMLTextAreaElement>(null)
@@ -95,9 +98,9 @@ export function AskAboutWork({
               aria-label="Copy prompt to explore rgbjoy with ChatGPT or Claude"
             >
               <span>{copyState === "copied" ? "prompt copied" : "explore rgbjoy with AI"}</span>
-              {copyState === "copied" ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
+              {copyState === "copied" ? <Check size={14} strokeWidth={1.75} aria-hidden /> : <Copy size={14} strokeWidth={1.75} aria-hidden />}
             </button>
-            <Dialog.Close className={styles.close} aria-label="Close prompt">
+            <Dialog.Close className={styles.close} aria-label="Close prompt" onClick={onDismiss}>
               <X size={14} strokeWidth={1.75} aria-hidden />
             </Dialog.Close>
           </div>

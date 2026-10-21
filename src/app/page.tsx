@@ -32,6 +32,7 @@ import {
 import { LINKS, type SiteLink } from "./data/links"
 import { SITE } from "./data/site"
 import { AskAboutWork } from "./utilities/AskAboutWork/AskAboutWork"
+import { useDismissed } from "./utilities/useDismissed"
 import { ContactDialog } from "./utilities/contact/ContactDialog"
 import {
   collapseAll,
@@ -127,25 +128,6 @@ function markIntroPlayed() {
  * cleanup persists that snapshot instead of reading the experiment's offset.
  */
 const INDEX_SCROLL_KEY = "rgbjoy:index-scroll"
-const AVAILABILITY_DISMISSED_KEY = "rgbjoy:availability-dismissed"
-const AVAILABILITY_DISMISSED_EVENT = "rgbjoy:availability-dismissed-change"
-let availabilityDismissedThisLoad = false
-
-function subscribeAvailabilityDismissal(callback: () => void) {
-  window.addEventListener(AVAILABILITY_DISMISSED_EVENT, callback)
-  return () => window.removeEventListener(AVAILABILITY_DISMISSED_EVENT, callback)
-}
-
-function availabilityDismissedSnapshot() {
-  if (availabilityDismissedThisLoad) return true
-  try {
-    return window.sessionStorage.getItem(AVAILABILITY_DISMISSED_KEY) === "1"
-  } catch {
-    return false
-  }
-}
-
-const serverAvailabilityDismissedSnapshot = () => false
 let rememberedIndexScroll = 0
 
 function rememberIndexScroll(y = window.scrollY) {
@@ -474,10 +456,13 @@ export default function Home() {
   // restore against the real page height; a first visit still animates them.
   const [resumeVisit] = useState(shouldSkipIntro)
   const [contactOpen, setContactOpen] = useState(false)
-  const availabilityDismissed = useSyncExternalStore(subscribeAvailabilityDismissal, availabilityDismissedSnapshot, serverAvailabilityDismissedSnapshot)
+  // Each pill stays closed for a day once its close button is pressed.
+  const [availabilityDismissed, dismissAvailability] = useDismissed("rgbjoy:availability-dismissed")
+  const [promptDismissed, dismissPrompt] = useDismissed("rgbjoy:prompt-dismissed")
   const desktopPrompt = useSyncExternalStore(subscribeDesktopPrompt, desktopPromptSnapshot, serverPromptSnapshot)
   const [promptOverride, setPromptOpen] = useState<boolean | null>(null)
-  const promptOpen = promptOverride ?? desktopPrompt
+  // The menu can still open it after it's been closed.
+  const promptOpen = promptOverride ?? (desktopPrompt && !promptDismissed)
   const reducedMotion = useReducedMotion()
   const theme = useTheme()
   const [controlsStuck, setControlsStuck] = useState(false)
@@ -491,16 +476,6 @@ export default function Home() {
   // heading lands, rather than every section waiting on the whole intro.
   const [arrived, setArrived] = useState<ReadonlySet<string>>(() => new Set())
   const hasArrived = (name: string) => !introPending || arrived.has(name)
-
-  const dismissAvailability = () => {
-    availabilityDismissedThisLoad = true
-    try {
-      window.sessionStorage.setItem(AVAILABILITY_DISMISSED_KEY, "1")
-    } catch {
-      // Closing the button does not depend on session storage.
-    }
-    window.dispatchEvent(new Event(AVAILABILITY_DISMISSED_EVENT))
-  }
 
   // Load choreography: headline → desc → search → each category (+ name, line, count).
   useLayoutEffect(() => {
@@ -965,7 +940,7 @@ export default function Home() {
       )}
 
       <ContactDialog open={contactOpen} onOpenChange={setContactOpen} />
-      <AskAboutWork open={promptOpen} onOpenChange={setPromptOpen} />
+      <AskAboutWork open={promptOpen} onOpenChange={setPromptOpen} onDismiss={dismissPrompt} />
     </>
   )
 }

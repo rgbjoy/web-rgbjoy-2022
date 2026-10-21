@@ -292,11 +292,8 @@
   z-index: 8;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--hairline);
-  border-radius: 999px;
-  background: var(--bg);
+  gap: 8px;
   color: var(--fg);
-  box-shadow: 0 8px 24px #0003;
   pointer-events: auto;
 }
 
@@ -307,8 +304,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 0;
-  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: 0 8px 24px #0003;
   color: inherit;
   font: inherit;
   font-size: 12px;
@@ -320,16 +319,15 @@
 
 .availabilityAction {
   gap: 9px;
-  padding: 11px 10px 11px 14px;
-  border-radius: 999px 0 0 999px;
+  padding: 11px 14px;
   white-space: nowrap;
 }
 
+/* Its own circle beside the pill. */
 .availabilityClose {
   width: 36px;
-  min-height: 36px;
-  border-left: 1px solid var(--hairline);
-  border-radius: 0 999px 999px 0;
+  height: 36px;
+  flex-shrink: 0;
 }
 
 .availabilityDot {
